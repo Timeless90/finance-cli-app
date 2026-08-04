@@ -57,7 +57,7 @@ class AppConfig(BaseModel):
     output_dir: Path = Path("runs/latest")
 
     @model_validator(mode="after")
-    def validate_bootstrap_input(self) -> "AppConfig":
+    def validate_bootstrap_input(self) -> AppConfig:
         if self.simulation.method in {
             SimulationMethod.HISTORICAL_BOOTSTRAP,
             SimulationMethod.BLOCK_BOOTSTRAP,
