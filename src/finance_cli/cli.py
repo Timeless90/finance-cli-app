@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import platform
 from pathlib import Path
+from typing import Annotated
 
 import numpy as np
 import typer
@@ -45,7 +46,9 @@ def _fallback_calibration(config: AppConfig) -> CalibrationResult:
 
 @config_app.command("example")
 def write_example_config(
-    output: Path = typer.Option(Path("config.example.json"), help="Output JSON path"),
+    output: Annotated[Path, typer.Option(help="Output JSON path")] = Path(
+        "config.example.json"
+    ),
 ) -> None:
     config = AppConfig()
     output.write_text(config.model_dump_json(indent=2), encoding="utf-8")
@@ -54,7 +57,10 @@ def write_example_config(
 
 @app.command()
 def simulate(
-    config: Path = typer.Option(..., exists=True, dir_okay=False, help="JSON config path"),
+    config: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, help="JSON config path"),
+    ],
 ) -> None:
     cfg = _load_config(config)
     historical_log_returns: np.ndarray | None = None
