@@ -1,0 +1,30 @@
+{
+  "data": {
+    "csv_path": null,
+    "date_column": "date",
+    "price_column": "price",
+    "returns_are_net_of_fund_fees": true
+  },
+  "calibration": {
+    "lookback_years": 10,
+    "assumed_annual_return": 0.06,
+    "mean_shrinkage_months": 60.0,
+    "volatility_shrinkage_months": 36.0
+  },
+  "portfolio": {
+    "initial_value": 34932.42,
+    "monthly_contribution": 1200.0,
+    "contribution_timing": "month_end",
+    "annual_inflation": 0.02,
+    "annual_external_fee": 0.0
+  },
+  "simulation": {
+    "method": "student_t",
+    "years": 30,
+    "paths": 10000,
+    "seed": 20260804,
+    "block_length_months": 3,
+    "student_t_degrees_of_freedom": null
+  },
+  "output_dir": "runs/latest"
+}
