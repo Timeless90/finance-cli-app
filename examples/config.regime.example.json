@@ -1,0 +1,72 @@
+{
+  "data": {
+    "csv_path": "data/msci-world-net-total-return.csv",
+    "date_column": "date",
+    "price_column": "price",
+    "returns_are_net_of_fund_fees": true
+  },
+  "calibration": {
+    "lookback_years": 25,
+    "assumed_annual_return": 0.06,
+    "mean_shrinkage_months": 60.0,
+    "volatility_shrinkage_months": 36.0
+  },
+  "portfolio": {
+    "initial_value": 34932.42,
+    "monthly_contribution": 1200.0,
+    "contribution_timing": "month_end",
+    "annual_inflation": 0.02,
+    "annual_external_fee": 0.0
+  },
+  "simulation": {
+    "method": "markov_regime",
+    "years": 30,
+    "paths": 50000,
+    "seed": 20260805,
+    "block_length_months": 3,
+    "student_t_degrees_of_freedom": null,
+    "regime": {
+      "enabled": true,
+      "states": 2,
+      "innovation": "gaussian",
+      "minimum_observations": 180,
+      "random_starts": 20,
+      "em_iterations": 10,
+      "max_iterations": 500,
+      "tolerance": 1e-8,
+      "student_t_degrees_of_freedom": null,
+      "initial_regime": "filtered",
+      "crisis_start_probability": null,
+      "crisis_persistence_override": null,
+      "normal_to_crisis_multiplier": 1.0,
+      "parallel_streams": 8,
+      "export_diagnostics": true,
+      "rolling_backtest_enabled": false,
+      "rolling_training_months": 180,
+      "gof_monte_carlo_samples": 0
+    }
+  },
+  "risk": {
+    "annual_risk_free_rate": 0.02,
+    "annual_omega_threshold": 0.0,
+    "confidence_level": 0.95
+  },
+  "diagnostics": {
+    "enabled": true,
+    "rolling_training_months": 60,
+    "interval_coverage": 0.9,
+    "monte_carlo_samples": 999
+  },
+  "tax": {
+    "enabled": false,
+    "partial_exemption": 0.3,
+    "saver_allowance": 1000.0,
+    "capital_gains_tax_rate": 0.25,
+    "solidarity_surcharge_rate": 0.055,
+    "church_tax_rate": 0.0
+  },
+  "output": {
+    "directory": "runs/regime",
+    "export_charts": true
+  }
+}
