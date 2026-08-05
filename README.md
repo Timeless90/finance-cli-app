@@ -208,7 +208,7 @@ Compare how well the normal and Student-t distributions fit historical returns:
 finance-cli diagnose --config config.json
 ```
 
-Requires `data.csv_path` to be set. Prints a goodness-of-fit table to the terminal and, during `simulate`, also saves `distribution-fit.csv` to the output directory.
+Requires `data.csv_path` to be set. Prints a goodness-of-fit table to the terminal.
 
 ### backtest
 
@@ -264,6 +264,18 @@ Risk metrics are computed across all simulated paths and saved to `risk-summary.
 ```
 
 Computed metrics include annual return, annual volatility, Sharpe ratio, Sortino ratio, Omega ratio, maximum drawdown, Ulcer Index, Value-at-Risk, and Expected Shortfall.
+
+## CLI commands
+
+Use `finance-cli --help` to list all commands:
+
+- `simulate --config <path>`: run calibration + simulation and write output files
+- `diagnose --config <path>`: print distribution goodness-of-fit diagnostics (historical data required)
+- `backtest --config <path>`: print rolling-origin coverage backtest results (historical data required)
+- `sensitivity --config <path>`: run deterministic return/inflation sensitivity grid
+- `wizard --output <path>`: interactive config wizard
+- `config example --output <path>`: write example JSON config (default: `config.example.json`)
+- `version`: print CLI version
 
 
 
