@@ -8,11 +8,17 @@ Production-ready Python CLI for ETF calibration, Monte Carlo simulation, risk an
 - Monthly simple and logarithmic return calculation
 - Normal and Student-t Monte Carlo simulation
 - Historical bootstrap and moving-block bootstrap
-- Monthly savings contributions
+- Monthly savings contributions with configurable timing
 - Inflation and external fee handling
 - Percentile analysis, shortfall probability, VaR, and Expected Shortfall
+- Per-path risk metrics: Sharpe, Sortino, Omega, max drawdown, Ulcer Index
+- Simplified German terminal-gain tax model
+- Distribution goodness-of-fit diagnostics and rolling-origin coverage backtest
+- Deterministic sensitivity grid across return and inflation assumptions
+- Percentile path chart export
 - CSV and JSON result exports
 - Reproducible simulations through deterministic random seeds
+- Interactive configuration wizard
 
 ## Requirements
 
@@ -66,6 +72,12 @@ finance-cli simulate --config config.json
 
 Without historical data, the application uses the configured long-term return assumption and a fallback annual volatility of 15%. Bootstrap methods require historical data.
 
+Use the interactive wizard to create a configuration by answering prompts:
+
+```bash
+finance-cli wizard --output config.json
+```
+
 ## Configuration example
 
 The following example models a current portfolio value of EUR 34,932.42, a monthly contribution of EUR 1,200, and a 30-year Student-t simulation with 10,000 paths:
@@ -99,7 +111,29 @@ The following example models a current portfolio value of EUR 34,932.42, a month
     "block_length_months": 3,
     "student_t_degrees_of_freedom": null
   },
-  "output_dir": "runs/latest"
+  "risk": {
+    "annual_risk_free_rate": 0.02,
+    "annual_omega_threshold": 0.0,
+    "confidence_level": 0.95
+  },
+  "diagnostics": {
+    "enabled": true,
+    "rolling_training_months": 60,
+    "interval_coverage": 0.90,
+    "monte_carlo_samples": 999
+  },
+  "tax": {
+    "enabled": false,
+    "partial_exemption": 0.30,
+    "saver_allowance": 1000.0,
+    "capital_gains_tax_rate": 0.25,
+    "solidarity_surcharge_rate": 0.055,
+    "church_tax_rate": 0.0
+  },
+  "output": {
+    "directory": "runs/latest",
+    "export_charts": true
+  }
 }
 ```
 
@@ -164,7 +198,74 @@ Example for moving-block bootstrap:
 }
 ```
 
-## Example terminal output
+## Additional commands
+
+### diagnose
+
+Compare how well the normal and Student-t distributions fit historical returns:
+
+```bash
+finance-cli diagnose --config config.json
+```
+
+Requires `data.csv_path` to be set. Prints a goodness-of-fit table to the terminal and, during `simulate`, also saves `distribution-fit.csv` to the output directory.
+
+### backtest
+
+Run a rolling-origin interval coverage backtest on historical returns:
+
+```bash
+finance-cli backtest --config config.json
+```
+
+Requires `data.csv_path` to be set. Uses the `diagnostics.rolling_training_months` and `diagnostics.interval_coverage` settings to evaluate whether the model's prediction intervals are well-calibrated.
+
+### sensitivity
+
+Compute a deterministic sensitivity grid across a range of annual return and inflation assumptions:
+
+```bash
+finance-cli sensitivity --config config.json
+```
+
+Writes `sensitivity-grid.csv` to the output directory and prints the results to the terminal.
+
+## Tax configuration
+
+The application includes a simplified German terminal-gain tax model. It is disabled by default. Set `tax.enabled` to `true` to activate it:
+
+```json
+{
+  "tax": {
+    "enabled": true,
+    "partial_exemption": 0.30,
+    "saver_allowance": 1000.0,
+    "capital_gains_tax_rate": 0.25,
+    "solidarity_surcharge_rate": 0.055,
+    "church_tax_rate": 0.0
+  }
+}
+```
+
+The model applies a partial exemption (`partial_exemption`) to gross gains, subtracts the saver's allowance, and then applies capital gains tax plus solidarity surcharge and optional church tax. The result is saved to `tax-summary.json` and covers terminal gains only; interim taxation is not modelled.
+
+## Risk configuration
+
+Risk metrics are computed across all simulated paths and saved to `risk-summary.csv`. Configure the reference rates used:
+
+```json
+{
+  "risk": {
+    "annual_risk_free_rate": 0.02,
+    "annual_omega_threshold": 0.0,
+    "confidence_level": 0.95
+  }
+}
+```
+
+Computed metrics include annual return, annual volatility, Sharpe ratio, Sortino ratio, Omega ratio, maximum drawdown, Ulcer Index, Value-at-Risk, and Expected Shortfall.
+
+
 
 A successful run prints a horizon summary similar to this:
 
@@ -185,20 +286,36 @@ The numbers above are illustrative. Actual values depend on the configuration, h
 
 ## Generated output files
 
-Each simulation writes the following files to the configured `output_dir`:
+Each simulation writes the following files to the configured `output.directory`:
 
 ```text
 runs/latest/
 ├── calibration.json
 ├── horizon-summary.csv
 ├── path-percentiles.csv
-└── run-manifest.json
+├── percentile-paths.png
+├── risk-summary.csv
+├── run-manifest.json
+└── tax-summary.json
+```
+
+If historical data is provided and diagnostics are enabled, the following additional files are written:
+
+```text
+runs/latest/
+├── coverage-backtest.csv
+└── distribution-fit.csv
 ```
 
 - `calibration.json`: estimated return-distribution parameters and historical statistics
 - `horizon-summary.csv`: selected horizon results including percentiles and shortfall probability
 - `path-percentiles.csv`: percentile development for every simulated month
+- `percentile-paths.png`: chart of the percentile paths over time (requires `output.export_charts: true`)
+- `risk-summary.csv`: per-path risk metrics (Sharpe, Sortino, VaR, Expected Shortfall, and others) summarised across all paths
 - `run-manifest.json`: configuration, package version, Python version, seed, and simulation metadata
+- `tax-summary.json`: simplified German terminal-gain tax estimate (always written; only meaningful when `tax.enabled: true`)
+- `coverage-backtest.csv`: rolling-origin interval coverage backtest results
+- `distribution-fit.csv`: goodness-of-fit comparison between normal and Student-t models
 
 ## Interpreting the results
 
