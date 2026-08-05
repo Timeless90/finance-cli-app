@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import numpy as np
 
-
 METRICS = (
     "annual_return",
     "annual_volatility",
@@ -87,7 +86,9 @@ def summarize_risk_metrics(metrics: dict[str, np.ndarray]) -> list[dict[str, flo
         values = metrics[name]
         finite = values[np.isfinite(values)]
         if finite.size == 0:
-            rows.append({"metric": name, "p05": float("nan"), "median": float("nan"), "p95": float("nan")})
+            rows.append(
+                {"metric": name, "p05": float("nan"), "median": float("nan"), "p95": float("nan")}
+            )
             continue
         rows.append(
             {
