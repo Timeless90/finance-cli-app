@@ -5,7 +5,8 @@ from dataclasses import dataclass
 import numpy as np
 
 from .calibration import CalibrationResult
-from .models import ContributionTiming, SimulationMethod
+from .models import ContributionTiming, RegimeConfig, SimulationMethod
+from .regime import RegimeCalibrationResult, simulate_regime_log_returns
 
 
 @dataclass(frozen=True)
@@ -82,6 +83,8 @@ def generate_log_returns(
     seed: int,
     block_length: int,
     student_t_df: float | None,
+    regime_calibration: RegimeCalibrationResult | None = None,
+    regime_config: RegimeConfig | None = None,
 ) -> np.ndarray:
     rng = np.random.default_rng(seed)
     if method == SimulationMethod.NORMAL:
@@ -90,6 +93,17 @@ def generate_log_returns(
         return _student_t_log_returns(
             calibration, n_paths, n_months, rng, student_t_df
         )
+    if method == SimulationMethod.MARKOV_REGIME:
+        if regime_calibration is None or regime_config is None:
+            raise ValueError("markov_regime requires a calibrated regime model")
+        returns, _ = simulate_regime_log_returns(
+            regime_calibration,
+            regime_config,
+            n_paths=n_paths,
+            n_months=n_months,
+            seed=seed,
+        )
+        return returns
     if historical_log_returns is None:
         raise ValueError(f"{method.value} requires historical log returns")
     if method == SimulationMethod.HISTORICAL_BOOTSTRAP:
