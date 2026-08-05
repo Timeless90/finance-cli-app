@@ -49,12 +49,46 @@ class SimulationConfig(BaseModel):
     student_t_degrees_of_freedom: float | None = Field(default=None, gt=2.0, le=200)
 
 
+class RiskConfig(BaseModel):
+    annual_risk_free_rate: float = Field(default=0.02, gt=-0.99, lt=1.0)
+    annual_omega_threshold: float = Field(default=0.0, gt=-0.99, lt=1.0)
+    confidence_level: float = Field(default=0.95, gt=0.5, lt=1.0)
+
+
+class DiagnosticsConfig(BaseModel):
+    enabled: bool = True
+    rolling_training_months: int = Field(default=60, ge=24, le=600)
+    interval_coverage: float = Field(default=0.90, gt=0.5, lt=1.0)
+    monte_carlo_samples: int = Field(default=999, ge=99, le=100000)
+
+
+class TaxConfig(BaseModel):
+    enabled: bool = False
+    partial_exemption: float = Field(default=0.30, ge=0.0, lt=1.0)
+    saver_allowance: float = Field(default=1000.0, ge=0.0)
+    capital_gains_tax_rate: float = Field(default=0.25, ge=0.0, lt=1.0)
+    solidarity_surcharge_rate: float = Field(default=0.055, ge=0.0, lt=1.0)
+    church_tax_rate: float = Field(default=0.0, ge=0.0, lt=1.0)
+
+
+class OutputConfig(BaseModel):
+    directory: Path = Path("runs/latest")
+    export_charts: bool = True
+
+
 class AppConfig(BaseModel):
     data: DataConfig = DataConfig()
     calibration: CalibrationConfig = CalibrationConfig()
     portfolio: PortfolioConfig = PortfolioConfig()
     simulation: SimulationConfig = SimulationConfig()
-    output_dir: Path = Path("runs/latest")
+    risk: RiskConfig = RiskConfig()
+    diagnostics: DiagnosticsConfig = DiagnosticsConfig()
+    tax: TaxConfig = TaxConfig()
+    output: OutputConfig = OutputConfig()
+
+    @property
+    def output_dir(self) -> Path:
+        return self.output.directory
 
     @model_validator(mode="after")
     def validate_bootstrap_input(self) -> AppConfig:
