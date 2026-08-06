@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from cfo_platform.composition import ApplicationContainer, build_container
 
+from .data_routes import build_data_router
 from .job_routes import build_job_router
 from .routes import (
     build_module_foundation_router,
@@ -51,6 +52,10 @@ def create_app(
     app.include_router(build_module_foundation_router(), prefix=resolved.api_prefix)
     app.include_router(
         build_job_router(resolved_container.job_manager),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_data_router(resolved_container.finance_data_workflow),
         prefix=resolved.api_prefix,
     )
     return app
