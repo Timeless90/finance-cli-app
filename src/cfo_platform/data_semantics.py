@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
-from typing import Iterable, Mapping
 
 from cfo_platform.data_foundation import FinanceRecord
 
