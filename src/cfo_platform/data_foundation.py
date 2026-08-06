@@ -7,7 +7,9 @@ import json
 from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
-from typing import Iterable, Mapping
+from typing import Iterable, Mapping, Protocol
+
+from openpyxl import load_workbook
 
 
 class FindingSeverity(StrEnum):
@@ -70,44 +72,48 @@ class DataSnapshot:
     records: tuple[FinanceRecord, ...]
 
 
-class CanonicalCsvImporter:
+class TabularImporter(Protocol):
+    def load(self, content: bytes, *, column_mapping: Mapping[str, str] | None = None) -> tuple[FinanceRecord, ...]: ...
+
+
+class _CanonicalRowParser:
     REQUIRED_COLUMNS = {"company", "account", "period", "scenario", "value", "currency"}
 
-    def load_text(
+    def parse(
         self,
-        content: str,
+        rows: Iterable[Mapping[str, object]],
         *,
+        source_columns: set[str],
         column_mapping: Mapping[str, str] | None = None,
+        first_data_row: int = 2,
     ) -> tuple[FinanceRecord, ...]:
         mapping = dict(column_mapping or {})
-        reader = csv.DictReader(io.StringIO(content))
-        source_columns = set(reader.fieldnames or ())
         required_sources = {mapping.get(name, name) for name in self.REQUIRED_COLUMNS}
         missing = sorted(required_sources - source_columns)
         if missing:
             raise ValueError(f"Missing required columns: {', '.join(missing)}")
-
         records: list[FinanceRecord] = []
-        for row_number, row in enumerate(reader, start=2):
+        for row_number, row in enumerate(rows, start=first_data_row):
+            value_raw = row.get(mapping.get("value", "value"))
             try:
-                value = Decimal(row[mapping.get("value", "value")].strip())
+                value = Decimal(str(value_raw).strip())
             except (InvalidOperation, AttributeError) as exc:
                 raise ValueError(f"Invalid decimal value at row {row_number}") from exc
             dimensions = tuple(
                 sorted(
-                    (key.removeprefix("dim_"), value.strip())
-                    for key, value in row.items()
-                    if key.startswith("dim_") and value and value.strip()
+                    (key.removeprefix("dim_"), str(raw).strip())
+                    for key, raw in row.items()
+                    if key.startswith("dim_") and raw is not None and str(raw).strip()
                 )
             )
             records.append(
                 FinanceRecord(
-                    company=row[mapping.get("company", "company")].strip(),
-                    account=row[mapping.get("account", "account")].strip(),
-                    period=row[mapping.get("period", "period")].strip(),
-                    scenario=row[mapping.get("scenario", "scenario")].strip(),
+                    company=str(row.get(mapping.get("company", "company"), "")).strip(),
+                    account=str(row.get(mapping.get("account", "account"), "")).strip(),
+                    period=str(row.get(mapping.get("period", "period"), "")).strip(),
+                    scenario=str(row.get(mapping.get("scenario", "scenario"), "")).strip(),
                     value=value,
-                    currency=row[mapping.get("currency", "currency")].strip().upper(),
+                    currency=str(row.get(mapping.get("currency", "currency"), "")).strip().upper(),
                     dimensions=dimensions,
                     source_row=row_number,
                 )
@@ -115,11 +121,80 @@ class CanonicalCsvImporter:
         return tuple(records)
 
 
+class CanonicalCsvImporter:
+    def __init__(self) -> None:
+        self._parser = _CanonicalRowParser()
+
+    def load_text(
+        self,
+        content: str,
+        *,
+        column_mapping: Mapping[str, str] | None = None,
+    ) -> tuple[FinanceRecord, ...]:
+        reader = csv.DictReader(io.StringIO(content))
+        return self._parser.parse(
+            reader,
+            source_columns=set(reader.fieldnames or ()),
+            column_mapping=column_mapping,
+        )
+
+    def load(
+        self,
+        content: bytes,
+        *,
+        column_mapping: Mapping[str, str] | None = None,
+    ) -> tuple[FinanceRecord, ...]:
+        return self.load_text(content.decode("utf-8-sig"), column_mapping=column_mapping)
+
+
+class CanonicalExcelImporter:
+    def __init__(self) -> None:
+        self._parser = _CanonicalRowParser()
+
+    def load(
+        self,
+        content: bytes,
+        *,
+        column_mapping: Mapping[str, str] | None = None,
+        sheet_name: str | None = None,
+    ) -> tuple[FinanceRecord, ...]:
+        workbook = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
+        sheet = workbook[sheet_name] if sheet_name else workbook.active
+        values = sheet.iter_rows(values_only=True)
+        try:
+            header_values = next(values)
+        except StopIteration as exc:
+            raise ValueError("Excel workbook contains no rows") from exc
+        headers = [str(value).strip() if value is not None else "" for value in header_values]
+        if any(not header for header in headers):
+            raise ValueError("Excel header contains empty column names")
+        rows = (dict(zip(headers, row, strict=True)) for row in values)
+        return self._parser.parse(
+            rows,
+            source_columns=set(headers),
+            column_mapping=column_mapping,
+        )
+
+
 class FinanceDataQualityService:
-    def validate(self, records: Iterable[FinanceRecord]) -> DataQualityReport:
+    def validate(
+        self,
+        records: Iterable[FinanceRecord],
+        *,
+        allowed_currencies: set[str] | None = None,
+        required_dimensions: set[str] | None = None,
+    ) -> DataQualityReport:
         materialized = tuple(records)
         findings: list[DataQualityFinding] = []
         seen: set[tuple[object, ...]] = set()
+        if not materialized:
+            findings.append(
+                DataQualityFinding(
+                    code="empty_dataset",
+                    severity=FindingSeverity.ERROR,
+                    message="dataset must contain at least one finance record",
+                )
+            )
         for record in materialized:
             required = {
                 "company": record.company,
@@ -138,12 +213,12 @@ class FinanceDataQualityService:
                             row_number=record.source_row,
                         )
                     )
-            if len(record.period) != 7 or record.period[4:5] != "-":
+            if not self._valid_period(record.period):
                 findings.append(
                     DataQualityFinding(
                         code="invalid_period",
                         severity=FindingSeverity.ERROR,
-                        message="period must use YYYY-MM format",
+                        message="period must use YYYY-MM with month between 01 and 12",
                         row_number=record.source_row,
                     )
                 )
@@ -153,6 +228,25 @@ class FinanceDataQualityService:
                         code="invalid_currency",
                         severity=FindingSeverity.ERROR,
                         message="currency must be a three-letter code",
+                        row_number=record.source_row,
+                    )
+                )
+            elif allowed_currencies is not None and record.currency not in allowed_currencies:
+                findings.append(
+                    DataQualityFinding(
+                        code="unsupported_currency",
+                        severity=FindingSeverity.ERROR,
+                        message=f"currency {record.currency} is not allowed",
+                        row_number=record.source_row,
+                    )
+                )
+            dimension_names = {name for name, _ in record.dimensions}
+            for dimension in sorted((required_dimensions or set()) - dimension_names):
+                findings.append(
+                    DataQualityFinding(
+                        code="missing_dimension",
+                        severity=FindingSeverity.ERROR,
+                        message=f"required dimension {dimension} is missing",
                         row_number=record.source_row,
                     )
                 )
@@ -168,6 +262,17 @@ class FinanceDataQualityService:
                 )
             seen.add(key)
         return DataQualityReport(row_count=len(materialized), findings=tuple(findings))
+
+    @staticmethod
+    def _valid_period(value: str) -> bool:
+        if len(value) != 7 or value[4] != "-":
+            return False
+        try:
+            year = int(value[:4])
+            month = int(value[5:])
+        except ValueError:
+            return False
+        return 1900 <= year <= 9999 and 1 <= month <= 12
 
 
 class DataSnapshotFactory:
