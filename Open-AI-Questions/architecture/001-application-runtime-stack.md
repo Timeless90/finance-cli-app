@@ -1,76 +1,70 @@
-# OAQ-001 — Application runtime and monorepo boundary
+# OAQ-001 — Application runtime and deployment architecture
 
 ## Status
 
-Open
+Resolved — accepted on 2026-08-06.
 
-## Context
+## Binding target architecture
 
-The accepted product roadmap names FastAPI as the API foundation and the existing quantitative engine is implemented in Python. Earlier stack preferences also point to a TypeScript/JavaScript monorepo with Next.js, Node.js, PostgreSQL, Python for quantitative and AI workloads, Docker and AWS.
+- **Cloud platform:** Microsoft Azure
+- **Backend:** Python with FastAPI
+- **Containerization:** Docker
+- **Web frontend:** JavaScript
 
-Before implementing E0-F3, we need a deliberate boundary between the product API and the Python model-execution service.
+## Architectural consequences
 
-## Options
+### Backend
 
-### Option A — Python API first
+FastAPI is the primary product API and application backend. The existing quantitative Python code remains in the same technology ecosystem and is integrated through explicit application ports and service boundaries.
 
-- FastAPI hosts the application API and invokes the Python quant layer in-process initially.
-- Next.js is added as the web client.
-- Background execution is split out later.
+The initial deployment may run the API and quantitative execution in one deployable unit where this reduces complexity. Long-running simulations must still be isolated behind job interfaces so they can later move to dedicated workers without changing domain contracts.
 
-**Advantages**
+### Web frontend
 
-- Lowest migration risk.
-- Direct reuse of the current typed Python code.
-- Fastest path to the first CFO-domain endpoints.
+The web application uses JavaScript. Framework and build-tool selection remain implementation details unless a later product requirement makes them material.
 
-**Disadvantages**
+The frontend consumes versioned REST endpoints and must not contain finance calculation logic. Statistical calculations, validations, permissions and reporting rules remain authoritative in the Python backend.
 
-- Does not use Node.js as the primary product backend.
-- A later service split may require API orchestration changes.
+### Azure deployment direction
 
-### Option B — Node.js product API plus Python quant service
+The target deployment uses Azure-native services where they provide clear operational value. Expected building blocks include:
 
-- A TypeScript API owns product workflows, identity and persistence.
-- A Python service owns simulation, statistics and AI/data workloads.
-- Services communicate through versioned contracts and asynchronous jobs.
+- Azure Container Registry for Docker images
+- Azure Container Apps or Azure App Service for initial application hosting
+- Azure Database for PostgreSQL for relational persistence
+- Azure Blob Storage for uploaded data, report artifacts and immutable snapshots
+- Azure Key Vault for secrets and credentials
+- Azure Monitor and Application Insights for logs, metrics and tracing
+- Microsoft Entra ID for enterprise identity and access management
 
-**Advantages**
+The exact choice between Azure Container Apps, App Service and AKS will be made based on workload complexity. AKS is not required for the first product release.
 
-- Aligns with the previously preferred TypeScript product stack.
-- Strong separation between product workflows and numerical execution.
-- Natural long-term service boundary.
+### Repository and service boundaries
 
-**Disadvantages**
+The repository remains Python-first. The planned top-level boundaries are:
 
-- Higher initial complexity.
-- Requires distributed tracing, contract testing and local orchestration earlier.
+```text
+src/
+├── cfo_platform/       # enterprise domain and application services
+└── finance_cli/        # existing portfolio CLI and quantitative capabilities
 
-### Option C — Python platform backend only
+web/                    # JavaScript web application
+infra/                  # Docker and Azure deployment definitions
+```
 
-- FastAPI remains the sole backend technology.
-- TypeScript is used only for the Next.js frontend.
+The `cfo_platform` domain layer must remain independent of FastAPI, Azure SDKs, database libraries and frontend technology.
 
-**Advantages**
+## Decision impact on Epic 01
 
-- Simplest operational model.
-- Strongest continuity with the existing repository.
+The following Epic 01 work is now unblocked:
 
-**Disadvantages**
+1. FastAPI application factory and versioned API routes.
+2. Dependency-injection composition root.
+3. Transport DTOs separated from domain entities.
+4. Docker development and production images.
+5. Azure-ready health, readiness and observability endpoints.
+6. JavaScript web application scaffold after the backend contract is stable.
 
-- Deviates most from the prior Node.js backend preference.
+## Superseded options
 
-## Recommendation
-
-Adopt **Option B** for the target architecture, but deliver it incrementally:
-
-1. Complete domain separation and generic Python model ports first.
-2. Define transport-neutral contracts.
-3. Add the TypeScript product API and PostgreSQL persistence.
-4. Expose the Python engine as an internal model-execution service.
-
-This preserves delivery speed while avoiding a long-term in-process coupling between enterprise workflows and computational models.
-
-## Decision requested
-
-Confirm whether Option B is the binding target architecture before E0-F3 begins.
+The previously considered Node.js product API plus Python quant-service split is no longer the target architecture. Node.js is not required for backend services.
