@@ -19,6 +19,12 @@ class PlatformResponse(BaseModel):
     capabilities: list[str]
 
 
+class ModuleFoundationResponse(BaseModel):
+    module: str
+    api_version: str
+    status: str
+
+
 def build_system_router(settings: ApiSettings) -> APIRouter:
     router = APIRouter(tags=["system"])
 
@@ -56,7 +62,26 @@ def build_platform_router() -> APIRouter:
                 "model-execution-ports",
                 "planning-foundation",
                 "risk-foundation",
+                "background-jobs",
             ],
         )
+
+    return router
+
+
+def build_module_foundation_router() -> APIRouter:
+    router = APIRouter(tags=["module-foundation"])
+
+    @router.get("/forecast", response_model=ModuleFoundationResponse)
+    def forecast_foundation() -> ModuleFoundationResponse:
+        return ModuleFoundationResponse(module="forecast", api_version="v1", status="available")
+
+    @router.get("/risk", response_model=ModuleFoundationResponse)
+    def risk_foundation() -> ModuleFoundationResponse:
+        return ModuleFoundationResponse(module="risk", api_version="v1", status="available")
+
+    @router.get("/data", response_model=ModuleFoundationResponse)
+    def data_foundation() -> ModuleFoundationResponse:
+        return ModuleFoundationResponse(module="data", api_version="v1", status="available")
 
     return router
