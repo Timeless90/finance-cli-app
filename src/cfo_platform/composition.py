@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from cfo_platform.application.services import ExecuteModelRun
+from cfo_platform.data_store import InMemoryDataSnapshotRepository
+from cfo_platform.data_workflow import FinanceDataWorkflow
 from cfo_platform.infrastructure.in_memory import (
     InMemoryModelRunRepository,
     RegisteredModelExecutor,
@@ -20,6 +22,8 @@ class ApplicationContainer:
     model_executor: RegisteredModelExecutor
     execute_model_run: ExecuteModelRun
     job_manager: InMemoryJobManager
+    data_snapshot_repository: InMemoryDataSnapshotRepository
+    finance_data_workflow: FinanceDataWorkflow
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -33,10 +37,14 @@ def build_container() -> ApplicationContainer:
     executor = RegisteredModelExecutor(registry)
     service = ExecuteModelRun(executor, repository)
     jobs = InMemoryJobManager(service)
+    snapshot_repository = InMemoryDataSnapshotRepository()
+    data_workflow = FinanceDataWorkflow(snapshot_repository)
     return ApplicationContainer(
         model_registry=registry,
         run_repository=repository,
         model_executor=executor,
         execute_model_run=service,
         job_manager=jobs,
+        data_snapshot_repository=snapshot_repository,
+        finance_data_workflow=data_workflow,
     )
