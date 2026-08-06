@@ -5,6 +5,17 @@ from dataclasses import dataclass
 from cfo_platform.application.services import ExecuteModelRun
 from cfo_platform.data_store import InMemoryDataSnapshotRepository
 from cfo_platform.data_workflow import FinanceDataWorkflow
+from cfo_platform.governance import (
+    GovernedRunService,
+    InMemoryAuditEventRepository,
+    InMemoryGovernedRunRepository,
+)
+from cfo_platform.governance_catalog import (
+    InMemoryModelRegistryRepository,
+    InMemoryScenarioRepository,
+    ModelRegistryService,
+    ScenarioService,
+)
 from cfo_platform.infrastructure.in_memory import (
     InMemoryModelRunRepository,
     RegisteredModelExecutor,
@@ -13,6 +24,7 @@ from cfo_platform.infrastructure.jobs import InMemoryJobManager
 from cfo_platform.quant.builtin import EchoForecastModel
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
 from cfo_platform.quant.registry import QuantModelRegistry
+from cfo_platform.rbac import AccessControlService
 
 
 @dataclass(slots=True)
@@ -24,21 +36,29 @@ class ApplicationContainer:
     job_manager: InMemoryJobManager
     data_snapshot_repository: InMemoryDataSnapshotRepository
     finance_data_workflow: FinanceDataWorkflow
+    governed_run_service: GovernedRunService
+    scenario_service: ScenarioService
+    model_registry_service: ModelRegistryService
+    access_control: AccessControlService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
 
 
 def build_container() -> ApplicationContainer:
-    registry = QuantModelRegistry(
-        [EchoForecastModel(), LegacyPortfolioSimulationModel()]
-    )
+    registry = QuantModelRegistry([EchoForecastModel(), LegacyPortfolioSimulationModel()])
     repository = InMemoryModelRunRepository()
     executor = RegisteredModelExecutor(registry)
     service = ExecuteModelRun(executor, repository)
     jobs = InMemoryJobManager(service)
     snapshot_repository = InMemoryDataSnapshotRepository()
     data_workflow = FinanceDataWorkflow(snapshot_repository)
+    governed_runs = GovernedRunService(
+        InMemoryGovernedRunRepository(),
+        InMemoryAuditEventRepository(),
+    )
+    scenario_service = ScenarioService(InMemoryScenarioRepository())
+    model_registry_service = ModelRegistryService(InMemoryModelRegistryRepository())
     return ApplicationContainer(
         model_registry=registry,
         run_repository=repository,
@@ -47,4 +67,8 @@ def build_container() -> ApplicationContainer:
         job_manager=jobs,
         data_snapshot_repository=snapshot_repository,
         finance_data_workflow=data_workflow,
+        governed_run_service=governed_runs,
+        scenario_service=scenario_service,
+        model_registry_service=model_registry_service,
+        access_control=AccessControlService(),
     )
