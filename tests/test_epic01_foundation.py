@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from cfo_platform.api.app import create_app
 from cfo_platform.api.settings import ApiSettings
+from cfo_platform.application.services import ModelRunCommand
 from cfo_platform.composition import build_container
 from cfo_platform.quant.interfaces import QuantModelInput
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
@@ -60,7 +61,7 @@ def test_background_job_is_non_blocking_and_reproducible() -> None:
 def test_job_cancel_and_resume_contract() -> None:
     container = build_container()
     record = container.job_manager.submit(
-        __import__("cfo_platform.application.services", fromlist=["ModelRunCommand"]).ModelRunCommand(
+        ModelRunCommand(
             model_id="echo-forecast",
             model_version="1.0.0",
             input_snapshot_id="snapshot-002",
@@ -78,16 +79,17 @@ def test_job_cancel_and_resume_contract() -> None:
 
 def test_legacy_adapter_matches_existing_simulation() -> None:
     calibration = CalibrationResult(
-        observations=120,
-        annualized_log_mean_raw=0.06,
-        annualized_log_mean_shrunk=0.05,
-        annualized_log_volatility=0.15,
-        monthly_log_mean_raw=0.06 / 12.0,
+        n_obs=120,
+        monthly_log_mean_historical=0.06 / 12.0,
+        monthly_log_mean_assumed=0.05 / 12.0,
         monthly_log_mean_shrunk=0.05 / 12.0,
         monthly_log_volatility=0.15 / np.sqrt(12.0),
+        annual_geometric_return_historical=0.06,
+        annual_geometric_return_shrunk=0.05,
+        annual_volatility=0.15,
+        simple_return_skewness=0.0,
+        simple_return_excess_kurtosis=0.0,
         student_t_df=8.0,
-        student_t_location=0.0,
-        student_t_scale=0.04,
     )
     parameters = {
         "method": "normal",
