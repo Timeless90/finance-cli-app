@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +9,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from cfo_platform.composition import ApplicationContainer, build_container
 
 from .job_routes import build_job_router
-from .routes import build_platform_router, build_system_router
+from .routes import (
+    build_module_foundation_router,
+    build_platform_router,
+    build_system_router,
+)
 from .settings import ApiSettings, get_settings
 
 
@@ -44,6 +48,7 @@ def create_app(
     )
     app.include_router(build_system_router(resolved))
     app.include_router(build_platform_router(), prefix=resolved.api_prefix)
+    app.include_router(build_module_foundation_router(), prefix=resolved.api_prefix)
     app.include_router(
         build_job_router(resolved_container.job_manager),
         prefix=resolved.api_prefix,
