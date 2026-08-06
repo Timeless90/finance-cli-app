@@ -8,6 +8,7 @@ from cfo_platform.infrastructure.in_memory import (
     RegisteredModelExecutor,
 )
 from cfo_platform.infrastructure.jobs import InMemoryJobManager
+from cfo_platform.quant.builtin import EchoForecastModel
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
 from cfo_platform.quant.registry import QuantModelRegistry
 
@@ -25,7 +26,9 @@ class ApplicationContainer:
 
 
 def build_container() -> ApplicationContainer:
-    registry = QuantModelRegistry([LegacyPortfolioSimulationModel()])
+    registry = QuantModelRegistry(
+        [EchoForecastModel(), LegacyPortfolioSimulationModel()]
+    )
     repository = InMemoryModelRunRepository()
     executor = RegisteredModelExecutor(registry)
     service = ExecuteModelRun(executor, repository)
