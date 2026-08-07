@@ -16,6 +16,7 @@ from .liquidity_routes import build_liquidity_router
 from .performance_routes import build_performance_router
 from .planning_routes import build_planning_router
 from .profitability_routes import build_profitability_router
+from .reporting_routes import build_reporting_router
 from .risk_routes import build_risk_router
 from .routes import (
     build_module_foundation_router,
@@ -127,6 +128,13 @@ def create_app(
             resolved_container.action_portfolio_prioritizer,
             resolved_container.action_review_service,
             resolved_container.benefit_tracking_service,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_reporting_router(
+            resolved_container.reporting_factory,
+            resolved_container.report_exporter,
         ),
         prefix=resolved.api_prefix,
     )
