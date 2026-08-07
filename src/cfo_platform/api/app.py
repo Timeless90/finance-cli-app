@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from cfo_platform.composition import ApplicationContainer, build_container
 
+from .capital_routes import build_capital_router
 from .data_routes import build_data_router
 from .governance_routes import build_governance_router
 from .job_routes import build_job_router
@@ -104,6 +105,15 @@ def create_app(
             resolved_container.covenant_engine,
             resolved_container.liquidity_stress_engine,
             resolved_container.cash_forecast_accuracy_service,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_capital_router(
+            resolved_container.project_valuation_service,
+            resolved_container.monte_carlo_npv_engine,
+            resolved_container.capital_portfolio_optimizer,
+            resolved_container.funding_scenario_engine,
         ),
         prefix=resolved.api_prefix,
     )
