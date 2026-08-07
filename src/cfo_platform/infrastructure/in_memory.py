@@ -28,13 +28,15 @@ class InMemoryModelRunRepository(ModelRunRepository):
         with self._lock:
             self._results[result.run_id] = result
 
-    def get_result(self, run_id: UUID) -> ModelExecutionResult | None:
+    def get_result(self, run_id: UUID | str) -> ModelExecutionResult | None:
+        normalized = UUID(run_id) if isinstance(run_id, str) else run_id
         with self._lock:
-            return self._results.get(run_id)
+            return self._results.get(normalized)
 
-    def get_request(self, run_id: UUID) -> ModelExecutionRequest | None:
+    def get_request(self, run_id: UUID | str) -> ModelExecutionRequest | None:
+        normalized = UUID(run_id) if isinstance(run_id, str) else run_id
         with self._lock:
-            return self._requests.get(run_id)
+            return self._requests.get(normalized)
 
 
 class RegisteredModelExecutor:
