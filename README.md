@@ -1,33 +1,279 @@
-# Finance CLI App
+# Finance CLI App / CFO Platform
 
-Production-ready Python CLI for ETF calibration, Monte Carlo simulation, risk analysis, and long-term investment planning.
+A Python-based finance platform evolving from a statistically grounded ETF Monte Carlo CLI into an enterprise-oriented CFO command center for planning, forecasting, performance management, profitability, liquidity, governance, and risk.
 
-## Features
+The repository currently contains two complementary product surfaces:
 
-- Statistical calibration from historical ETF price data
-- Monthly simple and logarithmic return calculation
-- Normal and Student-t Monte Carlo simulation
-- Historical bootstrap and moving-block bootstrap
-- Monthly savings contributions with configurable timing
-- Inflation and external fee handling
-- Percentile analysis, shortfall probability, VaR, and Expected Shortfall
-- Per-path risk metrics: Sharpe, Sortino, Omega, max drawdown, Ulcer Index
-- Simplified German terminal-gain tax model
-- Distribution goodness-of-fit diagnostics and rolling-origin coverage backtest
-- Deterministic sensitivity grid across return and inflation assumptions
-- Percentile path chart export
-- CSV and JSON result exports
-- Reproducible simulations through deterministic random seeds
-- Interactive configuration wizard
+1. **CFO Platform** — a FastAPI-based application layer for enterprise finance workflows.
+2. **Finance CLI** — the original quantitative toolkit for ETF calibration, Monte Carlo simulation, diagnostics, backtesting, stress analysis, and long-term investment planning.
 
-## Requirements
+## Current product status
+
+The current `main` branch contains the completed implementation through **Epic 07**.
+
+| Epic | Module | Status |
+|---|---|---|
+| 01 | Product Architecture & Domain Foundation | Complete |
+| 02 | Finance Data Foundation | Complete |
+| 03 | Governance, Run Store & Audit Trail | Complete |
+| 04 | Integrated Planning & Rolling Forecast | Complete |
+| 05 | Financial Performance Management | Complete |
+| 06 | Cost & Profitability Management | Complete |
+| 07 | Cash, Liquidity & Covenant Control | Complete |
+| 08 | Enterprise Risk Management | Next |
+
+The long-term product goal is a modular **CFO Command Center** that combines governed finance data, integrated planning, probabilistic forecasting, performance steering, liquidity control, risk analytics, reporting, and AI-assisted interpretation.
+
+## Target architecture
+
+```text
+JavaScript Web Client
+        |
+        v
+Python / FastAPI API
+        |
+        +-------------------------------+
+        |                               |
+        v                               v
+CFO Domain & Application Layer     Quant / Simulation Layer
+        |                               |
+        +---------------+---------------+
+                        |
+                        v
+                Persistence / Audit
+                        |
+                        v
+                     Azure
+```
+
+Target stack:
+
+- **Cloud:** Microsoft Azure
+- **Backend:** Python 3.11/3.12 + FastAPI
+- **Packaging:** Docker
+- **Web:** JavaScript
+- **Persistence:** repository abstractions with development adapters today and Azure/PostgreSQL-oriented production adapters planned
+- **Observability:** Azure-compatible liveness/readiness contracts
+- **Governance:** immutable lineage, approvals, audit events, model registry and scoped access control
+
+## CFO Platform modules
+
+### Epic 01 — Product Architecture & Domain Foundation
+
+Provides the application foundation and clean separation between domain, API, application services, quantitative models, and infrastructure.
+
+Key capabilities:
+
+- framework-independent CFO domain model
+- company, account, period, scenario and metric contracts
+- model execution ports and model registry
+- FastAPI application factory and composition root
+- versioned API routes
+- OpenAPI support
+- liveness and readiness endpoints
+- CORS support for the future JavaScript frontend
+- non-blocking jobs with status, progress, cancellation and retry/resume contracts
+- Docker production image
+
+### Epic 02 — Finance Data Foundation
+
+Provides controlled finance-data ingestion and the canonical semantic foundation used by downstream modules.
+
+Key capabilities:
+
+- CSV and Excel ingestion
+- source-column mapping
+- canonical finance records
+- semantic account mappings
+- sign normalization
+- KPI metadata
+- unmapped-account detection
+- data-quality scoring and blocking findings
+- reconciliation rules and tolerances
+- immutable SHA-256 content-addressed snapshots
+- governed import workflow
+
+Representative endpoints:
+
+```text
+POST /api/v1/data/imports
+GET  /api/v1/data/snapshots/{snapshot_id}
+```
+
+### Epic 03 — Governance, Run Store & Audit Trail
+
+Introduces auditability, approvals, lineage and controlled model usage.
+
+Key capabilities:
+
+- run lineage including model, code, snapshot, parameters and random seed
+- Draft -> Validated -> Approved -> Retired lifecycle
+- preparer/reviewer segregation
+- immutable approved runs
+- append-only audit events
+- before/after hashes, actor, reason and correlation ID
+- governed scenarios and assumptions
+- model registry and lifecycle
+- RBAC for CFO, FP&A, Risk, Treasury, Controller, Reviewer and Admin roles
+- company-level access scopes
+- durable SQLite reference repositories for local development and CI
+
+Representative endpoints:
+
+```text
+POST /api/v1/governance/runs
+POST /api/v1/governance/runs/{run_id}/validate
+POST /api/v1/governance/runs/{run_id}/approve
+POST /api/v1/governance/runs/{run_id}/retire
+GET  /api/v1/governance/runs/{run_id}/lineage
+POST /api/v1/governance/scenarios
+POST /api/v1/governance/models
+```
+
+### Epic 04 — Integrated Planning & Rolling Forecast
+
+Implements driver-based corporate planning and probabilistic rolling forecasts.
+
+Key capabilities:
+
+- revenue planning using volume, price, conversion and mix
+- workforce planning
+- fixed and variable cost planning
+- capex, depreciation and tax logic
+- DSO/DPO/inventory-day working-capital drivers
+- integrated income statement, balance sheet and cash flow
+- exact multi-period balance-sheet reconciliation
+- 12-, 18- and 24-month rolling forecast horizons
+- monthly-close refresh and predecessor lineage
+- Student-t probabilistic forecast overlay
+- moving-block bootstrap
+- optional Markov-regime forecast mode
+- P10/P50/P90 bands
+- deterministic seeds
+- rolling-origin backtesting
+- MAE, WAPE, bias, coverage and probabilistic log score
+- threshold and target-breach evaluation
+
+Representative endpoints:
+
+```text
+POST /api/v1/planning/forecasts
+GET  /api/v1/planning/forecasts/{version_id}
+POST /api/v1/planning/probabilistic
+POST /api/v1/planning/backtests
+POST /api/v1/planning/thresholds/evaluate
+```
+
+### Epic 05 — Financial Performance Management
+
+Adds management-performance steering on top of actuals, plans and forecasts.
+
+Key capabilities:
+
+- hierarchical KPI tree
+- EBITDA, EBIT, NOPAT, operating cash flow and free cash flow
+- entity, segment, product and cost-center drilldowns
+- Plan vs Actual, Forecast vs Actual and Forecast vs Forecast bridges
+- Price-Volume-Mix decomposition
+- exact variance reconciliation
+- source-snapshot lineage
+- forecast-accuracy analysis by KPI, business unit, horizon and model
+- robust MAD-based anomaly detection
+- materiality-based management commentary requirements
+- commentary ownership and linked actions
+
+Representative endpoints:
+
+```text
+POST /api/v1/performance/kpi-tree/evaluate
+POST /api/v1/performance/variance-bridges
+POST /api/v1/performance/forecast-accuracy
+POST /api/v1/performance/anomalies
+POST /api/v1/performance/commentary/requirements
+```
+
+### Epic 06 — Cost & Profitability Management
+
+Adds unit-economic and profitability steering.
+
+Key capabilities:
+
+- CM1, CM2 and operating margin
+- profitability by product, customer, channel, cost center and profit center
+- versioned driver-based cost allocations
+- exact source-to-target allocation reconciliation
+- Activity-Based Costing
+- P&L / cost-accounting reconciliation
+- price, volume, variable-cost and fixed-cost sensitivity analysis
+- probability-weighted Margin-at-Risk
+- target-shortfall probability
+
+Representative endpoints live under:
+
+```text
+/api/v1/profitability/...
+```
+
+### Epic 07 — Cash, Liquidity & Covenant Control
+
+Adds treasury-oriented cash visibility and covenant management.
+
+Key capabilities:
+
+- direct 13-week cash forecast
+- weekly bank-opening and closing-cash reconciliation
+- 12- to 24-month monthly liquidity forecast
+- minimum-liquidity headroom and funding-gap calculation
+- DSO/DPO/DIO working-capital model
+- instrument-level debt schedules
+- interest, amortization and maturity handling
+- leverage-ratio and interest-cover covenant engine
+- minimum and maximum covenant directions
+- covenant headroom
+- simulated breach probability
+- liquidity stress testing for revenue, collections, costs and refinancing
+- mitigation and funding-option impacts
+- cash-forecast accuracy by horizon
+
+Representative endpoints:
+
+```text
+POST /api/v1/liquidity/cash-forecast/13-week
+POST /api/v1/liquidity/cash-forecast/monthly
+POST /api/v1/liquidity/working-capital
+POST /api/v1/liquidity/debt-schedules
+POST /api/v1/liquidity/covenants/evaluate
+POST /api/v1/liquidity/stress-tests
+POST /api/v1/liquidity/cash-forecast/accuracy
+```
+
+## Next module: Enterprise Risk Management
+
+Epic 08 is the next planned module. Its intended scope includes:
+
+- enterprise risk register
+- financial and operational risk taxonomy
+- probability and impact distributions
+- Monte Carlo risk aggregation
+- correlation/dependency handling
+- risk appetite and limits
+- controls and mitigation measures
+- residual risk
+- Risk-to-Plan integration
+- risk contribution to EBITDA, cash and covenant outcomes
+- stress scenarios and reverse stress tests
+- management and board risk reporting
+
+See `docs/cfo-product-implementation-roadmap.md` for the complete multi-epic roadmap.
+
+## Running the CFO Platform API
+
+### Requirements
 
 - Python 3.11 or 3.12
 - Git
 
-## Installation
-
-Clone the repository and create an isolated Python environment:
+Clone the repository and create a virtual environment:
 
 ```bash
 git clone https://github.com/Timeless90/finance-cli-app.git
@@ -37,311 +283,56 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-On Windows PowerShell, activate the environment with:
+On Windows PowerShell:
 
 ```powershell
 .venv\Scripts\Activate.ps1
 ```
 
-Install the application and development dependencies:
+Install application and development dependencies:
 
 ```bash
 python -m pip install --upgrade pip
 pip install -e ".[dev]"
 ```
 
-Verify the installation:
+Run the FastAPI application:
 
 ```bash
-finance-cli version
+uvicorn cfo_platform.api.app:create_app --factory --host 0.0.0.0 --port 8000
 ```
 
-## Quickstart without historical data
-
-Generate an example configuration:
-
-```bash
-finance-cli config example --output config.json
-```
-
-Run the simulation:
-
-```bash
-finance-cli simulate --config config.json
-```
-
-Without historical data, the application uses the configured long-term return assumption and a fallback annual volatility of 15%. Bootstrap methods require historical data.
-
-Use the interactive wizard to create a configuration by answering prompts:
-
-```bash
-finance-cli wizard --output config.json
-```
-
-## Configuration example
-
-The following example models a current portfolio value of EUR 34,932.42, a monthly contribution of EUR 1,200, and a 30-year Student-t simulation with 10,000 paths:
-
-```json
-{
-  "data": {
-    "csv_path": null,
-    "date_column": "date",
-    "price_column": "price",
-    "returns_are_net_of_fund_fees": true
-  },
-  "calibration": {
-    "lookback_years": 10,
-    "assumed_annual_return": 0.06,
-    "mean_shrinkage_months": 60.0,
-    "volatility_shrinkage_months": 36.0
-  },
-  "portfolio": {
-    "initial_value": 34932.42,
-    "monthly_contribution": 1200.0,
-    "contribution_timing": "month_end",
-    "annual_inflation": 0.02,
-    "annual_external_fee": 0.0
-  },
-  "simulation": {
-    "method": "student_t",
-    "years": 30,
-    "paths": 10000,
-    "seed": 20260804,
-    "block_length_months": 3,
-    "student_t_degrees_of_freedom": null
-  },
-  "risk": {
-    "annual_risk_free_rate": 0.02,
-    "annual_omega_threshold": 0.0,
-    "confidence_level": 0.95
-  },
-  "diagnostics": {
-    "enabled": true,
-    "rolling_training_months": 60,
-    "interval_coverage": 0.90,
-    "monte_carlo_samples": 999
-  },
-  "tax": {
-    "enabled": false,
-    "partial_exemption": 0.30,
-    "saver_allowance": 1000.0,
-    "capital_gains_tax_rate": 0.25,
-    "solidarity_surcharge_rate": 0.055,
-    "church_tax_rate": 0.0
-  },
-  "output": {
-    "directory": "runs/latest",
-    "export_charts": true
-  }
-}
-```
-
-Percentages are entered as decimal values. For example, `0.06` means 6% and `0.02` means 2%.
-
-## Using historical ETF data
-
-Provide a CSV file with at least one date column and one adjusted-price or total-return price column.
-
-Example `data/etf-prices.csv`:
-
-```csv
-date,price
-2021-01-29,72.15
-2021-02-26,74.03
-2021-03-31,77.18
-2021-04-30,79.44
-2021-05-31,78.92
-2021-06-30,81.37
-```
-
-Update the `data` section in the configuration:
-
-```json
-{
-  "data": {
-    "csv_path": "data/etf-prices.csv",
-    "date_column": "date",
-    "price_column": "price",
-    "returns_are_net_of_fund_fees": true
-  }
-}
-```
-
-The application sorts the observations, aggregates them to month-end prices, and calculates monthly simple and logarithmic returns.
-
-For ETF analysis, use adjusted prices or total-return data whenever possible. Unadjusted prices can omit distributions and materially understate historical performance.
-
-## Simulation methods
-
-Set `simulation.method` to one of the following values:
-
-| Method | Value | Historical data required | Description |
-|---|---|---:|---|
-| Normal | `normal` | No | Parametric normal log-return model |
-| Student-t | `student_t` | No | Parametric heavy-tail model |
-| Historical bootstrap | `historical_bootstrap` | Yes | Resamples individual historical monthly returns |
-| Block bootstrap | `block_bootstrap` | Yes | Resamples consecutive return blocks to retain short-term dependence |
-
-Example for moving-block bootstrap:
-
-```json
-{
-  "simulation": {
-    "method": "block_bootstrap",
-    "years": 30,
-    "paths": 25000,
-    "seed": 20260804,
-    "block_length_months": 6,
-    "student_t_degrees_of_freedom": null
-  }
-}
-```
-
-## Additional commands
-
-### diagnose
-
-Compare how well the normal and Student-t distributions fit historical returns:
-
-```bash
-finance-cli diagnose --config config.json
-```
-
-Requires `data.csv_path` to be set. Prints a goodness-of-fit table to the terminal.
-
-### backtest
-
-Run a rolling-origin interval coverage backtest on historical returns:
-
-```bash
-finance-cli backtest --config config.json
-```
-
-Requires `data.csv_path` to be set. Uses the `diagnostics.rolling_training_months` and `diagnostics.interval_coverage` settings to evaluate whether the model's prediction intervals are well-calibrated.
-
-### sensitivity
-
-Compute a deterministic sensitivity grid across a range of annual return and inflation assumptions:
-
-```bash
-finance-cli sensitivity --config config.json
-```
-
-Writes `sensitivity-grid.csv` to the output directory and prints the results to the terminal.
-
-## Tax configuration
-
-The application includes a simplified German terminal-gain tax model. It is disabled by default. Set `tax.enabled` to `true` to activate it:
-
-```json
-{
-  "tax": {
-    "enabled": true,
-    "partial_exemption": 0.30,
-    "saver_allowance": 1000.0,
-    "capital_gains_tax_rate": 0.25,
-    "solidarity_surcharge_rate": 0.055,
-    "church_tax_rate": 0.0
-  }
-}
-```
-
-The model applies a partial exemption (`partial_exemption`) to gross gains, subtracts the saver's allowance, and then applies capital gains tax plus solidarity surcharge and optional church tax. The result is saved to `tax-summary.json` and covers terminal gains only; interim taxation is not modelled.
-
-## Risk configuration
-
-Risk metrics are computed across all simulated paths and saved to `risk-summary.csv`. Configure the reference rates used:
-
-```json
-{
-  "risk": {
-    "annual_risk_free_rate": 0.02,
-    "annual_omega_threshold": 0.0,
-    "confidence_level": 0.95
-  }
-}
-```
-
-Computed metrics include annual return, annual volatility, Sharpe ratio, Sortino ratio, Omega ratio, maximum drawdown, Ulcer Index, Value-at-Risk, and Expected Shortfall.
-
-## CLI commands
-
-Use `finance-cli --help` to list all commands:
-
-- `simulate --config <path>`: run calibration + simulation and write output files
-- `diagnose --config <path>`: print distribution goodness-of-fit diagnostics (historical data required)
-- `backtest --config <path>`: print rolling-origin coverage backtest results (historical data required)
-- `sensitivity --config <path>`: run deterministic return/inflation sensitivity grid
-- `wizard --output <path>`: interactive config wizard
-- `config example --output <path>`: write example JSON config (default: `config.example.json`)
-- `version`: print CLI version
-
-
-
-A successful run prints a horizon summary similar to this:
+Useful endpoints:
 
 ```text
-                     ETF Simulation Summary
-┏━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
-┃ Years ┃    Paid in ┃         P5 ┃     Median ┃        P95 ┃ P(< paid in) ┃
-┡━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
-│     1 │    EUR49,332 │    EUR42,151 │    EUR51,906 │    EUR64,159 │        34.1% │
-│     5 │   EUR106,932 │    EUR89,078 │   EUR130,655 │   EUR196,594 │        19.7% │
-│    15 │   EUR250,932 │   EUR231,594 │   EUR438,112 │   EUR865,544 │         7.6% │
-│    30 │   EUR466,932 │   EUR555,969 │ EUR1,410,592 │ EUR3,987,982 │         2.3% │
-└───────┴────────────┴────────────┴────────────┴────────────┴──────────────┘
-Results written to runs/latest
+GET /health/live
+GET /health/ready
+GET /api/v1/platform
+GET /docs
+GET /openapi.json
 ```
 
-The numbers above are illustrative. Actual values depend on the configuration, historical data, simulation method, and random seed.
+The interactive OpenAPI UI is available at `/docs` when the application is running.
 
-## Generated output files
+## Docker
 
-Each simulation writes the following files to the configured `output.directory`:
+Build the production container:
 
-```text
-runs/latest/
-├── calibration.json
-├── horizon-summary.csv
-├── path-percentiles.csv
-├── percentile-paths.png
-├── risk-summary.csv
-├── run-manifest.json
-└── tax-summary.json
+```bash
+docker build -t finance-cfo-platform .
 ```
 
-If historical data is provided and diagnostics are enabled, the following additional files are written:
+Run it locally:
 
-```text
-runs/latest/
-├── coverage-backtest.csv
-└── distribution-fit.csv
+```bash
+docker run --rm -p 8000:8000 finance-cfo-platform
 ```
 
-- `calibration.json`: estimated return-distribution parameters and historical statistics
-- `horizon-summary.csv`: selected horizon results including percentiles and shortfall probability
-- `path-percentiles.csv`: percentile development for every simulated month
-- `percentile-paths.png`: chart of the percentile paths over time (requires `output.export_charts: true`)
-- `risk-summary.csv`: per-path risk metrics (Sharpe, Sortino, VaR, Expected Shortfall, and others) summarised across all paths
-- `run-manifest.json`: configuration, package version, Python version, seed, and simulation metadata
-- `tax-summary.json`: simplified German terminal-gain tax estimate (always written; only meaningful when `tax.enabled: true`)
-- `coverage-backtest.csv`: rolling-origin interval coverage backtest results
-- `distribution-fit.csv`: goodness-of-fit comparison between normal and Student-t models
-
-## Interpreting the results
-
-- **P5**: only 5% of simulated outcomes finish below this value.
-- **Median**: half of the simulated outcomes finish below and half above this value.
-- **P95**: only 5% of simulated outcomes finish above this value.
-- **P(< paid in)**: estimated probability that the portfolio value is below total contributed capital at the selected horizon.
-- **Real values**: values adjusted for the configured inflation assumption and expressed in today's purchasing power.
-
-Monte Carlo results are scenario distributions, not forecasts or guarantees. Results are particularly sensitive to the expected-return assumption, volatility estimate, historical observation window, and treatment of extreme market events.
+The container exposes health contracts intended to remain compatible with Azure deployment patterns.
 
 ## Development and validation
 
-Run linting, type checks, and tests:
+Run linting, type checks and tests:
 
 ```bash
 ruff check .
@@ -349,17 +340,162 @@ mypy src
 pytest
 ```
 
-Run tests with coverage:
+Run the CI-equivalent test suite with coverage:
 
 ```bash
 pytest --cov=finance_cli --cov-report=term-missing
 ```
 
+GitHub Actions validates the repository against Python 3.11 and Python 3.12.
+
+## Architecture and completion evidence
+
+Each completed enterprise epic includes explicit acceptance evidence under `docs/architecture/`:
+
+```text
+docs/architecture/
+├── epic-01-completion.md
+├── epic-02-completion.md
+├── epic-03-completion.md
+├── epic-04-completion.md
+├── epic-05-completion.md
+├── epic-06-completion.md
+└── epic-07-completion.md
+```
+
+Open product or architecture decisions that require human input are recorded under:
+
+```text
+Open-AI-Questions/
+```
+
+## Finance CLI / Quant Toolkit
+
+The original ETF-focused CLI remains part of the repository and serves as a reusable quantitative research and simulation toolkit.
+
+### Core CLI capabilities
+
+- historical ETF price ingestion
+- monthly simple and logarithmic returns
+- statistical calibration
+- Normal and Student-t Monte Carlo simulation
+- historical bootstrap
+- moving-block bootstrap
+- regime-switching simulation
+- monthly savings contributions
+- inflation and fee handling
+- percentile analysis
+- shortfall probability
+- Sharpe, Sortino and Omega ratios
+- maximum drawdown and Ulcer Index
+- Value-at-Risk and Expected Shortfall
+- distribution diagnostics
+- rolling-origin coverage backtesting
+- deterministic sensitivity analysis
+- simplified German terminal-gain tax logic
+- chart, CSV and JSON exports
+- deterministic random seeds
+- interactive configuration wizard
+
+### CLI quickstart
+
+Verify the installation:
+
+```bash
+finance-cli version
+```
+
+Generate an example configuration:
+
+```bash
+finance-cli config example --output config.json
+```
+
+Run a simulation:
+
+```bash
+finance-cli simulate --config config.json
+```
+
+Create a configuration interactively:
+
+```bash
+finance-cli wizard --output config.json
+```
+
+### CLI commands
+
+```text
+finance-cli simulate --config <path>
+finance-cli diagnose --config <path>
+finance-cli backtest --config <path>
+finance-cli sensitivity --config <path>
+finance-cli wizard --output <path>
+finance-cli config example --output <path>
+finance-cli version
+```
+
+### Historical ETF data
+
+Provide a CSV with a date and adjusted-price or total-return column, for example:
+
+```csv
+date,price
+2021-01-29,72.15
+2021-02-26,74.03
+2021-03-31,77.18
+2021-04-30,79.44
+```
+
+For ETF analysis, adjusted prices or total-return data are recommended because unadjusted prices can omit distributions and materially understate historical performance.
+
+### Simulation methods
+
+| Method | Historical data required | Purpose |
+|---|---:|---|
+| Normal | No | Parametric Gaussian log-return model |
+| Student-t | No | Heavy-tail parametric model |
+| Historical bootstrap | Yes | Independent resampling of historical returns |
+| Moving-block bootstrap | Yes | Retains short-term temporal dependence |
+| Markov regime | Yes | Regime-dependent return dynamics |
+
+Monte Carlo outputs are distributions of scenarios, not guarantees or deterministic predictions.
+
+## Repository direction
+
+The project is intentionally moving from a single-purpose simulation CLI toward a modular enterprise finance platform. The quantitative CLI is retained because many of its statistical components — calibration, bootstrapping, Monte Carlo simulation, regime modelling, stress analysis and reproducible RNG handling — are directly reusable inside the CFO Platform.
+
+The strategic product direction is therefore:
+
+```text
+Quantitative Engine
+       +
+Finance Domain Model
+       +
+Governance & Audit
+       +
+Planning / Performance / Liquidity / Risk
+       +
+FastAPI Platform
+       +
+JavaScript CFO Dashboard
+       +
+AI-assisted interpretation and reporting
+```
+
 ## Additional documentation
 
+- [CFO product implementation roadmap](docs/cfo-product-implementation-roadmap.md)
 - [Implementation plan](docs/implementation-plan.md)
 - [Simulation methodology](docs/simulation-methodology.md)
+- [Epic 01 completion](docs/architecture/epic-01-completion.md)
+- [Epic 02 completion](docs/architecture/epic-02-completion.md)
+- [Epic 03 completion](docs/architecture/epic-03-completion.md)
+- [Epic 04 completion](docs/architecture/epic-04-completion.md)
+- [Epic 05 completion](docs/architecture/epic-05-completion.md)
+- [Epic 06 completion](docs/architecture/epic-06-completion.md)
+- [Epic 07 completion](docs/architecture/epic-07-completion.md)
 
 ## Disclaimer
 
-This software is intended for analytical and educational purposes. It does not constitute financial, tax, or investment advice. Historical returns and simulated outcomes do not guarantee future performance.
+This software is intended for analytical, planning and educational purposes. It does not constitute financial, tax, investment, legal, accounting or audit advice. Simulated and forecast outcomes depend on assumptions, model choices, data quality and scenario design and should be reviewed by appropriately qualified users before being used for material business decisions.
