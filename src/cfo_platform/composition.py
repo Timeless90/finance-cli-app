@@ -34,6 +34,14 @@ from cfo_platform.planning_workflow import (
     RollingForecastService,
 )
 from cfo_platform.probabilistic_forecast import ProbabilisticForecastEngine
+from cfo_platform.profitability_management import (
+    ActivityBasedCostingService,
+    CostAllocationService,
+    MarginAtRiskService,
+    MarginSensitivityService,
+    ProfitabilityReconciliationService,
+    ProfitabilityService,
+)
 from cfo_platform.quant.builtin import EchoForecastModel
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
 from cfo_platform.quant.registry import QuantModelRegistry
@@ -61,6 +69,12 @@ class ApplicationContainer:
     forecast_accuracy_service: ForecastAccuracyService
     anomaly_detection_service: AnomalyDetectionService
     management_commentary_service: ManagementCommentaryService
+    profitability_service: ProfitabilityService
+    cost_allocation_service: CostAllocationService
+    activity_based_costing_service: ActivityBasedCostingService
+    profitability_reconciliation_service: ProfitabilityReconciliationService
+    margin_sensitivity_service: MarginSensitivityService
+    margin_at_risk_service: MarginAtRiskService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -101,4 +115,10 @@ def build_container() -> ApplicationContainer:
         forecast_accuracy_service=ForecastAccuracyService(),
         anomaly_detection_service=AnomalyDetectionService(),
         management_commentary_service=ManagementCommentaryService(),
+        profitability_service=ProfitabilityService(),
+        cost_allocation_service=CostAllocationService(),
+        activity_based_costing_service=ActivityBasedCostingService(),
+        profitability_reconciliation_service=ProfitabilityReconciliationService(),
+        margin_sensitivity_service=MarginSensitivityService(),
+        margin_at_risk_service=MarginAtRiskService(),
     )
