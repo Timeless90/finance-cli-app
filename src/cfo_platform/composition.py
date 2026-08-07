@@ -23,11 +23,25 @@ from cfo_platform.infrastructure.in_memory import (
     RegisteredModelExecutor,
 )
 from cfo_platform.infrastructure.jobs import InMemoryJobManager
+from cfo_platform.performance_management import (
+    AnomalyDetectionService,
+    ForecastAccuracyService,
+    ManagementCommentaryService,
+    VarianceAnalysisEngine,
+)
 from cfo_platform.planning_workflow import (
     InMemoryRollingForecastRepository,
     RollingForecastService,
 )
 from cfo_platform.probabilistic_forecast import ProbabilisticForecastEngine
+from cfo_platform.profitability_management import (
+    ActivityBasedCostingService,
+    CostAllocationService,
+    MarginAtRiskService,
+    MarginSensitivityService,
+    ProfitabilityReconciliationService,
+    ProfitabilityService,
+)
 from cfo_platform.quant.builtin import EchoForecastModel
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
 from cfo_platform.quant.registry import QuantModelRegistry
@@ -51,6 +65,16 @@ class ApplicationContainer:
     probabilistic_forecast_engine: ProbabilisticForecastEngine
     rolling_origin_backtester: RollingOriginBacktester
     goal_threshold_engine: GoalThresholdEngine
+    variance_analysis_engine: VarianceAnalysisEngine
+    forecast_accuracy_service: ForecastAccuracyService
+    anomaly_detection_service: AnomalyDetectionService
+    management_commentary_service: ManagementCommentaryService
+    profitability_service: ProfitabilityService
+    cost_allocation_service: CostAllocationService
+    activity_based_costing_service: ActivityBasedCostingService
+    profitability_reconciliation_service: ProfitabilityReconciliationService
+    margin_sensitivity_service: MarginSensitivityService
+    margin_at_risk_service: MarginAtRiskService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -87,4 +111,14 @@ def build_container() -> ApplicationContainer:
         probabilistic_forecast_engine=ProbabilisticForecastEngine(),
         rolling_origin_backtester=RollingOriginBacktester(),
         goal_threshold_engine=GoalThresholdEngine(),
+        variance_analysis_engine=VarianceAnalysisEngine(),
+        forecast_accuracy_service=ForecastAccuracyService(),
+        anomaly_detection_service=AnomalyDetectionService(),
+        management_commentary_service=ManagementCommentaryService(),
+        profitability_service=ProfitabilityService(),
+        cost_allocation_service=CostAllocationService(),
+        activity_based_costing_service=ActivityBasedCostingService(),
+        profitability_reconciliation_service=ProfitabilityReconciliationService(),
+        margin_sensitivity_service=MarginSensitivityService(),
+        margin_at_risk_service=MarginAtRiskService(),
     )

@@ -11,7 +11,9 @@ from cfo_platform.composition import ApplicationContainer, build_container
 from .data_routes import build_data_router
 from .governance_routes import build_governance_router
 from .job_routes import build_job_router
+from .performance_routes import build_performance_router
 from .planning_routes import build_planning_router
+from .profitability_routes import build_profitability_router
 from .routes import (
     build_module_foundation_router,
     build_platform_router,
@@ -69,6 +71,26 @@ def create_app(
             resolved_container.probabilistic_forecast_engine,
             resolved_container.rolling_origin_backtester,
             resolved_container.goal_threshold_engine,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_performance_router(
+            resolved_container.variance_analysis_engine,
+            resolved_container.forecast_accuracy_service,
+            resolved_container.anomaly_detection_service,
+            resolved_container.management_commentary_service,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_profitability_router(
+            resolved_container.profitability_service,
+            resolved_container.cost_allocation_service,
+            resolved_container.activity_based_costing_service,
+            resolved_container.profitability_reconciliation_service,
+            resolved_container.margin_sensitivity_service,
+            resolved_container.margin_at_risk_service,
         ),
         prefix=resolved.api_prefix,
     )
