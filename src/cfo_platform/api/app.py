@@ -15,6 +15,7 @@ from .liquidity_routes import build_liquidity_router
 from .performance_routes import build_performance_router
 from .planning_routes import build_planning_router
 from .profitability_routes import build_profitability_router
+from .risk_routes import build_risk_router
 from .routes import (
     build_module_foundation_router,
     build_platform_router,
@@ -104,6 +105,17 @@ def create_app(
             resolved_container.covenant_engine,
             resolved_container.liquidity_stress_engine,
             resolved_container.cash_forecast_accuracy_service,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_risk_router(
+            resolved_container.risk_register_service,
+            resolved_container.risk_quantification_engine,
+            resolved_container.risk_aggregation_engine,
+            resolved_container.risk_appetite_engine,
+            resolved_container.risk_to_plan_engine,
+            resolved_container.risk_reporting_service,
         ),
         prefix=resolved.api_prefix,
     )

@@ -55,6 +55,15 @@ from cfo_platform.quant.builtin import EchoForecastModel
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
 from cfo_platform.quant.registry import QuantModelRegistry
 from cfo_platform.rbac import AccessControlService
+from cfo_platform.risk_management import (
+    InMemoryRiskRegister,
+    RiskAggregationEngine,
+    RiskAppetiteEngine,
+    RiskQuantificationEngine,
+    RiskRegisterService,
+    RiskReportingService,
+    RiskToPlanEngine,
+)
 
 
 @dataclass(slots=True)
@@ -91,6 +100,12 @@ class ApplicationContainer:
     covenant_engine: CovenantEngine
     liquidity_stress_engine: LiquidityStressEngine
     cash_forecast_accuracy_service: CashForecastAccuracyService
+    risk_register_service: RiskRegisterService
+    risk_quantification_engine: RiskQuantificationEngine
+    risk_aggregation_engine: RiskAggregationEngine
+    risk_appetite_engine: RiskAppetiteEngine
+    risk_to_plan_engine: RiskToPlanEngine
+    risk_reporting_service: RiskReportingService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -111,6 +126,7 @@ def build_container() -> ApplicationContainer:
     scenario_service = ScenarioService(InMemoryScenarioRepository())
     model_registry_service = ModelRegistryService(InMemoryModelRegistryRepository())
     rolling_forecast_service = RollingForecastService(InMemoryRollingForecastRepository())
+    risk_quantification = RiskQuantificationEngine()
     return ApplicationContainer(
         model_registry=registry,
         run_repository=repository,
@@ -144,4 +160,10 @@ def build_container() -> ApplicationContainer:
         covenant_engine=CovenantEngine(),
         liquidity_stress_engine=LiquidityStressEngine(),
         cash_forecast_accuracy_service=CashForecastAccuracyService(),
+        risk_register_service=RiskRegisterService(InMemoryRiskRegister()),
+        risk_quantification_engine=risk_quantification,
+        risk_aggregation_engine=RiskAggregationEngine(risk_quantification),
+        risk_appetite_engine=RiskAppetiteEngine(),
+        risk_to_plan_engine=RiskToPlanEngine(),
+        risk_reporting_service=RiskReportingService(risk_quantification),
     )
