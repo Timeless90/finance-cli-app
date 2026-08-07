@@ -23,6 +23,15 @@ from cfo_platform.infrastructure.in_memory import (
     RegisteredModelExecutor,
 )
 from cfo_platform.infrastructure.jobs import InMemoryJobManager
+from cfo_platform.liquidity_management import (
+    CashForecastAccuracyService,
+    CovenantEngine,
+    DebtScheduleEngine,
+    LiquidityStressEngine,
+    MonthlyLiquidityForecast,
+    ThirteenWeekCashForecast,
+    WorkingCapitalModel,
+)
 from cfo_platform.performance_management import (
     AnomalyDetectionService,
     ForecastAccuracyService,
@@ -75,6 +84,13 @@ class ApplicationContainer:
     profitability_reconciliation_service: ProfitabilityReconciliationService
     margin_sensitivity_service: MarginSensitivityService
     margin_at_risk_service: MarginAtRiskService
+    thirteen_week_cash_forecast: ThirteenWeekCashForecast
+    monthly_liquidity_forecast: MonthlyLiquidityForecast
+    working_capital_model: WorkingCapitalModel
+    debt_schedule_engine: DebtScheduleEngine
+    covenant_engine: CovenantEngine
+    liquidity_stress_engine: LiquidityStressEngine
+    cash_forecast_accuracy_service: CashForecastAccuracyService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -121,4 +137,11 @@ def build_container() -> ApplicationContainer:
         profitability_reconciliation_service=ProfitabilityReconciliationService(),
         margin_sensitivity_service=MarginSensitivityService(),
         margin_at_risk_service=MarginAtRiskService(),
+        thirteen_week_cash_forecast=ThirteenWeekCashForecast(),
+        monthly_liquidity_forecast=MonthlyLiquidityForecast(),
+        working_capital_model=WorkingCapitalModel(),
+        debt_schedule_engine=DebtScheduleEngine(),
+        covenant_engine=CovenantEngine(),
+        liquidity_stress_engine=LiquidityStressEngine(),
+        cash_forecast_accuracy_service=CashForecastAccuracyService(),
     )
