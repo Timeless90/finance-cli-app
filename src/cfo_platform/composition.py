@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from cfo_platform.application.services import ExecuteModelRun
 from cfo_platform.data_store import InMemoryDataSnapshotRepository
 from cfo_platform.data_workflow import FinanceDataWorkflow
+from cfo_platform.forecast_backtesting import RollingOriginBacktester
+from cfo_platform.forecast_thresholds import GoalThresholdEngine
 from cfo_platform.governance import (
     GovernedRunService,
     InMemoryAuditEventRepository,
@@ -21,6 +23,11 @@ from cfo_platform.infrastructure.in_memory import (
     RegisteredModelExecutor,
 )
 from cfo_platform.infrastructure.jobs import InMemoryJobManager
+from cfo_platform.planning_workflow import (
+    InMemoryRollingForecastRepository,
+    RollingForecastService,
+)
+from cfo_platform.probabilistic_forecast import ProbabilisticForecastEngine
 from cfo_platform.quant.builtin import EchoForecastModel
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
 from cfo_platform.quant.registry import QuantModelRegistry
@@ -40,6 +47,10 @@ class ApplicationContainer:
     scenario_service: ScenarioService
     model_registry_service: ModelRegistryService
     access_control: AccessControlService
+    rolling_forecast_service: RollingForecastService
+    probabilistic_forecast_engine: ProbabilisticForecastEngine
+    rolling_origin_backtester: RollingOriginBacktester
+    goal_threshold_engine: GoalThresholdEngine
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -59,6 +70,7 @@ def build_container() -> ApplicationContainer:
     )
     scenario_service = ScenarioService(InMemoryScenarioRepository())
     model_registry_service = ModelRegistryService(InMemoryModelRegistryRepository())
+    rolling_forecast_service = RollingForecastService(InMemoryRollingForecastRepository())
     return ApplicationContainer(
         model_registry=registry,
         run_repository=repository,
@@ -71,4 +83,8 @@ def build_container() -> ApplicationContainer:
         scenario_service=scenario_service,
         model_registry_service=model_registry_service,
         access_control=AccessControlService(),
+        rolling_forecast_service=rolling_forecast_service,
+        probabilistic_forecast_engine=ProbabilisticForecastEngine(),
+        rolling_origin_backtester=RollingOriginBacktester(),
+        goal_threshold_engine=GoalThresholdEngine(),
     )
