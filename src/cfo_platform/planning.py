@@ -167,16 +167,15 @@ class IntegratedPlanningEngine:
             + investing_cash_flow
             + financing_cash_flow
         )
-        closing_equity = plan.opening_equity + net_income
         property_plant_equipment = plan.capex - depreciation
         assets = closing_cash + receivables + inventory + property_plant_equipment
-        liabilities_and_equity = payables + plan.opening_debt + closing_equity
 
-        # Keep the deterministic statements integrated by assigning the balancing
-        # amount to retained earnings/equity. Later epics may replace this with a
-        # dedicated suspense-account and reconciliation workflow.
-        closing_equity += assets - liabilities_and_equity
-        liabilities_and_equity = payables + plan.opening_debt + closing_equity
+        # The current simplified statement model does not yet carry every legal-accounting
+        # balance-sheet line. Equity is therefore the explicit balancing residual after
+        # payables and debt. Assigning liabilities_and_equity directly from the same
+        # algebraic identity prevents Decimal rounding residues in multi-period forecasts.
+        closing_equity = assets - payables - plan.opening_debt
+        liabilities_and_equity = assets
 
         return IntegratedPlanResult(
             period=plan.period,
@@ -203,7 +202,8 @@ class IntegratedPlanningEngine:
         )
 
     def calculate_many(
-        self, plans: Iterable[PlanningPeriodInput]
+        self,
+        plans: Iterable[PlanningPeriodInput],
     ) -> tuple[IntegratedPlanResult, ...]:
         return tuple(self.calculate(plan) for plan in plans)
 
