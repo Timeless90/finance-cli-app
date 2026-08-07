@@ -28,10 +28,10 @@ class ForecastThreshold:
     def __post_init__(self) -> None:
         if not self.threshold_id.strip() or not self.kpi.strip():
             raise ValueError("threshold_id and kpi must not be empty")
-        if self.direction == ThresholdDirection.MINIMUM and self.warning > self.target:
-            raise ValueError("minimum warning must not exceed target")
-        if self.direction == ThresholdDirection.MAXIMUM and self.warning < self.target:
-            raise ValueError("maximum warning must not be below target")
+        if self.direction == ThresholdDirection.MINIMUM and self.warning < self.target:
+            raise ValueError("minimum warning must be at or above target")
+        if self.direction == ThresholdDirection.MAXIMUM and self.warning > self.target:
+            raise ValueError("maximum warning must be at or below target")
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,7 +67,10 @@ class GoalThresholdEngine:
         self,
         items: Iterable[tuple[ForecastThreshold, float, Sequence[float] | None]],
     ) -> tuple[ThresholdEvaluation, ...]:
-        return tuple(self.evaluate(threshold, value, simulations) for threshold, value, simulations in items)
+        return tuple(
+            self.evaluate(threshold, value, simulations)
+            for threshold, value, simulations in items
+        )
 
     @staticmethod
     def _is_breach(threshold: ForecastThreshold, value: float) -> bool:
