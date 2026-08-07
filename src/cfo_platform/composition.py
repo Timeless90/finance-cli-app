@@ -3,6 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from cfo_platform.application.services import ExecuteModelRun
+from cfo_platform.capital_allocation import (
+    CapitalPortfolioOptimizer,
+    FundingScenarioEngine,
+    MonteCarloNpvEngine,
+    ProjectValuationService,
+)
 from cfo_platform.data_store import InMemoryDataSnapshotRepository
 from cfo_platform.data_workflow import FinanceDataWorkflow
 from cfo_platform.forecast_backtesting import RollingOriginBacktester
@@ -91,6 +97,10 @@ class ApplicationContainer:
     covenant_engine: CovenantEngine
     liquidity_stress_engine: LiquidityStressEngine
     cash_forecast_accuracy_service: CashForecastAccuracyService
+    project_valuation_service: ProjectValuationService
+    monte_carlo_npv_engine: MonteCarloNpvEngine
+    capital_portfolio_optimizer: CapitalPortfolioOptimizer
+    funding_scenario_engine: FundingScenarioEngine
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -144,4 +154,8 @@ def build_container() -> ApplicationContainer:
         covenant_engine=CovenantEngine(),
         liquidity_stress_engine=LiquidityStressEngine(),
         cash_forecast_accuracy_service=CashForecastAccuracyService(),
+        project_valuation_service=ProjectValuationService(),
+        monte_carlo_npv_engine=MonteCarloNpvEngine(),
+        capital_portfolio_optimizer=CapitalPortfolioOptimizer(),
+        funding_scenario_engine=FundingScenarioEngine(),
     )
