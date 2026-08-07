@@ -63,6 +63,13 @@ from cfo_platform.quant.builtin import EchoForecastModel
 from cfo_platform.quant.legacy_portfolio import LegacyPortfolioSimulationModel
 from cfo_platform.quant.registry import QuantModelRegistry
 from cfo_platform.rbac import AccessControlService
+from cfo_platform.reporting_factory import (
+    InMemoryReportRepository,
+    ReportExporter,
+    ReportingFactory,
+    TemplateRegistry,
+    built_in_templates,
+)
 from cfo_platform.risk_management import (
     InMemoryRiskRegister,
     RiskAggregationEngine,
@@ -119,6 +126,8 @@ class ApplicationContainer:
     action_portfolio_prioritizer: ActionPortfolioPrioritizer
     action_review_service: ActionReviewService
     benefit_tracking_service: BenefitTrackingService
+    reporting_factory: ReportingFactory
+    report_exporter: ReportExporter
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -141,6 +150,10 @@ def build_container() -> ApplicationContainer:
     rolling_forecast_service = RollingForecastService(InMemoryRollingForecastRepository())
     risk_quantification = RiskQuantificationEngine()
     action_catalogue = ActionCatalogueService(InMemoryActionRepository())
+    reporting_factory = ReportingFactory(
+        TemplateRegistry(built_in_templates()),
+        InMemoryReportRepository(),
+    )
     return ApplicationContainer(
         model_registry=registry,
         run_repository=repository,
@@ -185,4 +198,6 @@ def build_container() -> ApplicationContainer:
         action_portfolio_prioritizer=ActionPortfolioPrioritizer(),
         action_review_service=ActionReviewService(),
         benefit_tracking_service=BenefitTrackingService(),
+        reporting_factory=reporting_factory,
+        report_exporter=ReportExporter(),
     )
