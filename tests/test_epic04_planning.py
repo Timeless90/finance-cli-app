@@ -43,7 +43,9 @@ def _period(period: str, opening_cash: str = "1000") -> PlanningPeriodInput:
             depreciation=Decimal("10"),
         ),
         working_capital=WorkingCapitalDriver(
-            dso_days=Decimal("30"), dpo_days=Decimal("20"), inventory_days=Decimal("15")
+            dso_days=Decimal("30"),
+            dpo_days=Decimal("20"),
+            inventory_days=Decimal("15"),
         ),
         capex=Decimal("20"),
         tax_rate=Decimal("0.3"),
@@ -77,8 +79,11 @@ def test_revenue_driver_calculates_volume_price_mix_and_conversion() -> None:
 
 def test_workforce_driver_calculates_closing_fte_and_monthly_cost() -> None:
     workforce = WorkforceDriver(
-        opening_fte=Decimal("100"), hires=Decimal("10"), leavers=Decimal("4"),
-        average_salary=Decimal("60000"), payroll_oncost_rate=Decimal("0.2"),
+        opening_fte=Decimal("100"),
+        hires=Decimal("10"),
+        leavers=Decimal("4"),
+        average_salary=Decimal("60000"),
+        payroll_oncost_rate=Decimal("0.2"),
     )
     assert workforce.closing_fte == Decimal("106")
     assert workforce.monthly_personnel_cost == Decimal("618000.0")
@@ -88,7 +93,11 @@ def test_integrated_statements_reconcile() -> None:
     result = IntegratedPlanningEngine().calculate(_period("2027-01"))
     assert result.revenue == Decimal("1000")
     assert result.balance_sheet_difference == Decimal("0")
-    assert result.closing_cash == Decimal("1000") + result.operating_cash_flow + result.investing_cash_flow
+    assert result.closing_cash == (
+        Decimal("1000")
+        + result.operating_cash_flow
+        + result.investing_cash_flow
+    )
 
 
 def test_forecast_horizons_are_explicit() -> None:
@@ -99,19 +108,29 @@ def test_rolling_forecast_requires_governed_references() -> None:
     assert _version("rf-1").horizon.months == 12
     with pytest.raises(ValueError, match="snapshot_id"):
         RollingForecastVersion(
-            version_id="rf-1", as_of_period="2027-01", horizon=ForecastHorizon.MONTHS_12,
-            snapshot_id="", scenario_id="scenario", assumption_set_id="assumptions",
+            version_id="rf-1",
+            as_of_period="2027-01",
+            horizon=ForecastHorizon.MONTHS_12,
+            snapshot_id="",
+            scenario_id="scenario",
+            assumption_set_id="assumptions",
             model_version="1.0.0",
         )
 
 
 def test_multi_period_roll_forward_uses_prior_closing_balances() -> None:
     service = RollingForecastService(InMemoryRollingForecastRepository())
-    periods = tuple(_period(f"2027-{month:02d}", opening_cash="0") for month in range(1, 13))
+    periods = tuple(
+        _period(f"2027-{month:02d}", opening_cash="0")
+        for month in range(1, 13)
+    )
     forecast = service.create(version=_version("rf-1"), period_inputs=periods)
     assert len(forecast.results) == 12
     assert forecast.period_inputs[1].opening_cash == forecast.results[0].closing_cash
-    assert all(result.balance_sheet_difference == Decimal("0") for result in forecast.results)
+    assert all(
+        result.balance_sheet_difference == Decimal("0")
+        for result in forecast.results
+    )
 
 
 def test_month_close_refresh_creates_new_version_and_lineage() -> None:
@@ -140,7 +159,15 @@ def test_probabilistic_forecast_is_reproducible_and_ordered() -> None:
     first = engine.generate(request)
     second = engine.generate(request)
     assert first == second
-    assert all(low <= median <= high for low, median, high in zip(first.p10, first.p50, first.p90))
+    assert all(
+        low <= median <= high
+        for low, median, high in zip(
+            first.p10,
+            first.p50,
+            first.p90,
+            strict=True,
+        )
+    )
 
 
 def test_block_bootstrap_preserves_complete_horizon() -> None:
@@ -175,7 +202,13 @@ def test_rolling_origin_metrics_and_leakage_guard() -> None:
 
 def test_goal_threshold_returns_shortfall_probability() -> None:
     evaluation = GoalThresholdEngine().evaluate(
-        ForecastThreshold("ebitda-min", "ebitda", 100.0, 110.0, ThresholdDirection.MINIMUM),
+        ForecastThreshold(
+            "ebitda-min",
+            "ebitda",
+            100.0,
+            110.0,
+            ThresholdDirection.MINIMUM,
+        ),
         deterministic_value=105.0,
         simulated_values=[90.0, 100.0, 120.0, 80.0],
     )
