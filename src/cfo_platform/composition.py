@@ -10,6 +10,12 @@ from cfo_platform.action_management import (
     BenefitTrackingService,
     InMemoryActionRepository,
 )
+from cfo_platform.ai_foundry import (
+    FinanceCopilotService,
+    InMemoryAIInteractionRepository,
+    ModelRoutingTable,
+    build_foundry_gateway,
+)
 from cfo_platform.application.services import ExecuteModelRun
 from cfo_platform.data_store import InMemoryDataSnapshotRepository
 from cfo_platform.data_workflow import FinanceDataWorkflow
@@ -128,6 +134,9 @@ class ApplicationContainer:
     benefit_tracking_service: BenefitTrackingService
     reporting_factory: ReportingFactory
     report_exporter: ReportExporter
+    ai_model_routing: ModelRoutingTable
+    ai_interaction_repository: InMemoryAIInteractionRepository
+    finance_copilot_service: FinanceCopilotService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -147,12 +156,21 @@ def build_container() -> ApplicationContainer:
     )
     scenario_service = ScenarioService(InMemoryScenarioRepository())
     model_registry_service = ModelRegistryService(InMemoryModelRegistryRepository())
+    access_control = AccessControlService()
     rolling_forecast_service = RollingForecastService(InMemoryRollingForecastRepository())
     risk_quantification = RiskQuantificationEngine()
     action_catalogue = ActionCatalogueService(InMemoryActionRepository())
     reporting_factory = ReportingFactory(
         TemplateRegistry(built_in_templates()),
         InMemoryReportRepository(),
+    )
+    ai_model_routing = ModelRoutingTable.from_environment()
+    ai_interactions = InMemoryAIInteractionRepository()
+    finance_copilot_service = FinanceCopilotService(
+        ai_model_routing,
+        build_foundry_gateway(),
+        ai_interactions,
+        access_control,
     )
     return ApplicationContainer(
         model_registry=registry,
@@ -165,7 +183,7 @@ def build_container() -> ApplicationContainer:
         governed_run_service=governed_runs,
         scenario_service=scenario_service,
         model_registry_service=model_registry_service,
-        access_control=AccessControlService(),
+        access_control=access_control,
         rolling_forecast_service=rolling_forecast_service,
         probabilistic_forecast_engine=ProbabilisticForecastEngine(),
         rolling_origin_backtester=RollingOriginBacktester(),
@@ -200,4 +218,7 @@ def build_container() -> ApplicationContainer:
         benefit_tracking_service=BenefitTrackingService(),
         reporting_factory=reporting_factory,
         report_exporter=ReportExporter(),
+        ai_model_routing=ai_model_routing,
+        ai_interaction_repository=ai_interactions,
+        finance_copilot_service=finance_copilot_service,
     )
