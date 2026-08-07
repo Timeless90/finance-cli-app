@@ -183,7 +183,7 @@ class VarianceAnalysisEngine:
         baseline_value: Decimal,
         comparison_value: Decimal,
         contributions: Sequence[VarianceContribution],
-        dimensions: DimensionKey = DimensionKey(),
+        dimensions: DimensionKey | None = None,
     ) -> VarianceBridge:
         bridge = VarianceBridge(
             comparison_type=comparison_type,
@@ -193,7 +193,7 @@ class VarianceAnalysisEngine:
             baseline_value=baseline_value,
             comparison_value=comparison_value,
             contributions=tuple(contributions),
-            dimensions=dimensions,
+            dimensions=dimensions or DimensionKey(),
         )
         bridge.assert_fully_explained()
         return bridge
