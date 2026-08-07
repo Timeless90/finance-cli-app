@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
-from math import exp, isclose, log, sqrt
+from math import exp, isclose, sqrt
 from random import Random
 from statistics import NormalDist, mean
 
@@ -300,8 +300,8 @@ class RiskAggregationEngine:
         self._check_double_count_groups(risks)
         factor = self._cholesky(self._validate_correlation(correlation_matrix, len(risks)))
         rng = Random(seed)
-        gross_by_risk = [[] for _ in risks]
-        net_by_risk = [[] for _ in risks]
+        gross_by_risk: list[list[Decimal]] = [[] for _ in risks]
+        net_by_risk: list[list[Decimal]] = [[] for _ in risks]
         gross_totals: list[Decimal] = []
         net_totals: list[Decimal] = []
 
