@@ -48,7 +48,7 @@ def test_13_week_cash_forecast_reconciles_bank_opening_and_closing() -> None:
     assert len(result) == 13
     assert result[0].closing_cash == D("104")
     assert result[-1].closing_cash == D("152")
-    for prior, current in zip(result, result[1:], strict=True):
+    for prior, current in zip(result[:-1], result[1:], strict=True):
         assert current.opening_cash == prior.closing_cash
 
 
