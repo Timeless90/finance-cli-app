@@ -2,6 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from cfo_platform.action_management import (
+    ActionCatalogueService,
+    ActionPortfolioPrioritizer,
+    ActionReviewService,
+    ActionSimulationEngine,
+    BenefitTrackingService,
+    InMemoryActionRepository,
+)
 from cfo_platform.application.services import ExecuteModelRun
 from cfo_platform.data_store import InMemoryDataSnapshotRepository
 from cfo_platform.data_workflow import FinanceDataWorkflow
@@ -106,6 +114,11 @@ class ApplicationContainer:
     risk_appetite_engine: RiskAppetiteEngine
     risk_to_plan_engine: RiskToPlanEngine
     risk_reporting_service: RiskReportingService
+    action_catalogue_service: ActionCatalogueService
+    action_simulation_engine: ActionSimulationEngine
+    action_portfolio_prioritizer: ActionPortfolioPrioritizer
+    action_review_service: ActionReviewService
+    benefit_tracking_service: BenefitTrackingService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -127,6 +140,7 @@ def build_container() -> ApplicationContainer:
     model_registry_service = ModelRegistryService(InMemoryModelRegistryRepository())
     rolling_forecast_service = RollingForecastService(InMemoryRollingForecastRepository())
     risk_quantification = RiskQuantificationEngine()
+    action_catalogue = ActionCatalogueService(InMemoryActionRepository())
     return ApplicationContainer(
         model_registry=registry,
         run_repository=repository,
@@ -166,4 +180,9 @@ def build_container() -> ApplicationContainer:
         risk_appetite_engine=RiskAppetiteEngine(),
         risk_to_plan_engine=RiskToPlanEngine(),
         risk_reporting_service=RiskReportingService(risk_quantification),
+        action_catalogue_service=action_catalogue,
+        action_simulation_engine=ActionSimulationEngine(),
+        action_portfolio_prioritizer=ActionPortfolioPrioritizer(),
+        action_review_service=ActionReviewService(),
+        benefit_tracking_service=BenefitTrackingService(),
     )
