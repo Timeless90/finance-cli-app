@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from cfo_platform.composition import ApplicationContainer, build_container
 
 from .action_routes import build_action_router
+from .copilot_routes import build_copilot_router
 from .data_routes import build_data_router
 from .governance_routes import build_governance_router
 from .job_routes import build_job_router
@@ -135,6 +136,13 @@ def create_app(
         build_reporting_router(
             resolved_container.reporting_factory,
             resolved_container.report_exporter,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_copilot_router(
+            resolved_container.finance_copilot_service,
+            resolved_container.ai_model_routing,
         ),
         prefix=resolved.api_prefix,
     )
