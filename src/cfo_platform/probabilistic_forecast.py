@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 from statistics import mean, pstdev
-from typing import Iterable, Sequence
+from typing import Iterable
 
 import numpy as np
 
@@ -55,13 +55,29 @@ class ProbabilisticForecastEngine:
         residuals = np.asarray(request.historical_residuals, dtype=float)
 
         if request.method == ForecastDistribution.STUDENT_T:
-            shocks = self._student_t_shocks(rng, residuals, request.paths, horizon, request.student_df)
+            shocks = self._student_t_shocks(
+                rng,
+                residuals,
+                request.paths,
+                horizon,
+                request.student_df,
+            )
         elif request.method == ForecastDistribution.MOVING_BLOCK_BOOTSTRAP:
             shocks = self._block_bootstrap_shocks(
-                rng, residuals, request.paths, horizon, request.block_length
+                rng,
+                residuals,
+                request.paths,
+                horizon,
+                request.block_length,
             )
         else:
-            shocks = self._markov_shocks(rng, residuals, request.paths, horizon, request.markov_transition)
+            shocks = self._markov_shocks(
+                rng,
+                residuals,
+                request.paths,
+                horizon,
+                request.markov_transition,
+            )
 
         deterministic = np.asarray(request.deterministic_values, dtype=float)
         simulated = deterministic[None, :] + shocks
@@ -84,9 +100,12 @@ class ProbabilisticForecastEngine:
     ) -> np.ndarray:
         center = float(np.mean(residuals))
         scale = float(np.std(residuals, ddof=1))
-        variance_adjustment = np.sqrt((degrees_of_freedom - 2.0) / degrees_of_freedom)
+        variance_adjustment = np.sqrt(
+            (degrees_of_freedom - 2.0) / degrees_of_freedom
+        )
         return center + scale * variance_adjustment * rng.standard_t(
-            degrees_of_freedom, size=(paths, horizon)
+            degrees_of_freedom,
+            size=(paths, horizon),
         )
 
     @staticmethod
@@ -119,7 +138,10 @@ class ProbabilisticForecastEngine:
         horizon: int,
         transition: tuple[tuple[float, float], tuple[float, float]] | None,
     ) -> np.ndarray:
-        matrix = np.asarray(transition or ((0.95, 0.05), (0.25, 0.75)), dtype=float)
+        matrix = np.asarray(
+            transition or ((0.95, 0.05), (0.25, 0.75)),
+            dtype=float,
+        )
         if matrix.shape != (2, 2) or not np.allclose(matrix.sum(axis=1), 1.0):
             raise ValueError("markov_transition must be a 2x2 row-stochastic matrix")
         split = float(np.quantile(residuals, 0.25))
