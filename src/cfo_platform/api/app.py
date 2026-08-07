@@ -11,6 +11,7 @@ from cfo_platform.composition import ApplicationContainer, build_container
 from .data_routes import build_data_router
 from .governance_routes import build_governance_router
 from .job_routes import build_job_router
+from .liquidity_routes import build_liquidity_router
 from .performance_routes import build_performance_router
 from .planning_routes import build_planning_router
 from .profitability_routes import build_profitability_router
@@ -91,6 +92,18 @@ def create_app(
             resolved_container.profitability_reconciliation_service,
             resolved_container.margin_sensitivity_service,
             resolved_container.margin_at_risk_service,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_liquidity_router(
+            resolved_container.thirteen_week_cash_forecast,
+            resolved_container.monthly_liquidity_forecast,
+            resolved_container.working_capital_model,
+            resolved_container.debt_schedule_engine,
+            resolved_container.covenant_engine,
+            resolved_container.liquidity_stress_engine,
+            resolved_container.cash_forecast_accuracy_service,
         ),
         prefix=resolved.api_prefix,
     )
