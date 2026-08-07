@@ -23,6 +23,12 @@ from cfo_platform.infrastructure.in_memory import (
     RegisteredModelExecutor,
 )
 from cfo_platform.infrastructure.jobs import InMemoryJobManager
+from cfo_platform.performance_management import (
+    AnomalyDetectionService,
+    ForecastAccuracyService,
+    ManagementCommentaryService,
+    VarianceAnalysisEngine,
+)
 from cfo_platform.planning_workflow import (
     InMemoryRollingForecastRepository,
     RollingForecastService,
@@ -51,6 +57,10 @@ class ApplicationContainer:
     probabilistic_forecast_engine: ProbabilisticForecastEngine
     rolling_origin_backtester: RollingOriginBacktester
     goal_threshold_engine: GoalThresholdEngine
+    variance_analysis_engine: VarianceAnalysisEngine
+    forecast_accuracy_service: ForecastAccuracyService
+    anomaly_detection_service: AnomalyDetectionService
+    management_commentary_service: ManagementCommentaryService
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -87,4 +97,8 @@ def build_container() -> ApplicationContainer:
         probabilistic_forecast_engine=ProbabilisticForecastEngine(),
         rolling_origin_backtester=RollingOriginBacktester(),
         goal_threshold_engine=GoalThresholdEngine(),
+        variance_analysis_engine=VarianceAnalysisEngine(),
+        forecast_accuracy_service=ForecastAccuracyService(),
+        anomaly_detection_service=AnomalyDetectionService(),
+        management_commentary_service=ManagementCommentaryService(),
     )
