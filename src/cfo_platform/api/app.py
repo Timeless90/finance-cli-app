@@ -14,6 +14,7 @@ from .data_routes import build_data_router
 from .governance_routes import build_governance_router
 from .job_routes import build_job_router
 from .liquidity_routes import build_liquidity_router
+from .market_risk_routes import build_market_risk_router
 from .performance_routes import build_performance_router
 from .planning_routes import build_planning_router
 from .profitability_routes import build_profitability_router
@@ -108,6 +109,20 @@ def create_app(
             resolved_container.covenant_engine,
             resolved_container.liquidity_stress_engine,
             resolved_container.cash_forecast_accuracy_service,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_market_risk_router(
+            resolved_container.exposure_management_service,
+            resolved_container.market_sensitivity_engine,
+            resolved_container.market_risk_metrics,
+            resolved_container.garch_t_model,
+            resolved_container.regime_hmm_model,
+            resolved_container.evt_tail_overlay,
+            resolved_container.copula_dependence_model,
+            resolved_container.hedge_scenario_engine,
+            resolved_container.var_backtester,
         ),
         prefix=resolved.api_prefix,
     )

@@ -46,6 +46,17 @@ from cfo_platform.liquidity_management import (
     ThirteenWeekCashForecast,
     WorkingCapitalModel,
 )
+from cfo_platform.market_treasury_risk import (
+    CopulaDependenceModel,
+    EvtTailOverlay,
+    ExposureManagementService,
+    GaussianHmmRegimeModel,
+    GarchTModel,
+    HedgeScenarioEngine,
+    MarketRiskMetrics,
+    SensitivityEngine,
+    VarBacktester,
+)
 from cfo_platform.performance_management import (
     AnomalyDetectionService,
     ForecastAccuracyService,
@@ -121,6 +132,15 @@ class ApplicationContainer:
     covenant_engine: CovenantEngine
     liquidity_stress_engine: LiquidityStressEngine
     cash_forecast_accuracy_service: CashForecastAccuracyService
+    exposure_management_service: ExposureManagementService
+    market_sensitivity_engine: SensitivityEngine
+    market_risk_metrics: MarketRiskMetrics
+    garch_t_model: GarchTModel
+    regime_hmm_model: GaussianHmmRegimeModel
+    evt_tail_overlay: EvtTailOverlay
+    copula_dependence_model: CopulaDependenceModel
+    hedge_scenario_engine: HedgeScenarioEngine
+    var_backtester: VarBacktester
     risk_register_service: RiskRegisterService
     risk_quantification_engine: RiskQuantificationEngine
     risk_aggregation_engine: RiskAggregationEngine
@@ -205,6 +225,15 @@ def build_container() -> ApplicationContainer:
         covenant_engine=CovenantEngine(),
         liquidity_stress_engine=LiquidityStressEngine(),
         cash_forecast_accuracy_service=CashForecastAccuracyService(),
+        exposure_management_service=ExposureManagementService(),
+        market_sensitivity_engine=SensitivityEngine(),
+        market_risk_metrics=MarketRiskMetrics(),
+        garch_t_model=GarchTModel(),
+        regime_hmm_model=GaussianHmmRegimeModel(),
+        evt_tail_overlay=EvtTailOverlay(),
+        copula_dependence_model=CopulaDependenceModel(),
+        hedge_scenario_engine=HedgeScenarioEngine(),
+        var_backtester=VarBacktester(),
         risk_register_service=RiskRegisterService(InMemoryRiskRegister()),
         risk_quantification_engine=risk_quantification,
         risk_aggregation_engine=RiskAggregationEngine(risk_quantification),
