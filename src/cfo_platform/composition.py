@@ -17,6 +17,12 @@ from cfo_platform.ai_foundry import (
     build_foundry_gateway,
 )
 from cfo_platform.application.services import ExecuteModelRun
+from cfo_platform.capital_allocation import (
+    CapitalPortfolioOptimizer,
+    FundingScenarioEngine,
+    MonteCarloNpvEngine,
+    ProjectValuationService,
+)
 from cfo_platform.data_store import InMemoryDataSnapshotRepository
 from cfo_platform.data_workflow import FinanceDataWorkflow
 from cfo_platform.forecast_backtesting import RollingOriginBacktester
@@ -157,6 +163,10 @@ class ApplicationContainer:
     ai_model_routing: ModelRoutingTable
     ai_interaction_repository: InMemoryAIInteractionRepository
     finance_copilot_service: FinanceCopilotService
+    project_valuation_service: ProjectValuationService
+    monte_carlo_npv_engine: MonteCarloNpvEngine
+    capital_portfolio_optimizer: CapitalPortfolioOptimizer
+    funding_scenario_engine: FundingScenarioEngine
 
     def shutdown(self) -> None:
         self.job_manager.shutdown()
@@ -250,4 +260,8 @@ def build_container() -> ApplicationContainer:
         ai_model_routing=ai_model_routing,
         ai_interaction_repository=ai_interactions,
         finance_copilot_service=finance_copilot_service,
+        project_valuation_service=ProjectValuationService(),
+        monte_carlo_npv_engine=MonteCarloNpvEngine(),
+        capital_portfolio_optimizer=CapitalPortfolioOptimizer(),
+        funding_scenario_engine=FundingScenarioEngine(),
     )
