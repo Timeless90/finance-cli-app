@@ -49,20 +49,53 @@ Client-side validation never replaces backend validation.
 
 ## Per-epic contract format
 
-Every frontend epic will document:
-
-1. endpoint and HTTP method,
-2. request contract,
-3. response contract,
-4. relevant HTTP/business errors,
-5. how the frontend consumes the response,
-6. backend prerequisite or open dependency.
+Every frontend epic documents endpoint/method, request, response, errors, frontend consumption and any backend prerequisite or gap.
 
 ## FE-01 — Finance 2060 Design System
 
 **Backend contract:** none.
 
-The design system contains tokens, primitives and finance presentation components only. It must render and be testable without the FastAPI service.
+The design system contains tokens, primitives and finance presentation components only. It renders and tests without FastAPI.
+
+## FE-02 — Application Shell & Navigation
+
+**Live backend contract:** none yet.
+
+FE-02 owns route composition and a global UI context for company, fiscal period and scenario. Until FE-03 binds these selectors to authoritative APIs, all selector values use `local-*` identifiers and the UI explicitly marks them as `LOCAL CONTEXT`.
+
+### Current local presentation contract
+
+```text
+companyId  : string   // local-* only in FE-02
+periodId   : string   // local-* only in FE-02
+scenarioId : string   // local-* only in FE-02
+```
+
+These are presentation values only. They must not be submitted to authoritative finance endpoints.
+
+### Existing backend facts relevant to FE-02
+
+The current governance API accepts identity/scope through request headers on protected governance operations:
+
+```text
+X-User
+X-Roles
+X-Companies
+X-Correlation-Id   // where applicable
+```
+
+The current governance router exposes `POST /api/v1/governance/scenarios` to create a scenario, but no GET/list scenario endpoint is currently available for populating a global scenario selector.
+
+### Backend read contracts required before live global context
+
+FE-03 must inspect the authoritative OpenAPI document before naming or requesting new endpoints. Functionally the frontend will need read contracts that provide:
+
+- companies the signed-in principal may access,
+- selectable fiscal/reporting periods,
+- existing scenarios with stable scenario IDs and display names,
+- eventually authenticated principal/role/scope information.
+
+If equivalent endpoints already exist when FE-03 runs, they will be consumed. If not, they will be documented as backend gaps rather than implemented by the frontend.
 
 ## FE-03 — API Contract & Mock Architecture
 
