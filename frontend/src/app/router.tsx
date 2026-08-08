@@ -4,6 +4,7 @@ import { App } from "@/app/App";
 import { AppShell } from "@/components/layout";
 import { CommandCenterPage } from "@/pages/CommandCenterPage";
 import { LiquidityPage } from "@/pages/LiquidityPage";
+import { MarketRiskPage } from "@/pages/MarketRiskPage";
 import { PerformancePage } from "@/pages/PerformancePage";
 import { PlanningPage } from "@/pages/PlanningPage";
 import { ProfitabilityPage } from "@/pages/ProfitabilityPage";
@@ -11,7 +12,6 @@ import { RiskPage } from "@/pages/RiskPage";
 import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
 
 const workspaceRoutes = [
-  "market-risk",
   "actions",
   "capital",
   "reports",
@@ -36,6 +36,7 @@ export const router = createBrowserRouter([
       { path: "profitability", element: <ProfitabilityPage /> },
       { path: "liquidity", element: <LiquidityPage /> },
       { path: "risk", element: <RiskPage /> },
+      { path: "market-risk", element: <MarketRiskPage /> },
       ...workspaceRoutes,
     ],
   },
