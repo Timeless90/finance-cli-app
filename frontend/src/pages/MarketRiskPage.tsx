@@ -1,5 +1,5 @@
 import { useWorkspaceContext } from "@/app/context/useWorkspaceContext";
-import { MetricPanel, StatusIndicator, TacticalFrame } from "@/components/finance";
+import { StatusIndicator, TacticalFrame } from "@/components/finance";
 import type {
   MarketRiskSnapshot,
   TimePoint,
