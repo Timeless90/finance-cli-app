@@ -7,6 +7,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from cfo_platform.composition import ApplicationContainer, build_container
+from cfo_platform.finance_model_runs import (
+    FinanceModelRunService,
+    InMemoryFinanceModelRunRepository,
+)
 
 from .action_routes import build_action_router
 from .capital_routes import build_capital_router
@@ -16,6 +20,7 @@ from .governance_routes import build_governance_router
 from .job_routes import build_job_router
 from .liquidity_routes import build_liquidity_router
 from .market_risk_routes import build_market_risk_router
+from .model_run_routes import build_model_run_router
 from .performance_routes import build_performance_router
 from .planning_routes import build_planning_router
 from .profitability_routes import build_profitability_router
@@ -36,6 +41,19 @@ def create_app(
 ) -> FastAPI:
     resolved = settings or get_settings()
     resolved_container = container or build_container()
+    finance_model_runs = FinanceModelRunService(
+        resolved_container.context_catalog_service,
+        resolved_container.data_snapshot_repository,
+        InMemoryFinanceModelRunRepository(),
+        resolved_container.risk_register_service,
+        resolved_container.risk_aggregation_engine,
+        resolved_container.market_risk_metrics,
+        resolved_container.garch_t_model,
+        resolved_container.regime_hmm_model,
+        resolved_container.evt_tail_overlay,
+        resolved_container.copula_dependence_model,
+        resolved_container.var_backtester,
+    )
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -52,6 +70,7 @@ def create_app(
     )
     app.state.settings = resolved
     app.state.container = resolved_container
+    app.state.finance_model_run_service = finance_model_runs
     app.add_middleware(
         CORSMiddleware,
         allow_origins=resolved.allowed_origins,
@@ -62,8 +81,14 @@ def create_app(
     app.include_router(build_system_router(resolved))
     app.include_router(build_platform_router(), prefix=resolved.api_prefix)
     app.include_router(build_module_foundation_router(), prefix=resolved.api_prefix)
-    app.include_router(build_job_router(resolved_container.job_manager), prefix=resolved.api_prefix)
-    app.include_router(build_data_router(resolved_container.finance_data_workflow), prefix=resolved.api_prefix)
+    app.include_router(
+        build_job_router(resolved_container.job_manager),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_data_router(resolved_container.finance_data_workflow),
+        prefix=resolved.api_prefix,
+    )
     app.include_router(
         build_governance_router(
             resolved_container.governed_run_service,
@@ -78,6 +103,10 @@ def create_app(
             resolved_container.context_catalog_service,
             resolved_container.workspace_read_model_service,
         ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_model_run_router(finance_model_runs),
         prefix=resolved.api_prefix,
     )
     app.include_router(
