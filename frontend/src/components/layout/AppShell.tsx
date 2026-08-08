@@ -170,7 +170,7 @@ function ShellContent() {
               <div className="interface-label text-[var(--text-muted)]">
                 WORKSPACE // <span className="text-[var(--signal-primary)]">{workspace?.code ?? "--"}</span>
               </div>
-              <div className="data-value text-[0.68rem] text-[var(--text-muted)]">FE-03 // TYPED API CONTRACT</div>
+              <div className="data-value text-[0.68rem] text-[var(--text-muted)]">FE-05 // EXECUTIVE COCKPIT</div>
             </div>
             <Outlet />
           </section>

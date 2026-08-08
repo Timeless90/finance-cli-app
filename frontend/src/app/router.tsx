@@ -2,10 +2,10 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import { App } from "@/app/App";
 import { AppShell } from "@/components/layout";
+import { CommandCenterPage } from "@/pages/CommandCenterPage";
 import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
 
 const workspaceRoutes = [
-  "command-center",
   "planning",
   "performance",
   "profitability",
@@ -30,6 +30,7 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { index: true, element: <Navigate replace to="command-center" /> },
+      { path: "command-center", element: <CommandCenterPage /> },
       ...workspaceRoutes,
     ],
   },
