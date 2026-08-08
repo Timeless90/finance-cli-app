@@ -50,7 +50,7 @@ describe("FE-06 Planning & Performance", () => {
 
     expect(await screen.findByRole("heading", { name: "Performance" })).toBeInTheDocument();
     expect(screen.getByText("-2.6%")).toBeInTheDocument();
-    expect(screen.getByText("-€9.6M")).toBeInTheDocument();
+    expect(screen.getAllByText("-€9.6M")).toHaveLength(3);
     expect(screen.getByText("AN-031")).toBeInTheDocument();
   });
 });
