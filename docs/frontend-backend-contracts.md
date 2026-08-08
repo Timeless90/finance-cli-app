@@ -153,3 +153,92 @@ The authoritative API should return already-governed values and source/run ident
 `frontend/src/features/command-center/contracts.ts` is a **provisional mock-only interface**, not a replacement for OpenAPI. Once the backend endpoint is implemented, the temporary type must be deleted and the feature adapter must map the generated OpenAPI response into the view model.
 
 The application visibly labels the command center as `MOCK CONNECTED` and keeps the global selectors labelled `LOCAL CONTEXT` so simulated values cannot be confused with backend-produced finance output.
+
+## FE-06 — Planning & Performance Workspace
+
+Lifecycle state: **MOCK CONNECTED**.
+
+FE-06 implements the Planning and Performance workspaces while preserving the calculation boundary. The backend already exposes useful calculation services, but the web application is still missing persisted, company/period/scenario-scoped read models for normal workspace loading.
+
+### Existing planning calculation contracts
+
+| Method | Endpoint | Current use |
+| --- | --- | --- |
+| POST | `/api/v1/planning/forecasts` | create a rolling forecast from complete driver inputs |
+| GET | `/api/v1/planning/forecasts/{version_id}` | retrieve one forecast when the version ID is already known |
+| POST | `/api/v1/planning/probabilistic` | generate a probabilistic forecast from deterministic values and residual history |
+| POST | `/api/v1/planning/backtests` | evaluate forecast observations |
+| POST | `/api/v1/planning/thresholds/evaluate` | evaluate one KPI against target/warning thresholds |
+
+The create/evaluate endpoints require authoritative source inputs. The frontend must not synthesize those inputs from displayed values merely to make a dashboard appear live.
+
+### Existing performance calculation contracts
+
+| Method | Endpoint | Current use |
+| --- | --- | --- |
+| POST | `/api/v1/performance/kpi-tree/evaluate` | evaluate a KPI from supplied leaf values |
+| POST | `/api/v1/performance/variance-bridges` | build a variance bridge from supplied version values and contributions |
+| POST | `/api/v1/performance/forecast-accuracy` | summarize supplied forecast/actual observations |
+| POST | `/api/v1/performance/anomalies` | detect anomalies in supplied observations |
+| POST | `/api/v1/performance/commentary/requirements` | evaluate commentary materiality/requirements |
+
+These are domain engines, not workspace query APIs. FE-06 therefore uses explicit fixtures for statement values, KPI states, variance explanations, anomaly signals and commentary queues until persisted results can be queried.
+
+### Required Planning read contracts
+
+Recommended minimum API surface:
+
+- `GET /api/v1/planning/scenarios?company_id=...&period_id=...`
+- `GET /api/v1/planning/forecasts?company_id=...&period_id=...&scenario_id=...`
+- `GET /api/v1/planning/workspace?company_id=...&period_id=...&scenario_id=...`
+
+The planning workspace response should provide:
+
+```text
+PlanningWorkspaceSnapshot
+  context
+  scenarios[]
+  active_forecast
+    version_id
+    snapshot_id
+    assumption_set_id
+    model_version
+    status
+  forecast_series[]
+    period / actual / plan / forecast / lower / upper
+  financial_statement[]
+    line_item / actual / plan / forecast / variance
+  drivers[]
+    driver_id / value / unit / owner / status
+  thresholds[]
+  forecast_assurance
+    confidence / backtest_metrics / bias
+```
+
+### Required Performance read contracts
+
+Recommended minimum API surface:
+
+- `GET /api/v1/performance/workspace?company_id=...&period_id=...&scenario_id=...`
+- optionally drill-down endpoints such as `GET /api/v1/performance/variance-bridges/{bridge_id}` and `GET /api/v1/performance/anomalies?company_id=...&period_id=...` when persisted identifiers exist.
+
+The performance workspace response should provide:
+
+```text
+PerformanceWorkspaceSnapshot
+  context
+  metrics[]
+  kpi_tree[]
+  variance_bridge
+    baseline / comparison / total / explained / unexplained / contributions[]
+  trend[]
+  anomalies[]
+  commentary_requirements[]
+  source_snapshot_ids[]
+```
+
+All returned financial values must be backend-produced or persisted domain outputs. The frontend may format numbers and scale visual coordinates, but it must not calculate income statement lines, KPI formulas, variance contributions, accuracy statistics or anomalies.
+
+### Current FE-06 temporary contract
+
+`frontend/src/features/planning-performance/contracts.ts` is a provisional mock-only view-model contract. It must be replaced by adapters over OpenAPI-generated response types as the recommended read endpoints become available. The workspaces visibly display `MOCK CONNECTED`, and global Company / Period / Scenario values remain local context until FE-02 context gaps are resolved.
