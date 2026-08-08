@@ -6,12 +6,11 @@ import { describe, expect, it } from "vitest";
 import { App } from "@/app/App";
 
 describe("App", () => {
-  it("renders the frontend foundation status", () => {
+  it("renders the Finance 2060 design system preview", () => {
     render(<App />);
 
-    expect(
-      screen.getByRole("heading", { name: "Frontend foundation online." }),
-    ).toBeInTheDocument();
-    expect(screen.getByText("/api/v1")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Tactical finance interface." })).toBeInTheDocument();
+    expect(screen.getByText("NO BACKEND CONTRACT")).toBeInTheDocument();
+    expect(screen.getByText("€184.2M")).toBeInTheDocument();
   });
 });
