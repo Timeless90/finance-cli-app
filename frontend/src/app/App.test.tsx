@@ -7,8 +7,8 @@ import { describe, expect, it } from "vitest";
 import { AppShell } from "@/components/layout";
 import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
 
-describe("FE-02 application shell", () => {
-  it("renders command center navigation and local context", () => {
+describe("FE-03 application shell", () => {
+  it("renders command center navigation and explicit local context", () => {
     const router = createMemoryRouter(
       [
         {
@@ -23,7 +23,7 @@ describe("FE-02 application shell", () => {
     render(<RouterProvider router={router} />);
 
     expect(screen.getByRole("heading", { name: "Command Center" })).toBeInTheDocument();
-    expect(screen.getByText(/LOCAL CONTEXT/)).toBeInTheDocument();
-    expect(screen.getAllByText("UNBOUND").length).toBeGreaterThan(0);
+    expect(screen.getByText("LOCAL CONTEXT // NOT YET BACKEND-BOUND")).toBeInTheDocument();
+    expect(screen.getByText("MODEL")).toBeInTheDocument();
   });
 });
