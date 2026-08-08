@@ -3,13 +3,13 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 import { App } from "@/app/App";
 import { AppShell } from "@/components/layout";
 import { CommandCenterPage } from "@/pages/CommandCenterPage";
+import { LiquidityPage } from "@/pages/LiquidityPage";
 import { PerformancePage } from "@/pages/PerformancePage";
 import { PlanningPage } from "@/pages/PlanningPage";
+import { ProfitabilityPage } from "@/pages/ProfitabilityPage";
 import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
 
 const workspaceRoutes = [
-  "profitability",
-  "liquidity",
   "risk",
   "market-risk",
   "actions",
@@ -33,6 +33,8 @@ export const router = createBrowserRouter([
       { path: "command-center", element: <CommandCenterPage /> },
       { path: "planning", element: <PlanningPage /> },
       { path: "performance", element: <PerformancePage /> },
+      { path: "profitability", element: <ProfitabilityPage /> },
+      { path: "liquidity", element: <LiquidityPage /> },
       ...workspaceRoutes,
     ],
   },
