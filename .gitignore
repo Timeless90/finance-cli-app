@@ -19,3 +19,6 @@ frontend/storybook-static/
 frontend/playwright-report/
 frontend/test-results/
 frontend/.vite/
+frontend/openapi/backend-openapi.json
+frontend/src/api/generated/
+frontend/public/mockServiceWorker.js

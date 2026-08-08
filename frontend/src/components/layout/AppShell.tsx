@@ -1,5 +1,7 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { ApiProvider } from "@/api/ApiProvider";
+import { useSystemContract } from "@/api/system";
 import { WorkspaceContextProvider } from "@/app/context/WorkspaceContext";
 import { useWorkspaceContext } from "@/app/context/useWorkspaceContext";
 import { getWorkspaceByPath, workspaceNavigation } from "@/app/navigation";
@@ -125,11 +127,28 @@ function MobileNavigation() {
 }
 
 function StatusBar() {
+  const systemContract = useSystemContract();
+  const apiDetail = systemContract.isSuccess
+    ? systemContract.data.readiness.status.toUpperCase()
+    : systemContract.isError
+      ? "OFFLINE"
+      : "CHECKING";
+  const apiTone = systemContract.isSuccess
+    ? "positive"
+    : systemContract.isError
+      ? "negative"
+      : "neutral";
+  const platformDetail = systemContract.data?.platform.api_version.toUpperCase() ?? "UNBOUND";
+
   return (
     <footer className="grid gap-px border-t border-[var(--frame-muted)] bg-[var(--frame-muted)] sm:grid-cols-4">
       <StatusIndicator label="CONTEXT" detail="LOCAL" tone="warning" />
-      <StatusIndicator label="API" detail="UNBOUND" tone="neutral" />
-      <StatusIndicator label="DATA" detail="UNBOUND" tone="neutral" />
+      <StatusIndicator label="API" detail={apiDetail} tone={apiTone} />
+      <StatusIndicator
+        label="CONTRACT"
+        detail={platformDetail}
+        tone={systemContract.isSuccess ? "positive" : "neutral"}
+      />
       <StatusIndicator label="MODEL" detail="UNBOUND" tone="neutral" />
     </footer>
   );
@@ -151,7 +170,7 @@ function ShellContent() {
               <div className="interface-label text-[var(--text-muted)]">
                 WORKSPACE // <span className="text-[var(--signal-primary)]">{workspace?.code ?? "--"}</span>
               </div>
-              <div className="data-value text-[0.68rem] text-[var(--text-muted)]">FE-02 // APP SHELL</div>
+              <div className="data-value text-[0.68rem] text-[var(--text-muted)]">FE-03 // TYPED API CONTRACT</div>
             </div>
             <Outlet />
           </section>
@@ -164,8 +183,10 @@ function ShellContent() {
 
 export function AppShell() {
   return (
-    <WorkspaceContextProvider>
-      <ShellContent />
-    </WorkspaceContextProvider>
+    <ApiProvider>
+      <WorkspaceContextProvider>
+        <ShellContent />
+      </WorkspaceContextProvider>
+    </ApiProvider>
   );
 }

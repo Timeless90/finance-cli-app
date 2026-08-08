@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("FE-02 application shell boots and navigates", async ({ page }) => {
+test("FE-03 application shell boots and navigates", async ({ page }) => {
   await page.goto("/");
 
   await expect(page).toHaveURL(/\/app\/command-center$/);
