@@ -38,7 +38,7 @@ describe("FE-08 Risk Command Center", () => {
     renderRisk();
 
     expect(await screen.findByRole("heading", { name: "Risk Command Center" })).toBeInTheDocument();
-    expect(screen.getAllByText("€19.8M")).toHaveLength(2);
+    expect(screen.getAllByText("€19.8M")).toHaveLength(3);
     expect(screen.getByText("Energy cost escalation")).toBeInTheDocument();
     expect(screen.getAllByText("MODEL CONTRACT PENDING")).toHaveLength(2);
     expect(screen.getByText("LATE-CYCLE / PRESSURE")).toBeInTheDocument();
