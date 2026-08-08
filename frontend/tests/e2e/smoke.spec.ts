@@ -16,7 +16,7 @@ test("FE-09 downside context flows through risk and market model labs", async ({
   await page.locator('a[href="/app/market-risk"]:visible').click();
   await expect(page).toHaveURL(/\/app\/market-risk$/);
   await expect(page.getByRole("heading", { name: "Market Risk Lab" })).toBeVisible();
-  await expect(page.getByText("42.8%", { exact: true })).toBeVisible();
+  await expect(page.getByText("42.8%", { exact: true })).toHaveCount(2);
   await expect(page.getByText("€8.9M", { exact: true })).toBeVisible();
   await expect(page.getByText("ACTION REQUIRED")).toBeVisible();
 });
