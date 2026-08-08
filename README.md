@@ -1,270 +1,388 @@
 # Finance CLI App / CFO Platform
 
-A Python-based finance platform evolving from a statistically grounded ETF Monte Carlo CLI into an enterprise-oriented CFO command center for planning, forecasting, performance management, profitability, liquidity, governance, and risk.
+A Python-based finance platform evolving from a statistically grounded ETF Monte Carlo CLI into a modular CFO Command Center for planning, forecasting, performance management, profitability, liquidity, enterprise risk, treasury risk, capital allocation, governed reporting and AI-assisted finance interpretation.
 
-The repository currently contains two complementary product surfaces:
+The repository currently contains two product surfaces:
 
-1. **CFO Platform** — a FastAPI-based application layer for enterprise finance workflows.
-2. **Finance CLI** — the original quantitative toolkit for ETF calibration, Monte Carlo simulation, diagnostics, backtesting, stress analysis, and long-term investment planning.
+1. **CFO Platform** — a FastAPI-based enterprise finance application layer.
+2. **Finance CLI** — the original quantitative toolkit for ETF calibration, Monte Carlo simulation, diagnostics, backtesting, stress analysis and long-term investment planning.
+
+> **Frontend status:** the CFO backend and APIs are implemented, but there is currently **no production frontend application** in the repository. A dedicated CFO web client remains a planned product layer.
 
 ## Current product status
 
-The current `main` branch contains the completed implementation through **Epic 07**.
+The current `main` branch contains the implementation through **Roadmap E12 — Capital Allocation & Funding**. The repository uses implementation labels `Epic 01` through `Epic 13`; these are offset by one from the roadmap because the roadmap starts at `E0`.
 
-| Epic | Module | Status |
-|---|---|---|
-| 01 | Product Architecture & Domain Foundation | Complete |
-| 02 | Finance Data Foundation | Complete |
-| 03 | Governance, Run Store & Audit Trail | Complete |
-| 04 | Integrated Planning & Rolling Forecast | Complete |
-| 05 | Financial Performance Management | Complete |
-| 06 | Cost & Profitability Management | Complete |
-| 07 | Cash, Liquidity & Covenant Control | Complete |
-| 08 | Enterprise Risk Management | Next |
+| Implementation | Roadmap | Module | Status |
+|---|---|---|---|
+| Epic 01 | E0 | Product Architecture & Domain Separation | Complete |
+| Epic 02 | E1 | Finance Data Foundation | Complete |
+| Epic 03 | E2 | Governance, Run Store & Audit Trail | Complete |
+| Epic 04 | E3 | Integrated Planning & Rolling Forecast | Complete |
+| Epic 05 | E4 | Financial Performance Management | Complete |
+| Epic 06 | E5 | Cost & Profitability Management | Complete |
+| Epic 07 | E6 | Cash, Liquidity & Covenant Control | Complete |
+| Epic 08 | E7 | Enterprise Risk Management | Complete |
+| Epic 09 | E8 | Action & Decision Management | Complete |
+| Epic 10 | E9 | Reporting Factory | Complete |
+| Epic 11 | E10 | LLM Finance Copilot / Microsoft Foundry | Complete |
+| Epic 12 | E11 | Market & Treasury Risk | Complete |
+| Epic 13 | E12 | Capital Allocation & Funding | Complete |
+| — | E13 | Enterprise Hardening & Scale | Next roadmap epic |
 
-The long-term product goal is a modular **CFO Command Center** that combines governed finance data, integrated planning, probabilistic forecasting, performance steering, liquidity control, risk analytics, reporting, and AI-assisted interpretation.
+The current platform therefore covers the full roadmap through **Phase 4 — Advanced Finance**. The next roadmap step is **E13 — Enterprise Hardening & Scale**.
 
-## Target architecture
+## Current architecture
 
 ```text
-JavaScript Web Client
+Planned CFO Web Client
         |
         v
 Python / FastAPI API
         |
-        +-------------------------------+
-        |                               |
-        v                               v
-CFO Domain & Application Layer     Quant / Simulation Layer
-        |                               |
-        +---------------+---------------+
-                        |
-                        v
-                Persistence / Audit
-                        |
-                        v
-                     Azure
+        +-----------------------------------------------+
+        |                                               |
+        v                                               v
+CFO Domain & Application Layer                    Quant / Simulation Layer
+        |                                               |
+        +-----------------------+-----------------------+
+                                |
+                                v
+                     Governance / Audit / Repositories
+                                |
+                                v
+                  Azure-oriented Production Target
 ```
 
-Target stack:
+Current stack:
 
-- **Cloud:** Microsoft Azure
 - **Backend:** Python 3.11/3.12 + FastAPI
+- **API:** versioned REST endpoints under `/api/v1`
+- **Quant:** NumPy/SciPy-based deterministic and probabilistic analytics
+- **Reporting:** JSON, CSV, XLSX, PDF and PPTX generation
+- **AI:** Microsoft Foundry-compatible multi-model Finance Copilot using OpenAI-compatible `/openai/v1` APIs
+- **Governance:** run lineage, approvals, audit events, model registry, RBAC and company scopes
 - **Packaging:** Docker
-- **Web:** JavaScript
-- **Persistence:** repository abstractions with development adapters today and Azure/PostgreSQL-oriented production adapters planned
-- **Observability:** Azure-compatible liveness/readiness contracts
-- **Governance:** immutable lineage, approvals, audit events, model registry and scoped access control
+- **Persistence:** repository abstractions with local/in-memory and SQLite reference adapters
+- **Frontend:** not implemented yet
+- **Cloud direction:** Microsoft Azure
 
-## CFO Platform modules
+## CFO Platform capability map
 
-### Epic 01 — Product Architecture & Domain Foundation
+### Foundation, data and governance
 
-Provides the application foundation and clean separation between domain, API, application services, quantitative models, and infrastructure.
+The platform provides:
 
-Key capabilities:
-
-- framework-independent CFO domain model
-- company, account, period, scenario and metric contracts
-- model execution ports and model registry
+- framework-independent finance domain contracts
 - FastAPI application factory and composition root
-- versioned API routes
-- OpenAPI support
-- liveness and readiness endpoints
-- CORS support for the future JavaScript frontend
-- non-blocking jobs with status, progress, cancellation and retry/resume contracts
-- Docker production image
-
-### Epic 02 — Finance Data Foundation
-
-Provides controlled finance-data ingestion and the canonical semantic foundation used by downstream modules.
-
-Key capabilities:
-
+- OpenAPI, liveness and readiness endpoints
+- background job execution contracts
 - CSV and Excel ingestion
-- source-column mapping
-- canonical finance records
-- semantic account mappings
-- sign normalization
-- KPI metadata
-- unmapped-account detection
-- data-quality scoring and blocking findings
-- reconciliation rules and tolerances
-- immutable SHA-256 content-addressed snapshots
-- governed import workflow
-
-Representative endpoints:
-
-```text
-POST /api/v1/data/imports
-GET  /api/v1/data/snapshots/{snapshot_id}
-```
-
-### Epic 03 — Governance, Run Store & Audit Trail
-
-Introduces auditability, approvals, lineage and controlled model usage.
-
-Key capabilities:
-
-- run lineage including model, code, snapshot, parameters and random seed
-- Draft -> Validated -> Approved -> Retired lifecycle
-- preparer/reviewer segregation
-- immutable approved runs
-- append-only audit events
-- before/after hashes, actor, reason and correlation ID
-- governed scenarios and assumptions
+- source-to-canonical field mapping
+- semantic finance records and account mappings
+- data-quality scoring and reconciliation
+- immutable content-addressed data snapshots
+- governed model runs and scenarios
 - model registry and lifecycle
-- RBAC for CFO, FP&A, Risk, Treasury, Controller, Reviewer and Admin roles
-- company-level access scopes
-- durable SQLite reference repositories for local development and CI
+- preparer/reviewer segregation
+- append-only audit events
+- role-based and company-scoped access control
 
-Representative endpoints:
+Representative API areas:
 
 ```text
-POST /api/v1/governance/runs
-POST /api/v1/governance/runs/{run_id}/validate
-POST /api/v1/governance/runs/{run_id}/approve
-POST /api/v1/governance/runs/{run_id}/retire
-GET  /api/v1/governance/runs/{run_id}/lineage
-POST /api/v1/governance/scenarios
-POST /api/v1/governance/models
+/api/v1/data/...
+/api/v1/governance/...
+/api/v1/jobs/...
 ```
 
-### Epic 04 — Integrated Planning & Rolling Forecast
+### Integrated Planning & Rolling Forecast
 
-Implements driver-based corporate planning and probabilistic rolling forecasts.
+Capabilities include:
 
-Key capabilities:
-
-- revenue planning using volume, price, conversion and mix
-- workforce planning
-- fixed and variable cost planning
-- capex, depreciation and tax logic
-- DSO/DPO/inventory-day working-capital drivers
-- integrated income statement, balance sheet and cash flow
-- exact multi-period balance-sheet reconciliation
-- 12-, 18- and 24-month rolling forecast horizons
-- monthly-close refresh and predecessor lineage
-- Student-t probabilistic forecast overlay
+- driver-based revenue planning
+- workforce, cost, capex, tax and working-capital drivers
+- integrated P&L, balance sheet and cash flow
+- 12-, 18- and 24-month rolling forecasts
+- Student-t probabilistic forecasts
 - moving-block bootstrap
-- optional Markov-regime forecast mode
+- optional regime overlays
 - P10/P50/P90 bands
 - deterministic seeds
 - rolling-origin backtesting
-- MAE, WAPE, bias, coverage and probabilistic log score
-- threshold and target-breach evaluation
+- MAE, WAPE, bias, coverage and log-score metrics
+- threshold and shortfall evaluation
 
-Representative endpoints:
+API prefix:
 
 ```text
-POST /api/v1/planning/forecasts
-GET  /api/v1/planning/forecasts/{version_id}
-POST /api/v1/planning/probabilistic
-POST /api/v1/planning/backtests
-POST /api/v1/planning/thresholds/evaluate
+/api/v1/planning/...
 ```
 
-### Epic 05 — Financial Performance Management
+### Financial Performance Management
 
-Adds management-performance steering on top of actuals, plans and forecasts.
+Capabilities include:
 
-Key capabilities:
-
-- hierarchical KPI tree
-- EBITDA, EBIT, NOPAT, operating cash flow and free cash flow
-- entity, segment, product and cost-center drilldowns
+- KPI trees and management metrics
 - Plan vs Actual, Forecast vs Actual and Forecast vs Forecast bridges
 - Price-Volume-Mix decomposition
 - exact variance reconciliation
-- source-snapshot lineage
-- forecast-accuracy analysis by KPI, business unit, horizon and model
-- robust MAD-based anomaly detection
-- materiality-based management commentary requirements
-- commentary ownership and linked actions
+- forecast-accuracy analysis
+- robust anomaly detection
+- management commentary requirements
 
-Representative endpoints:
+API prefix:
 
 ```text
-POST /api/v1/performance/kpi-tree/evaluate
-POST /api/v1/performance/variance-bridges
-POST /api/v1/performance/forecast-accuracy
-POST /api/v1/performance/anomalies
-POST /api/v1/performance/commentary/requirements
+/api/v1/performance/...
 ```
 
-### Epic 06 — Cost & Profitability Management
+### Cost & Profitability Management
 
-Adds unit-economic and profitability steering.
+Capabilities include:
 
-Key capabilities:
-
-- CM1, CM2 and operating margin
+- CM1, CM2 and operating-margin analysis
 - profitability by product, customer, channel, cost center and profit center
-- versioned driver-based cost allocations
-- exact source-to-target allocation reconciliation
+- driver-based cost allocation
 - Activity-Based Costing
-- P&L / cost-accounting reconciliation
-- price, volume, variable-cost and fixed-cost sensitivity analysis
-- probability-weighted Margin-at-Risk
-- target-shortfall probability
+- profitability reconciliation
+- price, volume, variable-cost and fixed-cost sensitivities
+- Margin-at-Risk and target-shortfall probability
 
-Representative endpoints live under:
+API prefix:
 
 ```text
 /api/v1/profitability/...
 ```
 
-### Epic 07 — Cash, Liquidity & Covenant Control
+### Cash, Liquidity & Covenant Control
 
-Adds treasury-oriented cash visibility and covenant management.
+Capabilities include:
 
-Key capabilities:
+- 13-week direct cash forecasting
+- monthly liquidity forecasting
+- DSO, DPO and DIO working-capital modelling
+- debt schedules, interest and amortization
+- leverage and interest-cover covenant evaluation
+- covenant headroom and breach probability
+- liquidity stress testing
+- mitigation and funding-option effects
+- cash forecast accuracy
 
-- direct 13-week cash forecast
-- weekly bank-opening and closing-cash reconciliation
-- 12- to 24-month monthly liquidity forecast
-- minimum-liquidity headroom and funding-gap calculation
-- DSO/DPO/DIO working-capital model
-- instrument-level debt schedules
-- interest, amortization and maturity handling
-- leverage-ratio and interest-cover covenant engine
-- minimum and maximum covenant directions
-- covenant headroom
-- simulated breach probability
-- liquidity stress testing for revenue, collections, costs and refinancing
-- mitigation and funding-option impacts
-- cash-forecast accuracy by horizon
-
-Representative endpoints:
+API prefix:
 
 ```text
-POST /api/v1/liquidity/cash-forecast/13-week
-POST /api/v1/liquidity/cash-forecast/monthly
-POST /api/v1/liquidity/working-capital
-POST /api/v1/liquidity/debt-schedules
-POST /api/v1/liquidity/covenants/evaluate
-POST /api/v1/liquidity/stress-tests
-POST /api/v1/liquidity/cash-forecast/accuracy
+/api/v1/liquidity/...
 ```
 
-## Next module: Enterprise Risk Management
+### Enterprise Risk Management
 
-Epic 08 is the next planned module. Its intended scope includes:
+Capabilities include:
 
 - enterprise risk register
 - financial and operational risk taxonomy
-- probability and impact distributions
+- probability/impact modelling
 - Monte Carlo risk aggregation
-- correlation/dependency handling
+- dependency handling
 - risk appetite and limits
 - controls and mitigation measures
 - residual risk
 - Risk-to-Plan integration
-- risk contribution to EBITDA, cash and covenant outcomes
-- stress scenarios and reverse stress tests
+- EBITDA, cash and covenant risk contribution
+- stress and reverse-stress concepts
 - management and board risk reporting
 
-See `docs/cfo-product-implementation-roadmap.md` for the complete multi-epic roadmap.
+API prefix:
+
+```text
+/api/v1/risk/...
+```
+
+### Action & Decision Management
+
+Capabilities include:
+
+- governed action catalogue
+- action simulation
+- financial-impact evaluation
+- action portfolio prioritization
+- review and approval support
+- benefit tracking
+- linkage between identified finance/risk issues and management responses
+
+API prefix:
+
+```text
+/api/v1/actions/...
+```
+
+### Reporting Factory
+
+Capabilities include:
+
+- Management Pack
+- Board Risk Pack
+- Forecast Report
+- Lagebericht draft
+- Audit Evidence Pack
+- report templates and run/data lineage
+- human-approval controls
+- JSON, CSV, XLSX, PDF and PPTX exporters
+
+API prefix:
+
+```text
+/api/v1/reporting/...
+```
+
+### Microsoft Foundry Multi-Model Finance Copilot
+
+The Finance Copilot is prepared for Microsoft Foundry and supports routing different finance workloads to different model deployments.
+
+Routing is resolved by **finance module × workload**, rather than by one global model. Example deployment aliases include:
+
+- `finance-fast`
+- `finance-reasoning`
+- `finance-drafting`
+- `model-router`
+
+Supported workload categories include:
+
+- management summaries
+- variance explanation
+- risk explanation
+- action recommendations
+- report drafting
+- general finance Q&A
+
+Governance and grounding controls include:
+
+- approved facts only
+- company-scoped retrieval
+- prompt-injection checks
+- source references
+- numeric-grounding validation
+- explicit data-gap and model-limit requirements
+- interaction audit records
+- no autonomous approval, booking or transaction execution
+
+Configuration is environment-driven through variables including:
+
+```text
+CFO_FOUNDRY_ENDPOINT
+CFO_FOUNDRY_AUTH_MODE
+CFO_FOUNDRY_API_KEY
+CFO_FOUNDRY_ROUTES_JSON
+```
+
+Representative endpoints:
+
+```text
+GET  /api/v1/copilot/routes
+GET  /api/v1/copilot/routes/resolve
+POST /api/v1/copilot/respond
+```
+
+See `docs/architecture/microsoft-foundry-multi-model.md` for the current routing and deployment guidance.
+
+### Market & Treasury Risk
+
+Capabilities include:
+
+- FX, rates, commodity and funding exposure aggregation
+- sensitivity analysis
+- historical and Student-t VaR / Expected Shortfall
+- Student-t GARCH(1,1)
+- two-state Gaussian HMM regime overlay
+- EVT peaks-over-threshold / GPD tail overlay
+- Gaussian vs Student-t copula comparison
+- hedge-ratio and variance-reduction analysis
+- Kupiec and Christoffersen VaR backtests
+
+Advanced models are activation-gated and are not enabled merely because a fit converges. GARCH, regime and EVT overlays must demonstrate diagnostic value before they are treated as preferred models.
+
+Representative endpoints:
+
+```text
+POST /api/v1/market-risk/exposures/aggregate
+POST /api/v1/market-risk/sensitivities
+POST /api/v1/market-risk/var-es
+POST /api/v1/market-risk/models/garch-t
+POST /api/v1/market-risk/models/regime-hmm
+POST /api/v1/market-risk/models/evt
+POST /api/v1/market-risk/models/copula
+POST /api/v1/market-risk/hedges/effectiveness
+POST /api/v1/market-risk/backtests/var
+```
+
+### Capital Allocation & Funding
+
+Capabilities include:
+
+- project and Capex valuation
+- NPV, IRR, ROIC and payback
+- reproducible Monte Carlo NPV
+- scenario and risk-event overlays
+- exact project portfolio optimization
+- budget, cash-headroom, leverage and interest-cover constraints
+- funding and refinancing scenario evaluation
+- proceeds, interest, amortization and debt-service analytics
+- post-funding leverage and covenant headroom
+
+Representative endpoints:
+
+```text
+POST /api/v1/capital/projects/value
+POST /api/v1/capital/projects/monte-carlo
+POST /api/v1/capital/portfolio/optimize
+POST /api/v1/capital/funding/evaluate
+```
+
+## Frontend status
+
+There is currently **no dedicated frontend application** in `main`.
+
+In particular, the repository does not yet contain a production React/Vue/Angular application, frontend package manifest or CFO dashboard shell. FastAPI's Swagger/OpenAPI UI at `/docs` is currently the primary interactive interface for the CFO Platform API.
+
+A future CFO web client should consume the existing API and can be organized around the implemented modules:
+
+```text
+Dashboard
+Planning
+Performance
+Profitability
+Liquidity
+Enterprise Risk
+Actions
+Reporting
+Market & Treasury Risk
+Capital Allocation
+Finance Copilot
+Administration / Governance
+```
+
+The backend already exposes CORS support and versioned APIs to support this future client.
+
+## Next roadmap epic: E13 — Enterprise Hardening & Scale
+
+The next roadmap step is the enterprise-scale hardening phase. Its purpose is to turn the current feature-complete backend foundation into a production-ready multi-user platform.
+
+Expected focus areas include:
+
+- production-grade persistence
+- tenant and organizational isolation
+- authentication and identity integration
+- security hardening
+- secrets and key management
+- operational observability
+- resilience and recovery
+- workload scaling
+- deployment automation
+- compliance and audit hardening
+- performance/load validation
+- enterprise production-readiness
+
+See `docs/cfo-product-implementation-roadmap.md` for the canonical roadmap.
 
 ## Running the CFO Platform API
 
@@ -350,17 +468,18 @@ GitHub Actions validates the repository against Python 3.11 and Python 3.12.
 
 ## Architecture and completion evidence
 
-Each completed enterprise epic includes explicit acceptance evidence under `docs/architecture/`:
+Completed enterprise epics include acceptance evidence under `docs/architecture/`.
+
+Key documents include:
 
 ```text
-docs/architecture/
-├── epic-01-completion.md
-├── epic-02-completion.md
-├── epic-03-completion.md
-├── epic-04-completion.md
-├── epic-05-completion.md
-├── epic-06-completion.md
-└── epic-07-completion.md
+docs/architecture/epic-01-completion.md
+...
+docs/architecture/epic-10-completion.md
+docs/architecture/epic-11-completion.md
+docs/architecture/epic-12-completion.md
+docs/architecture/epic-13-completion.md
+docs/architecture/microsoft-foundry-multi-model.md
 ```
 
 Open product or architecture decisions that require human input are recorded under:
@@ -447,7 +566,7 @@ date,price
 2021-04-30,79.44
 ```
 
-For ETF analysis, adjusted prices or total-return data are recommended because unadjusted prices can omit distributions and materially understate historical performance.
+Adjusted prices or total-return data are recommended because unadjusted prices can omit distributions and materially understate historical performance.
 
 ### Simulation methods
 
@@ -463,9 +582,9 @@ Monte Carlo outputs are distributions of scenarios, not guarantees or determinis
 
 ## Repository direction
 
-The project is intentionally moving from a single-purpose simulation CLI toward a modular enterprise finance platform. The quantitative CLI is retained because many of its statistical components — calibration, bootstrapping, Monte Carlo simulation, regime modelling, stress analysis and reproducible RNG handling — are directly reusable inside the CFO Platform.
+The repository has moved beyond the original single-purpose simulation CLI into a broad CFO backend platform. The quantitative CLI remains useful because calibration, bootstrapping, Monte Carlo simulation, regime modelling, stress analysis and reproducible RNG handling are reused throughout the enterprise finance modules.
 
-The strategic product direction is therefore:
+The current strategic direction is:
 
 ```text
 Quantitative Engine
@@ -474,13 +593,19 @@ Finance Domain Model
        +
 Governance & Audit
        +
-Planning / Performance / Liquidity / Risk
+Planning / Performance / Profitability / Liquidity
+       +
+Enterprise Risk / Treasury Risk / Capital Allocation
+       +
+Reporting Factory
+       +
+Microsoft Foundry Finance Copilot
        +
 FastAPI Platform
        +
-JavaScript CFO Dashboard
+Enterprise Hardening
        +
-AI-assisted interpretation and reporting
+Future CFO Web Client
 ```
 
 ## Additional documentation
@@ -488,13 +613,13 @@ AI-assisted interpretation and reporting
 - [CFO product implementation roadmap](docs/cfo-product-implementation-roadmap.md)
 - [Implementation plan](docs/implementation-plan.md)
 - [Simulation methodology](docs/simulation-methodology.md)
-- [Epic 01 completion](docs/architecture/epic-01-completion.md)
-- [Epic 02 completion](docs/architecture/epic-02-completion.md)
-- [Epic 03 completion](docs/architecture/epic-03-completion.md)
-- [Epic 04 completion](docs/architecture/epic-04-completion.md)
-- [Epic 05 completion](docs/architecture/epic-05-completion.md)
-- [Epic 06 completion](docs/architecture/epic-06-completion.md)
-- [Epic 07 completion](docs/architecture/epic-07-completion.md)
+- [Microsoft Foundry multi-model architecture](docs/architecture/microsoft-foundry-multi-model.md)
+- [Epic 08 completion](docs/architecture/epic-08-completion.md)
+- [Epic 09 completion](docs/architecture/epic-09-completion.md)
+- [Epic 10 completion](docs/architecture/epic-10-completion.md)
+- [Epic 11 completion](docs/architecture/epic-11-completion.md)
+- [Epic 12 completion](docs/architecture/epic-12-completion.md)
+- [Epic 13 completion](docs/architecture/epic-13-completion.md)
 
 ## Disclaimer
 
