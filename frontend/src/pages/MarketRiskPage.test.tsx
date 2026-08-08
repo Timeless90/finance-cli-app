@@ -50,7 +50,7 @@ describe("FE-09 Market Risk Lab", () => {
 
     expect(await screen.findAllByText("42.8%", { exact: true })).toHaveLength(2);
     expect(screen.getByText("€8.9M", { exact: true })).toBeInTheDocument();
-    expect(screen.getByText("82%", { exact: true })).toBeInTheDocument();
+    expect(screen.getAllByText("82%", { exact: true })).toHaveLength(2);
     expect(screen.getAllByText("BREACH")).toHaveLength(2);
   });
 });
