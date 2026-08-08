@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -22,6 +23,7 @@ class ApiSettings(BaseSettings):
     build_version: str = "0.3.0"
     azure_region: str | None = None
     allowed_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
+    governance_database_path: Path | None = None
 
 
 @lru_cache(maxsize=1)

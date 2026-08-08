@@ -6,12 +6,12 @@ Dedicated web client for the CFO Platform. The frontend is intentionally isolate
 
 - Node.js 22+
 - npm 10+
-- Python 3.11+ with the repository installed (`pip install -e .`) when synchronizing API contracts
+- uv with the repository synchronized (`uv sync --locked`) when synchronizing API contracts
 
 ## Local development
 
 ```bash
-pip install -e .
+uv sync --locked
 cd frontend
 npm install
 npm run api:sync

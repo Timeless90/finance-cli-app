@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from cfo_platform.action_management import (
     ActionCatalogueService,
@@ -31,6 +32,10 @@ from cfo_platform.governance import (
     GovernedRunService,
     InMemoryAuditEventRepository,
     InMemoryGovernedRunRepository,
+)
+from cfo_platform.governance_persistence import (
+    SqliteAuditEventRepository,
+    SqliteGovernedRunRepository,
 )
 from cfo_platform.governance_catalog import (
     InMemoryModelRegistryRepository,
@@ -179,7 +184,10 @@ class ApplicationContainer:
         self.job_manager.shutdown()
 
 
-def build_container() -> ApplicationContainer:
+def build_container(
+    *,
+    governance_database_path: Path | None = None,
+) -> ApplicationContainer:
     registry = QuantModelRegistry([EchoForecastModel(), LegacyPortfolioSimulationModel()])
     repository = InMemoryModelRunRepository()
     executor = RegisteredModelExecutor(registry)
@@ -187,10 +195,13 @@ def build_container() -> ApplicationContainer:
     jobs = InMemoryJobManager(service)
     snapshot_repository = InMemoryDataSnapshotRepository()
     data_workflow = FinanceDataWorkflow(snapshot_repository)
-    governed_runs = GovernedRunService(
-        InMemoryGovernedRunRepository(),
-        InMemoryAuditEventRepository(),
-    )
+    if governance_database_path is None:
+        governed_run_repository = InMemoryGovernedRunRepository()
+        audit_event_repository = InMemoryAuditEventRepository()
+    else:
+        governed_run_repository = SqliteGovernedRunRepository(governance_database_path)
+        audit_event_repository = SqliteAuditEventRepository(governance_database_path)
+    governed_runs = GovernedRunService(governed_run_repository, audit_event_repository)
     scenario_repository = InMemoryScenarioRepository()
     scenario_service = ScenarioService(scenario_repository)
     model_registry_service = ModelRegistryService(InMemoryModelRegistryRepository())

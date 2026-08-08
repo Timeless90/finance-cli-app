@@ -40,7 +40,9 @@ def create_app(
     container: ApplicationContainer | None = None,
 ) -> FastAPI:
     resolved = settings or get_settings()
-    resolved_container = container or build_container()
+    resolved_container = container or build_container(
+        governance_database_path=resolved.governance_database_path,
+    )
     finance_model_runs = FinanceModelRunService(
         resolved_container.context_catalog_service,
         resolved_container.data_snapshot_repository,

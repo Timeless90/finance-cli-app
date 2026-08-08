@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
 from cfo_platform.api.app import create_app
+from cfo_platform.api.settings import ApiSettings
 from cfo_platform.governance import (
     GovernanceStatus,
     GovernedRunService,
@@ -137,5 +139,37 @@ def test_governance_api_run_lifecycle() -> None:
     assert client.post(f"/api/v1/governance/runs/{run_id}/validate", headers={"x-user": "validator", "x-roles": "risk"}).status_code == 200
     assert client.post(f"/api/v1/governance/runs/{run_id}/approve", headers={"x-user": "reviewer", "x-roles": "reviewer"}).status_code == 200
     lineage = client.get(f"/api/v1/governance/runs/{run_id}/lineage", headers={"x-user": "auditor", "x-roles": "reviewer"})
+    assert lineage.status_code == 200
+    assert lineage.json()["snapshot_id"] == "snapshot"
+
+
+def test_governance_api_uses_configured_sqlite_store_after_restart(tmp_path: Path) -> None:
+    database = tmp_path / "governance.db"
+    settings = ApiSettings(
+        environment="test",
+        governance_database_path=database,
+    )
+    headers = {"x-user": "planner", "x-roles": "fp_and_a"}
+    with TestClient(create_app(settings)) as client:
+        created = client.post(
+            "/api/v1/governance/runs",
+            headers=headers,
+            json={
+                "model_id": "forecast",
+                "model_version": "1.0",
+                "code_version": "sha",
+                "snapshot_id": "snapshot",
+                "parameters": {"paths": 100},
+                "random_seed": 7,
+            },
+        )
+        assert created.status_code == 201
+        run_id = created.json()["run_id"]
+
+    with TestClient(create_app(settings)) as restarted_client:
+        lineage = restarted_client.get(
+            f"/api/v1/governance/runs/{run_id}/lineage",
+            headers={"x-user": "reviewer", "x-roles": "reviewer"},
+        )
     assert lineage.status_code == 200
     assert lineage.json()["snapshot_id"] == "snapshot"

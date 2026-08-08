@@ -19,7 +19,7 @@
     "build:storybook": "storybook build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "api:export": "python scripts/export_openapi.py",
+    "api:export": "uv run --project .. python scripts/export_openapi.py",
     "api:generate": "openapi-typescript openapi/backend-openapi.json -o src/api/generated/schema.d.ts",
     "api:sync": "npm run api:export && npm run api:generate",
     "mock:init": "msw init public --save"

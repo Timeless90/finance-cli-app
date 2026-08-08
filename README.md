@@ -389,35 +389,33 @@ See `docs/cfo-product-implementation-roadmap.md` for the canonical roadmap.
 ### Requirements
 
 - Python 3.11 or 3.12
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Git
 
-Clone the repository and create a virtual environment:
+Clone the repository:
 
 ```bash
 git clone https://github.com/Timeless90/finance-cli-app.git
 cd finance-cli-app
-
-python -m venv .venv
-source .venv/bin/activate
 ```
 
-On Windows PowerShell:
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
-Install application and development dependencies:
+Install the application and development dependencies. `uv` creates and manages
+the `.venv` environment automatically and uses the committed lockfile:
 
 ```bash
-python -m pip install --upgrade pip
-pip install -e ".[dev]"
+uv sync --locked --extra dev
 ```
 
 Run the FastAPI application:
 
 ```bash
-uvicorn cfo_platform.api.app:create_app --factory --host 0.0.0.0 --port 8000
+uv run cfo-api
+```
+
+For development with automatic reload:
+
+```bash
+uv run uvicorn cfo_platform.api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Useful endpoints:
