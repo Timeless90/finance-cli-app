@@ -242,3 +242,90 @@ All returned financial values must be backend-produced or persisted domain outpu
 ### Current FE-06 temporary contract
 
 `frontend/src/features/planning-performance/contracts.ts` is a provisional mock-only view-model contract. It must be replaced by adapters over OpenAPI-generated response types as the recommended read endpoints become available. The workspaces visibly display `MOCK CONNECTED`, and global Company / Period / Scenario values remain local context until FE-02 context gaps are resolved.
+
+## FE-07 — Profitability & Liquidity Workspace
+
+Lifecycle state: **MOCK CONNECTED**.
+
+FE-07 implements product/segment/customer profitability plus liquidity, working capital, debt, covenant and stress-control workspaces without moving backend finance calculations into the browser.
+
+### Existing profitability calculation contracts
+
+| Method | Endpoint | Current use |
+| --- | --- | --- |
+| POST | `/api/v1/profitability/summary` | summarize supplied profitability records or group them by one dimension |
+| POST | `/api/v1/profitability/allocations` | allocate one supplied cost pool using supplied drivers |
+| POST | `/api/v1/profitability/activity-based-costing` | calculate ABC rates and target costs from supplied activity pools/consumption |
+| POST | `/api/v1/profitability/reconcile` | reconcile supplied expected and actual values |
+| POST | `/api/v1/profitability/sensitivity` | evaluate margin sensitivity from supplied revenue/cost assumptions |
+| POST | `/api/v1/profitability/margin-at-risk` | calculate margin-at-risk from supplied scenario probabilities and margins |
+
+These endpoints are analytical engines. They do not provide a persisted profitability ledger or a company/period/scenario workspace query. The frontend must not reconstruct profitability records, allocations or margin-at-risk scenarios from displayed numbers merely to invoke these services.
+
+### Existing liquidity calculation contracts
+
+| Method | Endpoint | Current use |
+| --- | --- | --- |
+| POST | `/api/v1/liquidity/cash-forecast/13-week` | calculate cash positions from supplied weekly flows |
+| POST | `/api/v1/liquidity/cash-forecast/monthly` | calculate monthly liquidity positions from supplied period flows |
+| POST | `/api/v1/liquidity/working-capital` | calculate working-capital position from supplied revenue/COGS/DSO/DPO/DIO |
+| POST | `/api/v1/liquidity/debt-schedules` | calculate a debt schedule from one supplied instrument |
+| POST | `/api/v1/liquidity/covenants/evaluate` | evaluate a supplied covenant and optional simulations |
+| POST | `/api/v1/liquidity/stress-tests` | apply one supplied liquidity stress scenario |
+| POST | `/api/v1/liquidity/cash-forecast/accuracy` | summarize supplied cash forecast observations |
+
+Again, these are calculation contracts, not persisted workspace read contracts.
+
+### Required Profitability read contracts
+
+Recommended minimum API surface:
+
+- `GET /api/v1/profitability/workspace?company_id=...&period_id=...&scenario_id=...`
+- `GET /api/v1/profitability/segments?company_id=...&period_id=...&scenario_id=...&dimension=...`
+- optionally persisted allocation drilldowns such as `GET /api/v1/profitability/allocations/{allocation_version_id}`.
+
+Recommended workspace response:
+
+```text
+ProfitabilityWorkspaceSnapshot
+  context
+  metrics[]
+  segments[]
+    dimensions / revenue / contribution_margin / ebitda / allocated_cost / margin_at_risk
+  margin_waterfall[]
+  profitability_matrix[]
+  sensitivity_summary[]
+  allocation_assurance
+    allocation_version_id / snapshot_id / method
+    source_cost / allocated_cost / reconciliation_difference / reconciled
+```
+
+### Required Liquidity read contracts
+
+Recommended minimum API surface:
+
+- `GET /api/v1/liquidity/workspace?company_id=...&period_id=...&scenario_id=...`
+- `GET /api/v1/liquidity/cash-forecast?company_id=...&period_id=...&scenario_id=...&horizon=13-week`
+- `GET /api/v1/liquidity/debt?company_id=...&period_id=...`
+- `GET /api/v1/liquidity/covenants?company_id=...&period_id=...&scenario_id=...`
+
+Recommended workspace response:
+
+```text
+LiquidityWorkspaceSnapshot
+  context
+  metrics[]
+  cash_forecast
+    positions[] / minimum_liquidity / minimum_headroom / accuracy
+  working_capital[]
+  debt[]
+  covenants[]
+  stresses[]
+  source_snapshot_ids[]
+```
+
+All cash positions, working-capital balances, debt schedules, covenant states, stress outcomes, allocations and margin-at-risk values must come from backend-produced or persisted domain outputs. Frontend visualization may scale coordinates and format currency/ratios only.
+
+### Current FE-07 temporary contract
+
+`frontend/src/features/profitability-liquidity/contracts.ts` is a provisional mock-only view model. It must be removed or reduced to adapter-specific display types as OpenAPI-backed read contracts arrive. Both workspaces visibly display `MOCK CONNECTED`, and Company / Period / Scenario remain local context until the global context read contracts are implemented.
