@@ -173,10 +173,10 @@ const scenarioOverrides: Record<
   },
   "local-upside": {
     metrics: [
-      { ...baseSnapshot.metrics[0], value: "€503.8M", delta: "+8.5% vs plan" },
-      { ...baseSnapshot.metrics[1], value: "€89.6M", delta: "+€11.1M vs plan" },
-      { ...baseSnapshot.metrics[2], value: "€49.9M", delta: "+€6.1M vs plan", deltaTone: "positive" },
-      { ...baseSnapshot.metrics[3], value: "€84.5M", delta: "€5.1M expected loss" },
+      { ...baseSnapshot.metrics[0]!, value: "€503.8M", delta: "+8.5% vs plan" },
+      { ...baseSnapshot.metrics[1]!, value: "€89.6M", delta: "+€11.1M vs plan" },
+      { ...baseSnapshot.metrics[2]!, value: "€49.9M", delta: "+€6.1M vs plan", deltaTone: "positive" },
+      { ...baseSnapshot.metrics[3]!, value: "€84.5M", delta: "€5.1M expected loss" },
     ],
     liquidity: {
       cash: "€44.1M",
@@ -205,10 +205,10 @@ const scenarioOverrides: Record<
   },
   "local-downside": {
     metrics: [
-      { ...baseSnapshot.metrics[0], value: "€451.7M", delta: "-2.6% vs plan", deltaTone: "negative" },
-      { ...baseSnapshot.metrics[1], value: "€68.9M", delta: "-€9.6M vs plan", deltaTone: "negative" },
-      { ...baseSnapshot.metrics[2], value: "€24.3M", delta: "-€19.5M vs plan", deltaTone: "negative" },
-      { ...baseSnapshot.metrics[3], value: "€57.2M", delta: "€11.7M expected loss", deltaTone: "negative" },
+      { ...baseSnapshot.metrics[0]!, value: "€451.7M", delta: "-2.6% vs plan", deltaTone: "negative" },
+      { ...baseSnapshot.metrics[1]!, value: "€68.9M", delta: "-€9.6M vs plan", deltaTone: "negative" },
+      { ...baseSnapshot.metrics[2]!, value: "€24.3M", delta: "-€19.5M vs plan", deltaTone: "negative" },
+      { ...baseSnapshot.metrics[3]!, value: "€57.2M", delta: "€11.7M expected loss", deltaTone: "negative" },
     ],
     liquidity: {
       cash: "€24.6M",
@@ -238,7 +238,7 @@ const scenarioOverrides: Record<
 };
 
 export function getMockCommandCenterSnapshot(context: CommandCenterContext): CommandCenterSnapshot {
-  const scenario = scenarioOverrides[context.scenarioId] ?? scenarioOverrides["local-base"];
+  const scenario = scenarioOverrides[context.scenarioId] ?? scenarioOverrides["local-base"]!;
 
   return {
     ...baseSnapshot,
