@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 
+import { useWorkspaceContext } from "@/app/context/useWorkspaceContext";
 import { getWorkspaceByPath } from "@/app/navigation";
-import { useWorkspaceContext } from "@/app/context/WorkspaceContext";
 import { MetricPanel, StatusIndicator, TacticalFrame } from "@/components/finance";
 
 export function WorkspacePlaceholder() {
@@ -40,7 +40,7 @@ export function WorkspacePlaceholder() {
             <div className="interface-label text-[var(--text-muted)]">UI ROUTE READY</div>
             <div className="data-value text-2xl text-[var(--signal-primary)]">{workspace.path}</div>
             <p className="m-0 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-              FE-02 establishes navigation, responsive application framing and global presentation context. Domain data is intentionally not loaded yet.
+              FE-03 adds the typed API contract layer while domain workspaces remain intentionally disconnected until their endpoint contracts are bound.
             </p>
           </div>
         </TacticalFrame>

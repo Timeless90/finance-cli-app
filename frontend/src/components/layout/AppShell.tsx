@@ -137,7 +137,7 @@ function StatusBar() {
     ? "positive"
     : systemContract.isError
       ? "negative"
-      : "muted";
+      : "neutral";
   const platformDetail = systemContract.data?.platform.api_version.toUpperCase() ?? "UNBOUND";
 
   return (
@@ -147,9 +147,9 @@ function StatusBar() {
       <StatusIndicator
         label="CONTRACT"
         detail={platformDetail}
-        tone={systemContract.isSuccess ? "positive" : "muted"}
+        tone={systemContract.isSuccess ? "positive" : "neutral"}
       />
-      <StatusIndicator label="MODEL" detail="UNBOUND" tone="muted" />
+      <StatusIndicator label="MODEL" detail="UNBOUND" tone="neutral" />
     </footer>
   );
 }
