@@ -23,7 +23,7 @@ describe("FE-02 application shell", () => {
     render(<RouterProvider router={router} />);
 
     expect(screen.getByRole("heading", { name: "Command Center" })).toBeInTheDocument();
-    expect(screen.getByText(/LOCAL CONTEXT/)).toBeInTheDocument();
+    expect(screen.getByText("LOCAL CONTEXT // NOT YET BACKEND-BOUND")).toBeInTheDocument();
     expect(screen.getAllByText("UNBOUND").length).toBeGreaterThan(0);
   });
 });
