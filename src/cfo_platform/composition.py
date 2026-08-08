@@ -102,6 +102,11 @@ from cfo_platform.risk_management import (
     RiskReportingService,
     RiskToPlanEngine,
 )
+from cfo_platform.workspace_integration import (
+    ContextCatalogService,
+    InMemoryWorkspaceReadModelRepository,
+    WorkspaceReadModelService,
+)
 
 
 @dataclass(slots=True)
@@ -117,6 +122,8 @@ class ApplicationContainer:
     scenario_service: ScenarioService
     model_registry_service: ModelRegistryService
     access_control: AccessControlService
+    context_catalog_service: ContextCatalogService
+    workspace_read_model_service: WorkspaceReadModelService
     rolling_forecast_service: RollingForecastService
     probabilistic_forecast_engine: ProbabilisticForecastEngine
     rolling_origin_backtester: RollingOriginBacktester
@@ -184,9 +191,19 @@ def build_container() -> ApplicationContainer:
         InMemoryGovernedRunRepository(),
         InMemoryAuditEventRepository(),
     )
-    scenario_service = ScenarioService(InMemoryScenarioRepository())
+    scenario_repository = InMemoryScenarioRepository()
+    scenario_service = ScenarioService(scenario_repository)
     model_registry_service = ModelRegistryService(InMemoryModelRegistryRepository())
     access_control = AccessControlService()
+    context_catalog_service = ContextCatalogService(
+        snapshot_repository,
+        scenario_repository,
+        access_control,
+    )
+    workspace_read_model_service = WorkspaceReadModelService(
+        context_catalog_service,
+        InMemoryWorkspaceReadModelRepository(),
+    )
     rolling_forecast_service = RollingForecastService(InMemoryRollingForecastRepository())
     risk_quantification = RiskQuantificationEngine()
     action_catalogue = ActionCatalogueService(InMemoryActionRepository())
@@ -214,6 +231,8 @@ def build_container() -> ApplicationContainer:
         scenario_service=scenario_service,
         model_registry_service=model_registry_service,
         access_control=access_control,
+        context_catalog_service=context_catalog_service,
+        workspace_read_model_service=workspace_read_model_service,
         rolling_forecast_service=rolling_forecast_service,
         probabilistic_forecast_engine=ProbabilisticForecastEngine(),
         rolling_origin_backtester=RollingOriginBacktester(),

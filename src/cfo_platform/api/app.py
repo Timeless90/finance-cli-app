@@ -27,6 +27,7 @@ from .routes import (
     build_system_router,
 )
 from .settings import ApiSettings, get_settings
+from .workspace_routes import build_workspace_router
 
 
 def create_app(
@@ -69,6 +70,13 @@ def create_app(
             resolved_container.scenario_service,
             resolved_container.model_registry_service,
             resolved_container.access_control,
+        ),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_workspace_router(
+            resolved_container.context_catalog_service,
+            resolved_container.workspace_read_model_service,
         ),
         prefix=resolved.api_prefix,
     )
