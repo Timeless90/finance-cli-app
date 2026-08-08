@@ -28,6 +28,6 @@ test("FE-08 downside context flows across core finance and risk workspaces", asy
   await page.locator('a[href="/app/risk"]:visible').click();
   await expect(page).toHaveURL(/\/app\/risk$/);
   await expect(page.getByRole("heading", { name: "Risk Command Center" })).toBeVisible();
-  await expect(page.getByText("€36.7M", { exact: true })).toBeVisible();
+  await expect(page.getByText("€36.7M", { exact: true })).toHaveCount(2);
   await expect(page.getByText("Combined downside")).toBeVisible();
 });
