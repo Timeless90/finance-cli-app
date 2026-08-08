@@ -53,7 +53,7 @@ class WorkspaceContextKey:
     scenario_id: str
 
     @classmethod
-    def from_context(cls, context: WorkspaceContext) -> WorkspaceContextKey:
+    def from_context(cls, context: WorkspaceContext) -> "WorkspaceContextKey":
         return cls(
             company_id=context.company_id,
             period_id=context.period_id,
@@ -180,9 +180,7 @@ class ContextCatalogService:
         scenario_id: str,
     ) -> WorkspaceContext:
         self._access.require(principal, Permission.READ_DATA, company=company_id)
-        companies = {
-            item.company_id: item for item in self.list_companies(principal)
-        }
+        companies = {item.company_id: item for item in self.list_companies(principal)}
         company = companies.get(company_id)
         if company is None:
             raise KeyError("company")
@@ -228,6 +226,11 @@ class ContextCatalogService:
         return None
 
 
+def _validate_projection_version(version: int) -> None:
+    if version < 1:
+        raise ValueError("projection_version must be >= 1")
+
+
 @dataclass(frozen=True, slots=True)
 class CommandCenterSnapshot:
     context: WorkspaceContext
@@ -244,8 +247,23 @@ class CommandCenterSnapshot:
     projection_version: int = 1
 
     def __post_init__(self) -> None:
-        if self.projection_version < 1:
-            raise ValueError("projection_version must be >= 1")
+        _validate_projection_version(self.projection_version)
+
+
+@dataclass(frozen=True, slots=True)
+class WorkspaceProjectionSnapshot:
+    """Published query projection; domain engines own all financial calculations."""
+
+    context: WorkspaceContext
+    as_of: datetime
+    data: Mapping[str, Any] = field(default_factory=dict)
+    lineage: Mapping[str, Any] = field(default_factory=dict)
+    assurance: Mapping[str, Any] = field(default_factory=dict)
+    source_snapshot_ids: tuple[str, ...] = ()
+    projection_version: int = 1
+
+    def __post_init__(self) -> None:
+        _validate_projection_version(self.projection_version)
 
 
 class WorkspaceReadModelRepository(Protocol):
@@ -256,23 +274,36 @@ class WorkspaceReadModelRepository(Protocol):
         key: WorkspaceContextKey,
     ) -> CommandCenterSnapshot | None: ...
 
+    def save_workspace(
+        self,
+        workspace: str,
+        snapshot: WorkspaceProjectionSnapshot,
+    ) -> None: ...
+
+    def get_workspace(
+        self,
+        workspace: str,
+        key: WorkspaceContextKey,
+    ) -> WorkspaceProjectionSnapshot | None: ...
+
 
 class InMemoryWorkspaceReadModelRepository:
     def __init__(self) -> None:
         self._command_center: dict[WorkspaceContextKey, CommandCenterSnapshot] = {}
+        self._workspaces: dict[
+            str,
+            dict[WorkspaceContextKey, WorkspaceProjectionSnapshot],
+        ] = {}
         self._lock = RLock()
 
     def save_command_center(self, snapshot: CommandCenterSnapshot) -> None:
         key = WorkspaceContextKey.from_context(snapshot.context)
         with self._lock:
             current = self._command_center.get(key)
-            if (
-                current is not None
-                and snapshot.projection_version <= current.projection_version
-            ):
-                raise ValueError(
-                    "projection_version must increase when replacing a read model"
-                )
+            self._require_newer_projection(
+                current.projection_version if current is not None else None,
+                snapshot.projection_version,
+            )
             self._command_center[key] = snapshot
 
     def get_command_center(
@@ -282,8 +313,57 @@ class InMemoryWorkspaceReadModelRepository:
         with self._lock:
             return self._command_center.get(key)
 
+    def save_workspace(
+        self,
+        workspace: str,
+        snapshot: WorkspaceProjectionSnapshot,
+    ) -> None:
+        if not workspace:
+            raise ValueError("workspace must not be empty")
+        key = WorkspaceContextKey.from_context(snapshot.context)
+        with self._lock:
+            snapshots = self._workspaces.setdefault(workspace, {})
+            current = snapshots.get(key)
+            self._require_newer_projection(
+                current.projection_version if current is not None else None,
+                snapshot.projection_version,
+            )
+            snapshots[key] = snapshot
+
+    def get_workspace(
+        self,
+        workspace: str,
+        key: WorkspaceContextKey,
+    ) -> WorkspaceProjectionSnapshot | None:
+        with self._lock:
+            return self._workspaces.get(workspace, {}).get(key)
+
+    @staticmethod
+    def _require_newer_projection(
+        current_version: int | None,
+        new_version: int,
+    ) -> None:
+        if current_version is not None and new_version <= current_version:
+            raise ValueError(
+                "projection_version must increase when replacing a read model"
+            )
+
 
 class WorkspaceReadModelService:
+    WORKSPACE_KEYS = frozenset(
+        {
+            "planning",
+            "performance",
+            "profitability",
+            "liquidity",
+            "risk",
+            "market-risk",
+            "actions",
+            "capital",
+            "reporting",
+        }
+    )
+
     def __init__(
         self,
         context_catalog: ContextCatalogService,
@@ -295,6 +375,14 @@ class WorkspaceReadModelService:
     def publish_command_center(self, snapshot: CommandCenterSnapshot) -> None:
         self._repository.save_command_center(snapshot)
 
+    def publish_workspace(
+        self,
+        workspace: str,
+        snapshot: WorkspaceProjectionSnapshot,
+    ) -> None:
+        self._require_workspace(workspace)
+        self._repository.save_workspace(workspace, snapshot)
+
     def command_center(
         self,
         principal: Principal,
@@ -303,7 +391,7 @@ class WorkspaceReadModelService:
         period_id: str,
         scenario_id: str,
     ) -> CommandCenterSnapshot:
-        context = self._context_catalog.resolve(
+        context = self._resolve_context(
             principal,
             company_id=company_id,
             period_id=period_id,
@@ -318,3 +406,49 @@ class WorkspaceReadModelService:
         if snapshot is None:
             raise KeyError("command_center")
         return replace(snapshot, context=context)
+
+    def workspace(
+        self,
+        workspace: str,
+        principal: Principal,
+        *,
+        company_id: str,
+        period_id: str,
+        scenario_id: str,
+    ) -> WorkspaceProjectionSnapshot:
+        self._require_workspace(workspace)
+        context = self._resolve_context(
+            principal,
+            company_id=company_id,
+            period_id=period_id,
+            scenario_id=scenario_id,
+        )
+        key = WorkspaceContextKey(
+            company_id=company_id,
+            period_id=period_id,
+            scenario_id=scenario_id,
+        )
+        snapshot = self._repository.get_workspace(workspace, key)
+        if snapshot is None:
+            raise KeyError(workspace)
+        return replace(snapshot, context=context)
+
+    def _resolve_context(
+        self,
+        principal: Principal,
+        *,
+        company_id: str,
+        period_id: str,
+        scenario_id: str,
+    ) -> WorkspaceContext:
+        return self._context_catalog.resolve(
+            principal,
+            company_id=company_id,
+            period_id=period_id,
+            scenario_id=scenario_id,
+        )
+
+    @classmethod
+    def _require_workspace(cls, workspace: str) -> None:
+        if workspace not in cls.WORKSPACE_KEYS:
+            raise ValueError(f"unsupported workspace: {workspace}")
