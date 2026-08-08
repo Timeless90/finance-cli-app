@@ -53,7 +53,7 @@ class WorkspaceContextKey:
     scenario_id: str
 
     @classmethod
-    def from_context(cls, context: WorkspaceContext) -> "WorkspaceContextKey":
+    def from_context(cls, context: WorkspaceContext) -> WorkspaceContextKey:
         return cls(
             company_id=context.company_id,
             period_id=context.period_id,
