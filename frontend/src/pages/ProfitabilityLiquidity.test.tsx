@@ -49,7 +49,7 @@ describe("FE-07 Profitability & Liquidity", () => {
     renderWorkspace("liquidity", "local-downside");
 
     expect(await screen.findByRole("heading", { name: "Liquidity" })).toBeInTheDocument();
-    expect(screen.getByText("€24.6M")).toBeInTheDocument();
+    expect(screen.getAllByText("€24.6M")).toHaveLength(3);
     expect(screen.getByText("78d")).toBeInTheDocument();
     expect(screen.getByText("Emergency liquidity plan")).toBeInTheDocument();
   });
