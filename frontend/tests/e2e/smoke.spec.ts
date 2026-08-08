@@ -26,5 +26,5 @@ test("FE-07 downside context flows across finance workspaces", async ({ page }) 
   await expect(page).toHaveURL(/\/app\/liquidity$/);
   await expect(page.getByRole("heading", { name: "Liquidity" })).toBeVisible();
   await expect(page.getByText("78d", { exact: true })).toBeVisible();
-  await expect(page.getByText("Emergency liquidity plan")).toBeVisible();
+  await expect(page.getByText(/Emergency liquidity plan/i)).toBeVisible();
 });
