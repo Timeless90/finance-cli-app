@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 
+import { useWorkspaceContext } from "@/app/context/useWorkspaceContext";
 import { getWorkspaceByPath } from "@/app/navigation";
-import { useWorkspaceContext } from "@/app/context/WorkspaceContext";
 import { MetricPanel, StatusIndicator, TacticalFrame } from "@/components/finance";
 
 export function WorkspacePlaceholder() {
