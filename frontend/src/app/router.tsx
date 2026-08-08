@@ -3,11 +3,11 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 import { App } from "@/app/App";
 import { AppShell } from "@/components/layout";
 import { CommandCenterPage } from "@/pages/CommandCenterPage";
+import { PerformancePage } from "@/pages/PerformancePage";
+import { PlanningPage } from "@/pages/PlanningPage";
 import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
 
 const workspaceRoutes = [
-  "planning",
-  "performance",
   "profitability",
   "liquidity",
   "risk",
@@ -31,6 +31,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate replace to="command-center" /> },
       { path: "command-center", element: <CommandCenterPage /> },
+      { path: "planning", element: <PlanningPage /> },
+      { path: "performance", element: <PerformancePage /> },
       ...workspaceRoutes,
     ],
   },
