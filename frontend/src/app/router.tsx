@@ -7,10 +7,10 @@ import { LiquidityPage } from "@/pages/LiquidityPage";
 import { PerformancePage } from "@/pages/PerformancePage";
 import { PlanningPage } from "@/pages/PlanningPage";
 import { ProfitabilityPage } from "@/pages/ProfitabilityPage";
+import { RiskPage } from "@/pages/RiskPage";
 import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
 
 const workspaceRoutes = [
-  "risk",
   "market-risk",
   "actions",
   "capital",
@@ -35,6 +35,7 @@ export const router = createBrowserRouter([
       { path: "performance", element: <PerformancePage /> },
       { path: "profitability", element: <ProfitabilityPage /> },
       { path: "liquidity", element: <LiquidityPage /> },
+      { path: "risk", element: <RiskPage /> },
       ...workspaceRoutes,
     ],
   },
