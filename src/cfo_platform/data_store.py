@@ -13,6 +13,8 @@ class DataSnapshotRepository(Protocol):
 
     def exists(self, snapshot_id: str) -> bool: ...
 
+    def list_all(self) -> tuple[DataSnapshot, ...]: ...
+
 
 class InMemoryDataSnapshotRepository:
     def __init__(self) -> None:
@@ -33,3 +35,10 @@ class InMemoryDataSnapshotRepository:
     def exists(self, snapshot_id: str) -> bool:
         with self._lock:
             return snapshot_id in self._snapshots
+
+    def list_all(self) -> tuple[DataSnapshot, ...]:
+        with self._lock:
+            return tuple(
+                self._snapshots[snapshot_id]
+                for snapshot_id in sorted(self._snapshots)
+            )
