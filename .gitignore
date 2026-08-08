@@ -10,3 +10,12 @@ dist/
 build/
 *.egg-info/
 runs/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/storybook-static/
+frontend/playwright-report/
+frontend/test-results/
+frontend/.vite/
