@@ -22,6 +22,6 @@ const platform: PlatformResponse = {
 };
 
 export const handlers = [
-  http.get("*/health/ready", () => HttpResponse.json(readiness)),
-  http.get("*/api/v1/platform", () => HttpResponse.json(platform)),
+  http.get("/health/ready", () => HttpResponse.json(readiness)),
+  http.get("/api/v1/platform", () => HttpResponse.json(platform)),
 ];
