@@ -4,7 +4,7 @@ This document is the living integration boundary between the CFO web client and 
 
 ## Contract rule
 
-The FastAPI OpenAPI document at `/openapi.json` is the authoritative machine-readable contract. Frontend request/response models are generated from it and are never manually duplicated.
+The FastAPI OpenAPI document at `/openapi.json` is the authoritative machine-readable contract. Frontend request/response models are generated from it and are never manually duplicated once a backend endpoint exists.
 
 ```text
 FastAPI / Pydantic
@@ -89,3 +89,67 @@ The frontend will not invent production identities or role headers. The existing
 **Backend contract: none.**
 
 The public landing route `/` is intentionally independent from FastAPI and must render when the platform API is unavailable. Finance values shown in product previews are static simulated presentation data and are labelled as such. The only product boundary is navigation into `/app/command-center`; business API calls remain inside authenticated/product workspaces.
+
+## FE-05 — CFO Command Center
+
+Lifecycle state: **MOCK CONNECTED**.
+
+The executive cockpit requires one authoritative backend read model. It must not reconstruct group-level finance truth in the browser by orchestrating calculation endpoints or combining partially persisted module state.
+
+### Existing backend capabilities relevant to FE-05
+
+- `GET /api/v1/risk/register` can list currently registered enterprise risks.
+- `GET /api/v1/actions` can list currently registered management actions.
+- `GET /api/v1/planning/forecasts/{version_id}` can read a known forecast version.
+- performance and liquidity APIs currently expose calculation-oriented `POST` endpoints rather than persisted executive read models.
+- no backend endpoint currently returns a company / period / scenario scoped CFO overview.
+
+These endpoints are useful for their domain workspaces but are insufficient as the authoritative source of an executive cockpit. The frontend therefore uses a typed, explicitly labelled fixture for FE-05 until the aggregate read contract exists.
+
+### Required aggregate read contract
+
+Recommended endpoint:
+
+`GET /api/v1/command-center/overview`
+
+Recommended query parameters:
+
+| Parameter | Required | Purpose |
+| --- | --- | --- |
+| `company_id` | yes | authoritative company scope |
+| `period_id` | yes | reporting / forecast cut-off |
+| `scenario_id` | yes | active scenario/version context |
+
+Recommended response shape:
+
+```text
+CommandCenterSnapshot
+  context
+    company_id / company_label
+    period_id / period_label
+    scenario_id / scenario_label
+    currency
+    as_of
+  metrics[]
+    id / label / value / delta / status
+  forecast
+    title / unit / points[]
+  liquidity
+    cash / runway / minimum_headroom / covenant_headroom / status
+  risk
+    score / expected_loss / tail_loss / appetite_usage / top_risks[]
+  variance_drivers[]
+  actions[]
+  briefing
+    headline / summary / decisions[]
+  assurance
+    data_freshness / coverage / model_status / lineage_status
+```
+
+The authoritative API should return already-governed values and source/run identifiers where applicable. The frontend may scale chart coordinates and format display values, but it must not recompute EBITDA, cash, risk exposure, scenario probabilities or action benefit values.
+
+### Current FE-05 temporary contract
+
+`frontend/src/features/command-center/contracts.ts` is a **provisional mock-only interface**, not a replacement for OpenAPI. Once the backend endpoint is implemented, the temporary type must be deleted and the feature adapter must map the generated OpenAPI response into the view model.
+
+The application visibly labels the command center as `MOCK CONNECTED` and keeps the global selectors labelled `LOCAL CONTEXT` so simulated values cannot be confused with backend-produced finance output.
