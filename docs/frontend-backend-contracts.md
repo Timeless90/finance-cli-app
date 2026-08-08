@@ -69,8 +69,6 @@ Current backend observation:
 | API readiness | GET | `/health/ready` | none | `HealthResponse { status, service, environment, version }` | none |
 | Platform metadata | GET | `/api/v1/platform` | none | `PlatformResponse { name, api_version, capabilities[] }` | none |
 
-These are the first live frontend/backend contracts and are used only for application/system status, not finance results.
-
 ### Context contracts still missing
 
 | Frontend need | Current state | Backend gap |
@@ -85,3 +83,9 @@ Until these read contracts exist, the UI continues to label global selectors as 
 ### Authentication boundary
 
 The frontend will not invent production identities or role headers. The existing `X-User`, `X-Roles` and `X-Companies` mechanism is recorded as the current backend contract, but production identity propagation will be integrated only when the authentication architecture is finalized.
+
+## FE-04 — Public Landing Experience
+
+**Backend contract: none.**
+
+The public landing route `/` is intentionally independent from FastAPI and must render when the platform API is unavailable. Finance values shown in product previews are static simulated presentation data and are labelled as such. The only product boundary is navigation into `/app/command-center`; business API calls remain inside authenticated/product workspaces.
