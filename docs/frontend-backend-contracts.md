@@ -4,7 +4,7 @@ This document is the living integration boundary between the CFO web client and 
 
 ## Contract rule
 
-The backend OpenAPI document at `/openapi.json` is the authoritative machine-readable API contract. The frontend must not manually duplicate backend request/response models. Generated TypeScript contracts are wrapped by frontend adapters before feature code consumes them.
+The FastAPI OpenAPI document at `/openapi.json` is the authoritative machine-readable contract. Frontend request/response models are generated from it and are never manually duplicated.
 
 ```text
 FastAPI / Pydantic
@@ -13,10 +13,13 @@ FastAPI / Pydantic
 /openapi.json
       |
       v
-generated TypeScript client
+OpenAPI export
       |
       v
-frontend API adapter
+generated TypeScript paths/components
+      |
+      v
+openapi-fetch adapter
       |
       v
 TanStack Query / feature hooks
@@ -27,84 +30,58 @@ React UI
 
 ## Responsibility boundary
 
-**Backend owns**
+**Backend owns** finance calculations, authoritative validation, authorization, workflow state transitions and persisted run/snapshot/model state.
 
-- finance calculations and business rules
-- risk, forecast, valuation and simulation results
-- authorization decisions
-- workflow state transitions
-- persisted run/snapshot/model state
-- authoritative validation
-
-**Frontend owns**
-
-- presentation and interaction state
-- loading, empty and error UX
-- input forms and client-side convenience validation
-- formatting and visualization of backend results
-- navigation and feature composition
-- accessibility and responsive behavior
+**Frontend owns** presentation, interaction state, loading/empty/error UX, convenience validation, formatting, visualization, navigation and accessibility.
 
 Client-side validation never replaces backend validation.
 
-## Per-epic contract format
-
-Every frontend epic documents endpoint/method, request, response, errors, frontend consumption and any backend prerequisite or gap.
-
 ## FE-01 — Finance 2060 Design System
 
-**Backend contract:** none.
-
-The design system contains tokens, primitives and finance presentation components only. It renders and tests without FastAPI.
+Backend contract: none.
 
 ## FE-02 — Application Shell & Navigation
 
-**Live backend contract:** none yet.
+No live business API calls. Company, fiscal period and scenario selectors remain clearly labelled local context values and must not be submitted to authoritative finance APIs.
 
-FE-02 owns route composition and a global UI context for company, fiscal period and scenario. Until FE-03 binds these selectors to authoritative APIs, all selector values use `local-*` identifiers and the UI explicitly marks them as `LOCAL CONTEXT`.
+Current backend observation:
 
-### Current local presentation contract
-
-```text
-companyId  : string   // local-* only in FE-02
-periodId   : string   // local-* only in FE-02
-scenarioId : string   // local-* only in FE-02
-```
-
-These are presentation values only. They must not be submitted to authoritative finance endpoints.
-
-### Existing backend facts relevant to FE-02
-
-The current governance API accepts identity/scope through request headers on protected governance operations:
-
-```text
-X-User
-X-Roles
-X-Companies
-X-Correlation-Id   // where applicable
-```
-
-The current governance router exposes `POST /api/v1/governance/scenarios` to create a scenario, but no GET/list scenario endpoint is currently available for populating a global scenario selector.
-
-### Backend read contracts required before live global context
-
-FE-03 must inspect the authoritative OpenAPI document before naming or requesting new endpoints. Functionally the frontend will need read contracts that provide:
-
-- companies the signed-in principal may access,
-- selectable fiscal/reporting periods,
-- existing scenarios with stable scenario IDs and display names,
-- eventually authenticated principal/role/scope information.
-
-If equivalent endpoints already exist when FE-03 runs, they will be consumed. If not, they will be documented as backend gaps rather than implemented by the frontend.
+- `POST /api/v1/governance/scenarios` exists for scenario creation.
+- no scenario list/read endpoint currently exists for the global selector.
+- governed endpoints currently receive principal context via `X-User`, `X-Roles`, `X-Companies` and optional `X-Correlation-Id` headers.
 
 ## FE-03 — API Contract & Mock Architecture
 
-This epic introduces the first technical integration contract:
+### Machine contract
 
 - source: `GET /openapi.json`
-- generated TypeScript contracts are treated as build artifacts
-- generated code is never edited manually
-- feature code accesses APIs through frontend adapters
-- MSW fixtures reproduce the same request/response shapes for parallel development
+- local export: `npm run api:export`
+- TypeScript generation: `npm run api:generate`
+- full synchronization: `npm run api:sync`
+- runtime transport: `openapi-fetch`
+- remote-state orchestration: TanStack Query
+- mock transport: MSW
 
-Concrete endpoint matrices are added as each product workspace is connected.
+### Bound system contracts
+
+| Purpose | Method | Endpoint | Request | Response | Auth |
+| --- | --- | --- | --- | --- | --- |
+| API readiness | GET | `/health/ready` | none | `HealthResponse { status, service, environment, version }` | none |
+| Platform metadata | GET | `/api/v1/platform` | none | `PlatformResponse { name, api_version, capabilities[] }` | none |
+
+These are the first live frontend/backend contracts and are used only for application/system status, not finance results.
+
+### Context contracts still missing
+
+| Frontend need | Current state | Backend gap |
+| --- | --- | --- |
+| accessible companies | local-only | read endpoint for user/company scopes |
+| fiscal periods | local-only | read endpoint for available reporting periods |
+| scenarios | create endpoint only | list/read scenario endpoint |
+| principal identity/roles | headers required by governed routes | authoritative identity/RBAC read contract for the web client |
+
+Until these read contracts exist, the UI continues to label global selectors as `LOCAL CONTEXT`.
+
+### Authentication boundary
+
+The frontend will not invent production identities or role headers. The existing `X-User`, `X-Roles` and `X-Companies` mechanism is recorded as the current backend contract, but production identity propagation will be integrated only when the authentication architecture is finalized.
