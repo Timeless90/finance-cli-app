@@ -128,9 +128,9 @@ function StatusBar() {
   return (
     <footer className="grid gap-px border-t border-[var(--frame-muted)] bg-[var(--frame-muted)] sm:grid-cols-4">
       <StatusIndicator label="CONTEXT" detail="LOCAL" tone="warning" />
-      <StatusIndicator label="API" detail="UNBOUND" tone="muted" />
-      <StatusIndicator label="DATA" detail="UNBOUND" tone="muted" />
-      <StatusIndicator label="MODEL" detail="UNBOUND" tone="muted" />
+      <StatusIndicator label="API" detail="UNBOUND" tone="neutral" />
+      <StatusIndicator label="DATA" detail="UNBOUND" tone="neutral" />
+      <StatusIndicator label="MODEL" detail="UNBOUND" tone="neutral" />
     </footer>
   );
 }
