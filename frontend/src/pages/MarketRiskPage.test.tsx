@@ -48,7 +48,7 @@ describe("FE-09 Market Risk Lab", () => {
   it("escalates volatility and simulation risk in downside context", async () => {
     renderLab("local-downside");
 
-    expect(await screen.findByText("42.8%", { exact: true })).toBeInTheDocument();
+    expect(await screen.findAllByText("42.8%", { exact: true })).toHaveLength(2);
     expect(screen.getByText("€8.9M", { exact: true })).toBeInTheDocument();
     expect(screen.getByText("82%", { exact: true })).toBeInTheDocument();
     expect(screen.getAllByText("BREACH")).toHaveLength(2);
