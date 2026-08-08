@@ -1,7 +1,8 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { WorkspaceContextProvider } from "@/app/context/WorkspaceContext";
+import { useWorkspaceContext } from "@/app/context/useWorkspaceContext";
 import { getWorkspaceByPath, workspaceNavigation } from "@/app/navigation";
-import { WorkspaceContextProvider, useWorkspaceContext } from "@/app/context/WorkspaceContext";
 import { StatusIndicator } from "@/components/finance";
 
 const navGroups = [
