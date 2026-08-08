@@ -1,5 +1,5 @@
-import { Navigate } from "react-router-dom";
+import { LandingPage } from "@/pages/LandingPage";
 
 export function App() {
-  return <Navigate replace to="/app/command-center" />;
+  return <LandingPage />;
 }

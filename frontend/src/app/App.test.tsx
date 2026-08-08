@@ -1,29 +1,24 @@
 import "@testing-library/jest-dom/vitest";
 
 import { render, screen } from "@testing-library/react";
-import { RouterProvider, createMemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 
-import { AppShell } from "@/components/layout";
-import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
+import { App } from "@/app/App";
 
-describe("FE-03 application shell", () => {
-  it("renders command center navigation and explicit local context", () => {
-    const router = createMemoryRouter(
-      [
-        {
-          path: "/app",
-          element: <AppShell />,
-          children: [{ path: "command-center", element: <WorkspacePlaceholder /> }],
-        },
-      ],
-      { initialEntries: ["/app/command-center"] },
+describe("FE-04 public landing", () => {
+  it("renders the public finance 2060 experience without backend data", () => {
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
     );
 
-    render(<RouterProvider router={router} />);
-
-    expect(screen.getByRole("heading", { name: "Command Center" })).toBeInTheDocument();
-    expect(screen.getByText("LOCAL CONTEXT // NOT YET BACKEND-BOUND")).toBeInTheDocument();
-    expect(screen.getByText("MODEL")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /see the future of finance/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/simulated ui preview/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "LAUNCH COMMAND CENTER" })).toHaveAttribute(
+      "href",
+      "/app/command-center",
+    );
   });
 });
