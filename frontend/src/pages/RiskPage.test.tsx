@@ -47,7 +47,7 @@ describe("FE-08 Risk Command Center", () => {
   it("raises portfolio exposure and risk breaches in downside context", async () => {
     renderRisk("local-downside");
 
-    expect(await screen.findByText("€36.7M")).toBeInTheDocument();
+    expect(await screen.findAllByText("€36.7M")).toHaveLength(2);
     expect(screen.getByText("Combined downside")).toBeInTheDocument();
     expect(screen.getByText("112%", { exact: false })).toBeInTheDocument();
     expect(screen.getAllByText(/BREACHED/)).toHaveLength(2);
