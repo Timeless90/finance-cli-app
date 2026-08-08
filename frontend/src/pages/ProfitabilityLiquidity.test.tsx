@@ -51,6 +51,6 @@ describe("FE-07 Profitability & Liquidity", () => {
     expect(await screen.findByRole("heading", { name: "Liquidity" })).toBeInTheDocument();
     expect(screen.getAllByText("€24.6M")).toHaveLength(3);
     expect(screen.getByText("78d")).toBeInTheDocument();
-    expect(screen.getByText("Emergency liquidity plan")).toBeInTheDocument();
+    expect(screen.getByText(/Emergency liquidity plan/i)).toBeInTheDocument();
   });
 });
