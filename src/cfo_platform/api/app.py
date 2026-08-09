@@ -7,6 +7,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from cfo_platform.composition import ApplicationContainer, build_container
+from cfo_platform.finance_decision_runs import (
+    FinanceDecisionRunService,
+    InMemoryFinanceDecisionRunRepository,
+)
 from cfo_platform.finance_model_runs import (
     FinanceModelRunService,
     InMemoryFinanceModelRunRepository,
@@ -16,6 +20,7 @@ from .action_routes import build_action_router
 from .capital_routes import build_capital_router
 from .copilot_routes import build_copilot_router
 from .data_routes import build_data_router
+from .decision_run_routes import build_decision_run_router
 from .governance_routes import build_governance_router
 from .job_routes import build_job_router
 from .liquidity_routes import build_liquidity_router
@@ -56,6 +61,20 @@ def create_app(
         resolved_container.copula_dependence_model,
         resolved_container.var_backtester,
     )
+    finance_decision_runs = FinanceDecisionRunService(
+        resolved_container.context_catalog_service,
+        resolved_container.data_snapshot_repository,
+        resolved_container.access_control,
+        InMemoryFinanceDecisionRunRepository(),
+        resolved_container.action_catalogue_service,
+        resolved_container.action_simulation_engine,
+        resolved_container.action_portfolio_prioritizer,
+        resolved_container.benefit_tracking_service,
+        resolved_container.project_valuation_service,
+        resolved_container.monte_carlo_npv_engine,
+        resolved_container.capital_portfolio_optimizer,
+        resolved_container.funding_scenario_engine,
+    )
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -73,6 +92,7 @@ def create_app(
     app.state.settings = resolved
     app.state.container = resolved_container
     app.state.finance_model_run_service = finance_model_runs
+    app.state.finance_decision_run_service = finance_decision_runs
     app.add_middleware(
         CORSMiddleware,
         allow_origins=resolved.allowed_origins,
@@ -109,6 +129,10 @@ def create_app(
     )
     app.include_router(
         build_model_run_router(finance_model_runs),
+        prefix=resolved.api_prefix,
+    )
+    app.include_router(
+        build_decision_run_router(finance_decision_runs),
         prefix=resolved.api_prefix,
     )
     app.include_router(
