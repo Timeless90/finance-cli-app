@@ -1,0 +1,20 @@
+services:
+  workspace:
+    build: ./.devcontainer
+    command: sleep infinity
+    volumes:
+      - .:/workspaces/template:cached
+      - devcontainer-python:/workspaces/template/backend/.venv
+      - devcontainer-node:/workspaces/template/frontend/node_modules
+    environment:
+      CFO_GOVERNANCE_DATABASE_URL: postgresql://template:template-local@postgres:5432/template
+      CFO_OTLP_ENDPOINT: http://otel-collector:4318
+      TEMPLATE_INFRA_MANAGED: "1"
+      BIND_HOST: "0.0.0.0"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  devcontainer-python:
+  devcontainer-node:

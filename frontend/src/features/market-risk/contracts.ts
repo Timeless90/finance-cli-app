@@ -4,12 +4,12 @@ export type WorkspaceSelection = {
   scenarioId: string;
 };
 
-export type ModelLifecycle = "MODEL_CONTRACT_PENDING";
+export type ModelLifecycle = 'MODEL_CONTRACT_PENDING' | 'LIVE_RUN_AVAILABLE';
 
 export type MarketRiskAsset = {
   id: string;
   label: string;
-  assetClass: "FX" | "COMMODITY" | "EQUITY" | "RATE";
+  assetClass: 'FX' | 'COMMODITY' | 'EQUITY' | 'RATE';
   exposure: string;
   spot: string;
   dailyVol: string;
@@ -17,7 +17,7 @@ export type MarketRiskAsset = {
   var95: string;
   es95: string;
   beta: string;
-  status: "NORMAL" | "WATCH" | "STRESS";
+  status: 'NORMAL' | 'WATCH' | 'STRESS';
 };
 
 export type TimePoint = {
@@ -29,7 +29,7 @@ export type TimePoint = {
 };
 
 export type MarketRiskSnapshot = {
-  contractStatus: "MOCK_CONNECTED";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
   modelLifecycle: ModelLifecycle;
   context: WorkspaceSelection & {
     companyLabel: string;
@@ -40,9 +40,9 @@ export type MarketRiskSnapshot = {
   assets: MarketRiskAsset[];
   selectedAssetId: string;
   garch: {
-    model: "GARCH(1,1)-t";
+    model: 'GARCH(1,1)-t';
     runId: string;
-    convergence: "CONVERGED";
+    convergence: 'CONVERGED';
     logLikelihood: string;
     aic: string;
     bic: string;
@@ -60,9 +60,9 @@ export type MarketRiskSnapshot = {
     qq: Array<{ theoretical: number; observed: number }>;
   };
   regimes: {
-    model: "2-STATE MARKOV SWITCHING";
+    model: '2-STATE MARKOV SWITCHING';
     runId: string;
-    currentState: "LOW VOL" | "HIGH VOL";
+    currentState: 'LOW VOL' | 'HIGH VOL';
     confidence: string;
     states: Array<{
       id: string;
@@ -84,7 +84,7 @@ export type MarketRiskSnapshot = {
     ksPValue: string;
   }>;
   dependency: {
-    model: "t-COPULA";
+    model: 't-COPULA';
     runId: string;
     dof: string;
     logLikelihood: string;
@@ -101,7 +101,7 @@ export type MarketRiskSnapshot = {
   simulation: {
     runId: string;
     paths: string;
-    horizon: "252D";
+    horizon: '252D';
     seed: string;
     var95: string;
     es95: string;
@@ -121,7 +121,7 @@ export type MarketRiskSnapshot = {
     expectedExceptions: string;
     kupiecPValue: string;
     christoffersenPValue: string;
-    trafficLight: "GREEN" | "YELLOW" | "RED";
+    trafficLight: 'GREEN' | 'YELLOW' | 'RED';
     breaches: Array<{
       date: string;
       return: string;
@@ -139,7 +139,7 @@ export type MarketRiskSnapshot = {
     outOfSampleLoss: string;
     varCoverage: string;
     tailFit: string;
-    status: "CANDIDATE" | "CHAMPION" | "REJECTED";
+    status: 'CANDIDATE' | 'CHAMPION' | 'REJECTED';
   }>;
   thresholds: Array<{
     id: string;
@@ -147,7 +147,7 @@ export type MarketRiskSnapshot = {
     warning: string;
     breach: string;
     current: string;
-    status: "NORMAL" | "WARNING" | "BREACH";
+    status: 'NORMAL' | 'WARNING' | 'BREACH';
     documentation: string;
   }>;
 };

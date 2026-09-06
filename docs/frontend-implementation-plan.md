@@ -1,5 +1,7 @@
 # CFO Frontend Implementation Plan
 
+> Aufgaben, Prioritäten und Lieferstatus werden im [GitHub Project](https://github.com/users/Timeless90/projects/2) geführt. Dieses Dokument bleibt fachliche Planungsreferenz; historische Reihenfolgen und Statusangaben können vom lokalen Lieferstand abweichen. Siehe [Arbeitsablauf und Übernahmeabgleich](development/github-project-workflow.md).
+
 ## Scope
 
 This roadmap covers only the JavaScript/TypeScript web client for `finance-cli-app`. Backend implementation remains outside frontend scope. Frontend delivery is designed to proceed in parallel with backend work through OpenAPI contracts, adapters and mock handlers.

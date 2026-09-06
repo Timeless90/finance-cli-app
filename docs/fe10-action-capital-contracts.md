@@ -1,16 +1,16 @@
-# FE-10 — Action Steering & Capital Allocation Backend Contracts
+# FE-09 — Action Steering & Capital Allocation Backend Contracts
 
 ## Lifecycle
 
-Frontend lifecycle: **MOCK CONNECTED**.
+Frontend lifecycle: **LIVE API CONNECTED for published read models in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
 
-The existing action list is useful, but FE-10 requires governed, company/period/scenario-scoped steering and capital portfolio read models. The browser must not calculate benefit realization, capital rankings, NPV/IRR, constrained allocations or approval outcomes.
+The published company/period/scenario Action Steering and Capital Allocation read models are bound through generated OpenAPI types. The browser must not calculate benefit realization, capital rankings, NPV/IRR, constrained allocations or approval outcomes. BE-04's governed mutation lifecycle remains outstanding.
 
 ## Action Steering
 
 ### Existing boundary
 
-`GET /api/v1/actions` is already available and remains the authoritative source for the action register where applicable. FE-10 additionally needs source-signal lineage, expected-value baselines, realized benefits, evidence, decision gates and dependencies in one read model.
+`GET /api/v1/actions` remains available for the action register where applicable. FE-09 uses the published workspace projection for source-signal lineage, expected-value baselines, realized benefits, evidence, decision gates and dependencies in one read model.
 
 ### Recommended endpoint
 
@@ -211,10 +211,10 @@ Approval records should preserve gate, owner/role, decision, rationale, evidence
 
 ## Frontend replacement rule
 
-`frontend/src/features/action-capital/contracts.ts` is a temporary view-model contract. Once OpenAPI-backed read models exist:
+`frontend/src/features/action-capital/contracts.ts` is a display view-model contract. The OpenAPI-backed read models are mapped through thin adapters; the remaining replacement rule applies to BE-04 command workflows:
 
 1. generate response types through FE-03 OpenAPI sync;
 2. map generated types through thin feature adapters;
 3. delete duplicated authoritative fields from frontend contracts;
 4. retain only display-specific types;
-5. remove `MOCK CONNECTED` only after the real read models and governed mutations are bound.
+5. keep `LIVE API CONNECTED` for published read models and add mutation states only when governed commands are bound.

@@ -1,0 +1,17 @@
+Run ID: uat-local-r4-read-models-2026-08-09
+Cases: FE-UAT-028, FE-UAT-029 (read-model scope only)
+Environment: local-uat
+Build: working tree based on f28d3ec
+Executed: 2026-08-09T08:01:00Z
+Tester: automated local UAT gate
+
+Evidence
+- CFO_ENVIRONMENT=uat uv run --no-sync cfo-api seeded deterministic, non-personal Action Steering and Capital Allocation projections.
+- CFO_UAT_GATEWAY=true npm run dev:uat replaced browser-supplied trust headers with the local UAT identity.
+- CFO_LIVE_E2E=true npx playwright test tests/e2e/live-uat.spec.ts passed in Chromium and verified both published workspaces display LIVE API CONNECTED after a downside-context change.
+- tests/test_uat_seed.py and frontend/src/features/action-capital/query.test.ts passed; frontend lint, typecheck and production build passed.
+
+Scope note
+This is evidence for read-only, published workspace projections. It does not execute or approve the
+full FE-UAT-028/029 production-target cases: BE-04's versioned command/run lifecycle, idempotency,
+authorization-gated approval actions, durable persistence and manual business acceptance remain blocked.

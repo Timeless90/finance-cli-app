@@ -1,0 +1,41 @@
+# Project MCP servers for Codex. Copilot uses .vscode/mcp.json.
+# Start Codex inside this repository; see docs/mcp-setup.md for authentication.
+
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+bearer_token_env_var = "CODEX_GITHUB_TOKEN"
+
+[mcp_servers.playwright]
+command = "sh"
+args = ["-c", 'cd "$(git rev-parse --show-toplevel)" && exec mise exec -- pnpm --dir frontend exec mcp-server-playwright --isolated --headless --output-dir "$PWD/.local/playwright-mcp-codex"']
+startup_timeout_sec = 60
+
+[mcp_servers."21st"]
+url = "https://21st.dev/api/mcp"
+env_http_headers = { "x-api-key" = "TWENTY_FIRST_API_KEY" }
+
+[mcp_servers.microsoftLearn]
+url = "https://learn.microsoft.com/api/mcp"
+
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp/oauth"
+
+[mcp_servers.shadcn]
+command = "sh"
+args = ["-c", 'cd "$(git rev-parse --show-toplevel)/frontend" && exec mise exec -- pnpm dlx shadcn@4.21.0 mcp']
+startup_timeout_sec = 120
+
+[mcp_servers.grafana]
+command = "sh"
+args = ["-c", 'cd "$(git rev-parse --show-toplevel)" && exec mise exec -- uv tool run --from mcp-grafana==1.3.0 mcp-grafana --transport stdio --disable-write --enabled-tools search,datasource,dashboard,prometheus,loki']
+env_vars = ["GRAFANA_SERVICE_ACCOUNT_TOKEN"]
+startup_timeout_sec = 120
+
+[mcp_servers.grafana.env]
+GRAFANA_URL = "http://127.0.0.1:3000"
+
+[mcp_servers.postgres]
+command = "sh"
+args = ["-c", 'cd "$(git rev-parse --show-toplevel)/.vscode/mcp" && exec mise exec -- pnpm dlx @bytebase/dbhub@1.2.3 --transport stdio --config dbhub.toml']
+env_vars = ["MCP_POSTGRES_DSN"]
+startup_timeout_sec = 120

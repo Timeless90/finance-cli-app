@@ -1,0 +1,8 @@
+{
+  "template_version": "1.0.0",
+  "initialized": true,
+  "id": "finance-cli-app",
+  "name": "CFO Command Center",
+  "description": "CFO planning, forecasting, and quantitative risk platform",
+  "vscode_profile": ""
+}

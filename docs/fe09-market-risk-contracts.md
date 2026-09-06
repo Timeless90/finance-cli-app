@@ -1,8 +1,8 @@
-# FE-09 — Market Risk Lab Backend Contracts
+# FE-08 — Market Risk Lab Backend Contracts
 
 ## Lifecycle
 
-Frontend lifecycle: **MOCK CONNECTED / MODEL CONTRACT PENDING**.
+Frontend lifecycle: **LIVE API CONNECTED in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
 
 The Market Risk Lab is a diagnostic and model-governance surface. It must never estimate GARCH parameters, classify regimes, fit copulas, generate production Monte Carlo paths, or execute risk backtests in browser JavaScript.
 
@@ -15,11 +15,11 @@ The repository already contains useful Python foundations in the Finance CLI:
 - `finance_cli.risk`: drawdown, Sharpe, Sortino, Omega, Ulcer Index, historical/normal VaR and Expected Shortfall;
 - `finance_cli.diagnostics`: walk-forward forecast diagnostics, historical/normal VaR/CVaR, PIT, autocorrelation checks, Jensen-Shannon/Wasserstein metrics, POT threshold estimation and bootstrap comparison utilities.
 
-These functions are valuable analytical building blocks, but they are not exposed as a governed FastAPI Market Risk service. No production GARCH, Markov/regime-switching, copula or market-risk model-run contract was found in the current API surface.
+These functions remain useful analytical building blocks. FastAPI now exposes the governed UAT `GET /api/v1/market-risk/workspace` projection and `POST`/`GET /api/v1/market-risk/model-runs` workflow, including deterministic seeds and source-snapshot lineage. Durable persistence and production workers remain Release 7 work.
 
 ## Required service architecture
 
-FE-09 should consume versioned **model runs** rather than ad-hoc synchronous calculation payloads. Each model run must be reproducible and auditable.
+FE-08 consumes versioned **model runs** rather than ad-hoc synchronous calculation payloads. Each model run must be reproducible and auditable.
 
 Recommended common run metadata:
 
@@ -148,7 +148,7 @@ MarketRegimeRun
     state_separation
 ```
 
-FE-09 must display state probabilities and transitions only; regime inference remains backend-owned.
+FE-08 must display state probabilities and transitions only; regime inference remains backend-owned.
 
 ## Gap 4 — Marginal distribution fitting
 
@@ -246,10 +246,10 @@ A breach record should preserve metric, threshold/version, observed value, sourc
 
 ## Frontend replacement rule
 
-`frontend/src/features/market-risk/contracts.ts` is a temporary mock/view-model schema. When these backend contracts are implemented:
+`frontend/src/features/market-risk/contracts.ts` is a display view-model schema. The UAT contracts are implemented and mapped through the generated OpenAPI types:
 
 1. generate TypeScript types from FastAPI OpenAPI;
 2. build thin adapters from generated responses to presentation models;
 3. delete duplicated authoritative finance/model fields from the frontend contract;
 4. keep only display-specific types such as chart-coordinate helpers;
-5. remove `MODEL CONTRACT PENDING` only after validated backend runs are actually bound.
+5. retain explicit run/persistence limitations until production-grade validated backend runs are deployed.

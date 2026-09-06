@@ -42,13 +42,13 @@ Backend contract: none.
 
 ## FE-02 — Application Shell & Navigation
 
-No live business API calls. Company, fiscal period and scenario selectors remain clearly labelled local context values and must not be submitted to authoritative finance APIs.
+Company, fiscal period and scenario selectors use the authoritative context APIs in live UAT mode. Mock mode continues to show explicitly local context values.
 
-Current backend observation:
+Current backend contract:
 
-- `POST /api/v1/governance/scenarios` exists for scenario creation.
-- no scenario list/read endpoint currently exists for the global selector.
-- governed endpoints currently receive principal context via `X-User`, `X-Roles`, `X-Companies` and optional `X-Correlation-Id` headers.
+- `GET /api/v1/context/principal`, `/companies`, `/periods`, `/scenarios` and `/resolve` provide authoritative context.
+- The UAT reverse proxy replaces browser-supplied `X-User`, `X-Roles`, and `X-Companies` values with a deploy-side test principal.
+- Production identity propagation remains an OIDC/Entra release gate; the browser never creates trust headers.
 
 ## FE-03 — API Contract & Mock Architecture
 
@@ -57,7 +57,7 @@ Current backend observation:
 - source: `GET /openapi.json`
 - local export: `npm run api:export`
 - TypeScript generation: `npm run api:generate`
-- full synchronization: `npm run api:sync`
+- full synchronization: `pnpm api:sync`
 - runtime transport: `openapi-fetch`
 - remote-state orchestration: TanStack Query
 - mock transport: MSW
@@ -69,16 +69,17 @@ Current backend observation:
 | API readiness | GET | `/health/ready` | none | `HealthResponse { status, service, environment, version }` | none |
 | Platform metadata | GET | `/api/v1/platform` | none | `PlatformResponse { name, api_version, capabilities[] }` | none |
 
-### Context contracts still missing
+### Context contracts
 
-| Frontend need | Current state | Backend gap |
+| Frontend need | Endpoint | Current state |
 | --- | --- | --- |
-| accessible companies | local-only | read endpoint for user/company scopes |
-| fiscal periods | local-only | read endpoint for available reporting periods |
-| scenarios | create endpoint only | list/read scenario endpoint |
-| principal identity/roles | headers required by governed routes | authoritative identity/RBAC read contract for the web client |
+| principal identity and permissions | `GET /api/v1/context/principal` | UAT live |
+| accessible companies | `GET /api/v1/context/companies` | UAT live |
+| fiscal periods | `GET /api/v1/context/periods` | UAT live |
+| scenarios | `GET /api/v1/context/scenarios` | UAT live |
+| canonical selection validation | `GET /api/v1/context/resolve` | UAT live |
 
-Until these read contracts exist, the UI continues to label global selectors as `LOCAL CONTEXT`.
+In live mode the UI labels these values as backend-bound context.
 
 ### Authentication boundary
 
@@ -92,7 +93,7 @@ The public landing route `/` is intentionally independent from FastAPI and must 
 
 ## FE-05 — CFO Command Center
 
-Lifecycle state: **MOCK CONNECTED**.
+Lifecycle state: **LIVE API CONNECTED in UAT; MOCK CONNECTED in isolated frontend mode.**
 
 The executive cockpit requires one authoritative backend read model. It must not reconstruct group-level finance truth in the browser by orchestrating calculation endpoints or combining partially persisted module state.
 
@@ -102,9 +103,9 @@ The executive cockpit requires one authoritative backend read model. It must not
 - `GET /api/v1/actions` can list currently registered management actions.
 - `GET /api/v1/planning/forecasts/{version_id}` can read a known forecast version.
 - performance and liquidity APIs currently expose calculation-oriented `POST` endpoints rather than persisted executive read models.
-- no backend endpoint currently returns a company / period / scenario scoped CFO overview.
+- `GET /api/v1/command-center/overview` returns a published company / period / scenario scoped CFO overview.
 
-These endpoints are useful for their domain workspaces but are insufficient as the authoritative source of an executive cockpit. The frontend therefore uses a typed, explicitly labelled fixture for FE-05 until the aggregate read contract exists.
+The Command Center uses an adapter over generated OpenAPI types in live mode. It does not calculate or reconstruct finance values; unpublished contexts display an explicit error state rather than fixtures.
 
 ### Required aggregate read contract
 
@@ -156,9 +157,9 @@ The application visibly labels the command center as `MOCK CONNECTED` and keeps 
 
 ## FE-06 — Planning & Performance Workspace
 
-Lifecycle state: **MOCK CONNECTED**.
+Lifecycle state: **LIVE API CONNECTED in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
 
-FE-06 implements the Planning and Performance workspaces while preserving the calculation boundary. The backend already exposes useful calculation services, but the web application is still missing persisted, company/period/scenario-scoped read models for normal workspace loading.
+FE-06 implements the Planning and Performance workspaces while preserving the calculation boundary. Published, company/period/scenario-scoped workspace projections are loaded through the generated FastAPI contract; the frontend maps values for presentation but does not derive financial results.
 
 ### Existing planning calculation contracts
 
@@ -182,14 +183,12 @@ The create/evaluate endpoints require authoritative source inputs. The frontend 
 | POST | `/api/v1/performance/anomalies` | detect anomalies in supplied observations |
 | POST | `/api/v1/performance/commentary/requirements` | evaluate commentary materiality/requirements |
 
-These are domain engines, not workspace query APIs. FE-06 therefore uses explicit fixtures for statement values, KPI states, variance explanations, anomaly signals and commentary queues until persisted results can be queried.
+These are domain engines, not workspace query APIs. The normal workspace views instead load the published read models below; fixtures are retained only for explicit mock mode and frontend tests.
 
-### Required Planning read contracts
+### Published Planning read contract
 
 Recommended minimum API surface:
 
-- `GET /api/v1/planning/scenarios?company_id=...&period_id=...`
-- `GET /api/v1/planning/forecasts?company_id=...&period_id=...&scenario_id=...`
 - `GET /api/v1/planning/workspace?company_id=...&period_id=...&scenario_id=...`
 
 The planning workspace response should provide:
@@ -215,12 +214,11 @@ PlanningWorkspaceSnapshot
     confidence / backtest_metrics / bias
 ```
 
-### Required Performance read contracts
-
-Recommended minimum API surface:
+### Published Performance read contract
 
 - `GET /api/v1/performance/workspace?company_id=...&period_id=...&scenario_id=...`
-- optionally drill-down endpoints such as `GET /api/v1/performance/variance-bridges/{bridge_id}` and `GET /api/v1/performance/anomalies?company_id=...&period_id=...` when persisted identifiers exist.
+
+Optional drill-down endpoints such as `GET /api/v1/performance/variance-bridges/{bridge_id}` and `GET /api/v1/performance/anomalies?...` can be added when persisted identifiers are available.
 
 The performance workspace response should provide:
 
@@ -239,13 +237,13 @@ PerformanceWorkspaceSnapshot
 
 All returned financial values must be backend-produced or persisted domain outputs. The frontend may format numbers and scale visual coordinates, but it must not calculate income statement lines, KPI formulas, variance contributions, accuracy statistics or anomalies.
 
-### Current FE-06 temporary contract
+### FE-06 client contract
 
-`frontend/src/features/planning-performance/contracts.ts` is a provisional mock-only view-model contract. It must be replaced by adapters over OpenAPI-generated response types as the recommended read endpoints become available. The workspaces visibly display `MOCK CONNECTED`, and global Company / Period / Scenario values remain local context until FE-02 context gaps are resolved.
+`frontend/src/features/planning-performance/query.ts` adapts generated `PlanningWorkspaceResponse` and `PerformanceWorkspaceResponse` types into display view models. It shows `LIVE API CONNECTED` for backend projections. Company, period and scenario options are loaded from the FE-02 context endpoints; a missing projection is surfaced as an empty/error state, never as a fixture fallback.
 
 ## FE-07 — Profitability & Liquidity Workspace
 
-Lifecycle state: **MOCK CONNECTED**.
+Lifecycle state: **LIVE API CONNECTED in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
 
 FE-07 implements product/segment/customer profitability plus liquidity, working capital, debt, covenant and stress-control workspaces without moving backend finance calculations into the browser.
 
@@ -260,7 +258,7 @@ FE-07 implements product/segment/customer profitability plus liquidity, working 
 | POST | `/api/v1/profitability/sensitivity` | evaluate margin sensitivity from supplied revenue/cost assumptions |
 | POST | `/api/v1/profitability/margin-at-risk` | calculate margin-at-risk from supplied scenario probabilities and margins |
 
-These endpoints are analytical engines. They do not provide a persisted profitability ledger or a company/period/scenario workspace query. The frontend must not reconstruct profitability records, allocations or margin-at-risk scenarios from displayed numbers merely to invoke these services.
+These endpoints are analytical engines. The normal workspace view reads the published workspace projection; it does not reconstruct profitability records, allocations or margin-at-risk scenarios from displayed numbers merely to invoke these services.
 
 ### Existing liquidity calculation contracts
 
@@ -274,15 +272,11 @@ These endpoints are analytical engines. They do not provide a persisted profitab
 | POST | `/api/v1/liquidity/stress-tests` | apply one supplied liquidity stress scenario |
 | POST | `/api/v1/liquidity/cash-forecast/accuracy` | summarize supplied cash forecast observations |
 
-Again, these are calculation contracts, not persisted workspace read contracts.
+Again, these are calculation contracts. The normal workspace view reads the published workspace projection rather than supplying synthetic source inputs.
 
-### Required Profitability read contracts
-
-Recommended minimum API surface:
+### Published Profitability read contract
 
 - `GET /api/v1/profitability/workspace?company_id=...&period_id=...&scenario_id=...`
-- `GET /api/v1/profitability/segments?company_id=...&period_id=...&scenario_id=...&dimension=...`
-- optionally persisted allocation drilldowns such as `GET /api/v1/profitability/allocations/{allocation_version_id}`.
 
 Recommended workspace response:
 
@@ -300,14 +294,9 @@ ProfitabilityWorkspaceSnapshot
     source_cost / allocated_cost / reconciliation_difference / reconciled
 ```
 
-### Required Liquidity read contracts
-
-Recommended minimum API surface:
+### Published Liquidity read contract
 
 - `GET /api/v1/liquidity/workspace?company_id=...&period_id=...&scenario_id=...`
-- `GET /api/v1/liquidity/cash-forecast?company_id=...&period_id=...&scenario_id=...&horizon=13-week`
-- `GET /api/v1/liquidity/debt?company_id=...&period_id=...`
-- `GET /api/v1/liquidity/covenants?company_id=...&period_id=...&scenario_id=...`
 
 Recommended workspace response:
 
@@ -326,6 +315,62 @@ LiquidityWorkspaceSnapshot
 
 All cash positions, working-capital balances, debt schedules, covenant states, stress outcomes, allocations and margin-at-risk values must come from backend-produced or persisted domain outputs. Frontend visualization may scale coordinates and format currency/ratios only.
 
-### Current FE-07 temporary contract
+### FE-07 client contract
 
-`frontend/src/features/profitability-liquidity/contracts.ts` is a provisional mock-only view model. It must be removed or reduced to adapter-specific display types as OpenAPI-backed read contracts arrive. Both workspaces visibly display `MOCK CONNECTED`, and Company / Period / Scenario remain local context until the global context read contracts are implemented.
+`frontend/src/features/profitability-liquidity/query.ts` adapts generated `ProfitabilityWorkspaceResponse` and `LiquidityWorkspaceResponse` types into display view models. It shows `LIVE API CONNECTED` for backend projections. A missing publication or inaccessible company is rendered as its corresponding API state; it never falls back to fixture finance values.
+
+## FE-08 — Enterprise Risk Command
+
+Lifecycle state: **LIVE API CONNECTED in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
+
+`GET /api/v1/risk/workspace?company_id=...&period_id=...&scenario_id=...` is the published workspace contract. It supplies the portfolio, percentile curve, risk register, appetite view, correlation matrix, scenario, controls, and UAT-published regime/EVT diagnostics. The frontend maps the generated `RiskWorkspaceResponse` only for display and renders an explicit API state for an unavailable projection; it never calculates or replaces risk data in the browser.
+
+BE-03 model execution uses `POST` and `GET /api/v1/risk/model-runs`. Every UAT run carries its input context, seed, source snapshot IDs, projection version, status, result or controlled error. The local UAT repository is process-scoped; durable workers and persisted runs remain a production-release requirement.
+
+## Enterprise & Market Risk — Release 3
+
+Lifecycle state: **LIVE API CONNECTED in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
+
+`GET /api/v1/market-risk/workspace?company_id=...&period_id=...&scenario_id=...` supplies published assets, the selected run diagnostics and threshold states. The adapter maps GARCH, regime, copula, Monte-Carlo, backtest and champion/challenger read-model data for display only; it does not invoke quantitative algorithms or construct loss inputs in the browser.
+
+BE-03 provides `POST` and `GET /api/v1/market-risk/model-runs` for governed execution and polling. UAT validates a historical VaR/ES run with source snapshot and context lineage. The process-scoped UAT repository is not a production persistence guarantee.
+
+## FE-09 — Actions & Capital Allocation
+
+Lifecycle state: **LIVE API CONNECTED for published read models in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
+
+`GET /api/v1/actions/workspace?company_id=...&period_id=...&scenario_id=...` supplies the published action-steering metrics, action queue, benefit series and dependencies. `GET /api/v1/capital/workspace?company_id=...&period_id=...&scenario_id=...` supplies the portfolio envelope, investment candidates, constraints, allocation, frontier and approval read-model data. The frontend maps the generated OpenAPI types only for presentation; it does not calculate NPV, ranking, liquidity headroom or financial outcomes in the browser.
+
+Missing publications and inaccessible companies display the corresponding 404/403 API state and never fall back to fixture values in live mode.
+
+BE-04 command runs are now exposed as UAT contracts. `POST /api/v1/actions/runs` starts server-owned action simulation or prioritization, and `POST /api/v1/actions/runs/benefit-tracking` summarizes published benefit baselines/actuals; all use Action IDs rather than browser finance values. `POST /api/v1/capital/runs/valuation`, `/monte-carlo-npv`, `/allocation`, and `/funding` run server-owned candidate and funding inputs selected by business ID. Every create request requires `Idempotency-Key`, context, source snapshot IDs, projection version and model version. `GET /api/v1/decision-runs/{run_id}` plus `POST .../validate`, `.../approve`, and `.../reject` implement the lifecycle; `GET .../events` provides audit history. Validation, approval and rejection are role-gated and a preparer cannot approve or reject their own run.
+
+The Actions and Capital screens can start every published BE-04 UAT run type, show server result/lineage, immediately refresh a context-scoped review queue, and enable Validate/Approve/Reject only when the backend principal advertises the required permission. The server still enforces every transition and segregation-of-duties rule. Full production persistence, queue workers, real identity and durable action/capital master-data repositories remain Release 7 work.
+
+## FE-10 — Reporting Studio
+
+Lifecycle state: **LIVE API CONNECTED in UAT/live; MOCK CONNECTED only in explicit frontend isolation mode.**
+
+`GET /api/v1/reporting/workspace?company_id=...&period_id=...&scenario_id=...` supplies the published report, sections, versions, source pack, findings and export targets. The Reporting Studio maps this generated contract for display only and treats a missing projection as an API no-data state.
+
+BE-05 adds the governed report-run contract: `POST /api/v1/reporting/runs`, `GET /api/v1/reporting/runs`, `GET /api/v1/reporting/runs/{report_id}`, and `POST .../review`, `.../approve`, `.../publish`. A creation binds company, period, scenario, projection version and existing snapshot IDs. The reporting factory rejects values from unapproved runs and material narratives without sources; the workflow requires an authorized reviewer, rejects self-approval, and keeps the approved artifact immutable. Existing `GET /api/v1/reporting/reports/{report_id}/export/{format}` remains the artifact exporter.
+
+## FE-11 — Data & Governance
+
+Lifecycle state: **LIVE API CONNECTED in UAT/live.**
+
+`GET /api/v1/data-governance/workspace?company_id=...&period_id=...&scenario_id=...` is the published read contract for source snapshots, data-quality findings, governed runs, model versions, approvals and lineage. `/app/data` and `/app/governance` intentionally render this backend projection rather than fake approval data. Ingestion commands remain under `/api/v1/data/imports`; durable storage, asynchronous export jobs and production identity remain Release 7 work.
+
+## FE-10 — Governed Finance Copilot
+
+Lifecycle state: **LIVE API CONNECTED for context/session binding in UAT; a successful answer additionally requires the configured Foundry UAT deployment.**
+
+The browser uses `POST /api/v1/copilot/sessions` with only module/workload and the selected company, period and scenario, followed by `POST /api/v1/copilot/sessions/{session_id}/messages`. It never supplies a principal, identity header, source fact, citation, tool permission or model deployment. The backend resolves the principal from the gateway, checks company scope, assembles facts from the published reporting projection, applies prompt-injection and grounding rules, routes through the configured deployment, and records interaction lineage in the backend service.
+
+The former direct `/api/v1/copilot/respond` request is retired with `410 Gone`; it cannot be used to inject browser-provided facts or principal data. A missing Foundry configuration returns a controlled `503` without revealing source content. Local UAT therefore proves session scope, source assembly and safe failure; it does not claim a successful Foundry-model response until the UAT deployment is configured.
+
+## Release 7 — Local hardening completed, production infrastructure pending
+
+All API responses now receive a request correlation ID (`X-Request-ID`) and basic browser hardening headers. `CFO_RATE_LIMIT_REQUESTS_PER_MINUTE` enables a process-local limiter for `/api` traffic and returns a controlled `429` with `Retry-After`; the frontend maps that status to a retryable busy state. This is deliberately a local/UAT guardrail, not a substitute for a distributed gateway limiter.
+
+Production completion still requires Entra JWT validation, PostgreSQL and migration execution, Blob artifacts, a distributed queue/rate limiter, Key Vault-managed configuration, Azure Monitor and recovery/load/security evidence.

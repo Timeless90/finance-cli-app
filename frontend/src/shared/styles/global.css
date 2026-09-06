@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+@import '../design-system/tokens.css';
+@import '../design-system/environment.css';
+
+@theme inline {
+  --color-canvas: var(--surface-canvas);
+  --color-panel: var(--surface-panel);
+  --color-panel-raised: var(--surface-panel-raised);
+  --color-signal: var(--signal-primary);
+  --color-positive: var(--signal-positive);
+  --color-negative: var(--signal-negative);
+  --color-warning: var(--signal-warning);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --font-display: var(--font-display);
+  --font-interface: var(--font-interface);
+  --font-data: var(--font-data);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--surface-canvas);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background: var(--surface-canvas);
+  font-family: var(--font-interface);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  color: var(--text-inverse);
+  background: var(--signal-primary);
+}
+
+.data-value {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.interface-label {
+  font-family: var(--font-data);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

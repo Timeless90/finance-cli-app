@@ -1,0 +1,462 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: Start",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Dev: Full",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "dev-full"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Dev: Backend",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "backend-dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Dev: Frontend",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "frontend-dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Check: All",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "check"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Test: Backend",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "backend-test"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      },
+      "group": "test"
+    },
+    {
+      "label": "Test: Frontend",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "frontend-test"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      },
+      "group": "test"
+    },
+    {
+      "label": "Test: Frontend Watch",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "frontend-test-watch"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "E2E: Playwright",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "e2e"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      },
+      "group": "test"
+    },
+    {
+      "label": "E2E: UI",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "e2e-ui"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Lint: All",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "lint"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Format: All",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "format"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Infra: Up",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "infra-up"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Infra: Down",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "infra-down"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Observability: Up",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "observability-up"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Observability: Down",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "observability-down"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "API: Generate",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "api-generate"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "API: Check",
+      "type": "process",
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "make",
+        "api-check"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "runOptions": {
+        "runOn": "default",
+        "instanceLimit": 1
+      }
+    }
+  ]
+}

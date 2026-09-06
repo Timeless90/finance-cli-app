@@ -4,7 +4,7 @@ export type WorkspaceSelection = {
   scenarioId: string;
 };
 
-export type RiskTone = "positive" | "warning" | "negative" | "neutral";
+export type RiskTone = 'positive' | 'warning' | 'negative' | 'neutral';
 
 export type EnterpriseRisk = {
   id: string;
@@ -18,8 +18,8 @@ export type EnterpriseRisk = {
   residualLoss: string;
   mitigationEffect: string;
   appetiteUsage: string;
-  status: "HEALTHY" | "WARNING" | "BREACHED";
-  trend: "UP" | "DOWN" | "STABLE";
+  status: 'HEALTHY' | 'WARNING' | 'BREACHED';
+  trend: 'UP' | 'DOWN' | 'STABLE';
 };
 
 export type PortfolioPoint = {
@@ -28,7 +28,7 @@ export type PortfolioPoint = {
 };
 
 export type RiskCommandSnapshot = {
-  contractStatus: "MOCK_CONNECTED";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
   context: WorkspaceSelection & {
     companyLabel: string;
     periodLabel: string;
@@ -66,14 +66,19 @@ export type RiskCommandSnapshot = {
     matrix: number[][];
   };
   regimes: {
-    lifecycle: "MODEL_CONTRACT_PENDING";
+    lifecycle: 'MODEL_CONTRACT_PENDING' | 'LIVE_RUN_AVAILABLE';
     currentState: string;
     stateConfidence: string;
-    states: Array<{ id: string; label: string; probability: number; expectedLossMultiplier: string }>;
+    states: Array<{
+      id: string;
+      label: string;
+      probability: number;
+      expectedLossMultiplier: string;
+    }>;
     transitionMatrix: number[][];
   };
   tail: {
-    lifecycle: "MODEL_CONTRACT_PENDING";
+    lifecycle: 'MODEL_CONTRACT_PENDING' | 'LIVE_RUN_AVAILABLE';
     threshold: string;
     shape: string;
     scale: string;
@@ -96,6 +101,6 @@ export type RiskCommandSnapshot = {
     effectiveness: string;
     annualCost: string;
     avoidedLoss: string;
-    status: "ACTIVE" | "PLANNED" | "INEFFECTIVE";
+    status: 'ACTIVE' | 'PLANNED' | 'INEFFECTIVE';
   }>;
 };

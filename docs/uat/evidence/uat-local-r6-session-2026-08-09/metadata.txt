@@ -1,0 +1,10 @@
+Release: 6 — Governed Finance Copilot session boundary
+Environment: local UAT via configured gateway identity; Foundry intentionally unconfigured
+Date: 2026-08-09
+
+Evidence:
+- Backend Copilot unit/API tests cover routing, source scope, prompt-injection protection, numeric grounding, session source binding and controlled model-unavailable response.
+- Frontend OpenAPI synchronization, lint, typecheck, unit tests and production build passed.
+- Browser flow establishes a secure session for the active UAT context, displays uat-snapshot-v1 as the backend source and displays the controlled unavailable model state after a message.
+
+Scope limitation: This is not a successful Foundry invocation. A configured UAT deployment, real identity provider, persistent sessions and durable interaction/audit storage remain required for release completion/production.

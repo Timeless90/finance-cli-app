@@ -1,0 +1,30 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      CFO_TELEMETRY_ENABLED: ${CFO_TELEMETRY_ENABLED:-false}
+      CFO_OTLP_ENDPOINT: http://otel-collector:4318
+      CFO_IMPORT_STORAGE_PATH: /data/imports
+      CFO_GOVERNANCE_DATABASE_URL: postgresql://template:template-local@postgres:5432/template
+    volumes:
+      - import-data:/data/imports
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:5173:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  import-data:

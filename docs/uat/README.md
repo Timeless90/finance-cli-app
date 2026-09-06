@@ -1,5 +1,30 @@
 # Production User Acceptance Testing
 
+## Local integrated UAT
+
+Start the seeded backend from the repository root:
+
+```bash
+CFO_ENVIRONMENT=uat uv run cfo-api
+```
+
+Then configure and start the frontend in a second terminal:
+
+```bash
+cd frontend
+cp .env.uat.example .env.uat
+npm run dev:uat
+```
+
+The Vite proxy overwrites all browser-supplied `X-User`, `X-Roles`, and
+`X-Companies` headers with the configured UAT identity. The browser never owns
+these trust headers. The UAT backend publishes deterministic non-personal data
+for `AURELIA` and `EUROPE`, each with `base` and `downside` scenarios.
+
+For a deployed UAT environment, render
+`deploy/uat/frontend-nginx.conf.template` with deployment-only `UAT_X_*`
+values. This bridge is UAT-only and must be replaced by OIDC before production.
+
 This directory is the version-controlled acceptance package for the CFO Platform and CFO Command
 Center. It covers the current product and the complete planned production application. A case being
 listed does not mean its capability is production-ready: `release_scope`, `readiness`, and `blocker`

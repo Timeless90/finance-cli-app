@@ -1,0 +1,71 @@
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from threading import RLock
+from uuid import UUID
+
+from app.shared.application.ports import (
+    ModelExecutionRequest,
+    ModelExecutionResult,
+    ModelRunRepository,
+    ModelRunStatus,
+)
+from app.shared.quant.interfaces import QuantModelInput
+from app.shared.quant.registry import QuantModelRegistry
+
+
+class InMemoryModelRunRepository(ModelRunRepository):
+    def __init__(self) -> None:
+        self._requests: dict[UUID, ModelExecutionRequest] = {}
+        self._results: dict[UUID, ModelExecutionResult] = {}
+        self._lock = RLock()
+
+    def save_request(self, request: ModelExecutionRequest) -> None:
+        with self._lock:
+            self._requests[request.run_id] = request
+
+    def save_result(self, result: ModelExecutionResult) -> None:
+        with self._lock:
+            self._results[result.run_id] = result
+
+    def get_result(self, run_id: UUID | str) -> ModelExecutionResult | None:
+        normalized = UUID(run_id) if isinstance(run_id, str) else run_id
+        with self._lock:
+            return self._results.get(normalized)
+
+    def get_request(self, run_id: UUID | str) -> ModelExecutionRequest | None:
+        normalized = UUID(run_id) if isinstance(run_id, str) else run_id
+        with self._lock:
+            return self._requests.get(normalized)
+
+
+class RegisteredModelExecutor:
+    def __init__(self, registry: QuantModelRegistry) -> None:
+        self._registry = registry
+
+    def execute(self, request: ModelExecutionRequest) -> ModelExecutionResult:
+        started_at = datetime.now(UTC)
+        try:
+            model = self._registry.get(request.model_id, request.model_version)
+            output = model.execute(
+                QuantModelInput(
+                    values={},
+                    parameters=request.parameters,
+                    random_seed=request.random_seed,
+                )
+            )
+            status = ModelRunStatus.SUCCEEDED
+            outputs = output.values
+            error_message = None
+        except Exception as exc:  # noqa: BLE001 - boundary translates model failures
+            status = ModelRunStatus.FAILED
+            outputs = {}
+            error_message = str(exc)
+        return ModelExecutionResult(
+            run_id=request.run_id,
+            status=status,
+            outputs=outputs,
+            started_at=started_at,
+            completed_at=datetime.now(UTC),
+            error_message=error_message,
+        )

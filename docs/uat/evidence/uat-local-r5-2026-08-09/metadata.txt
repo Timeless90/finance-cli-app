@@ -1,0 +1,10 @@
+Release: 5 — Reporting Studio and Data & Governance
+Environment: local UAT via configured gateway identity
+Date: 2026-08-09
+
+Evidence:
+- Backend: ruff check and focused reporting/UAT tests passed (10 tests).
+- Frontend: OpenAPI synchronization, lint, typecheck, unit tests (21), and production build passed.
+- Browser: CFO_LIVE_E2E=true playwright tests/e2e/live-uat.spec.ts passed (1 test), including Reporting Studio and Data & Governance routes.
+
+Scope limitation: local UAT has process-scoped repositories. Durable queues, artifact storage, real OIDC, production data catalog and production persistence are not claimed by this evidence.

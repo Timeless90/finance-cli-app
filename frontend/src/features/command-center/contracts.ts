@@ -1,4 +1,4 @@
-export type SignalTone = "positive" | "negative" | "warning" | "neutral";
+export type SignalTone = 'positive' | 'negative' | 'warning' | 'neutral';
 
 export type CommandCenterContext = {
   companyId: string;
@@ -11,7 +11,7 @@ export type ExecutiveMetric = {
   label: string;
   value: string;
   delta: string;
-  deltaTone: "positive" | "negative" | "neutral";
+  deltaTone: 'positive' | 'negative' | 'neutral';
   meta: string;
 };
 
@@ -35,8 +35,8 @@ export type RiskSignal = {
   title: string;
   owner: string;
   exposure: string;
-  severity: "HIGH" | "MEDIUM" | "LOW";
-  trend: "UP" | "DOWN" | "STABLE";
+  severity: 'HIGH' | 'MEDIUM' | 'LOW';
+  trend: 'UP' | 'DOWN' | 'STABLE';
 };
 
 export type ManagementAction = {
@@ -44,19 +44,19 @@ export type ManagementAction = {
   title: string;
   owner: string;
   due: string;
-  status: "ON TRACK" | "AT RISK" | "BLOCKED";
+  status: 'ON TRACK' | 'AT RISK' | 'BLOCKED';
   impact: string;
   confidence: string;
 };
 
 export type CommandCenterSnapshot = {
-  contractStatus: "MOCK_CONNECTED";
-  source: "frontend-fixture";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
+  source: 'frontend-fixture' | 'backend-projection';
   context: CommandCenterContext & {
     companyLabel: string;
     periodLabel: string;
     scenarioLabel: string;
-    currency: "EUR";
+    currency: 'EUR';
     asOf: string;
   };
   metrics: ExecutiveMetric[];

@@ -1,4 +1,7 @@
 .venv/
+.env.local
+frontend/.env.local
+.local/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -22,3 +25,9 @@ frontend/.vite/
 frontend/openapi/backend-openapi.json
 frontend/src/api/generated/
 frontend/public/mockServiceWorker.js
+
+backend/.venv/
+backend/.coverage
+backend/coverage.xml
+frontend/coverage/
+!frontend/src/generated/

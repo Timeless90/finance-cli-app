@@ -1,0 +1,6 @@
+{
+  "original_paths": 125,
+  "migrated_paths": 125,
+  "changed_wire_contracts": [],
+  "comparison": "dereferenced request/response schemas and endpoint metadata from original working-tree backup"
+}

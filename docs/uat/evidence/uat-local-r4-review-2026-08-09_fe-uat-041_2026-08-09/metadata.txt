@@ -1,0 +1,15 @@
+Run ID: uat-local-r4-review-2026-08-09
+Cases: FE-UAT-041, FE-UAT-042 (review-queue re-test)
+Environment: local-uat
+Build: working tree based on f28d3ec
+Executed: 2026-08-09T08:31:00Z
+Tester: automated local UAT gate
+
+Evidence
+- `GET /api/v1/decision-runs` returns only the selected authorized company/period/scenario context and is covered by `tests/test_be04_decision_runs.py`.
+- The frontend obtains the principal permissions from `GET /api/v1/context/principal`, displays the context review queue and keeps transitions disabled unless the advertised permission and separation-of-duties condition permit them.
+- `CFO_LIVE_E2E=true npx playwright test tests/e2e/live-uat.spec.ts` passed in Chromium. After each server-owned UAT Action Simulation and Capital Allocation start, a review-table Validate control was visible for the corresponding context.
+
+Scope note
+The UAT gateway identity has only its configured permissions. This evidence proves permission-aware UI
+and server-enforced lifecycle transitions, not a production OIDC multi-user session or durable review history.

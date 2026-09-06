@@ -1,0 +1,123 @@
+{
+  "date": "2026-09-06",
+  "complete": true,
+  "template_version": "1.0.0",
+  "baseline": {
+    "backend_tests": 134,
+    "frontend_tests": 21
+  },
+  "backend": {
+    "unit_tests_passed": 138,
+    "postgresql_test_passed_separately": 1,
+    "coverage_percent": 80.68,
+    "ruff": "passed",
+    "pyright": "passed"
+  },
+  "frontend": {
+    "tests_passed": 99,
+    "coverage_percent": {
+      "statements": 90.32,
+      "branches": 80.66,
+      "functions": 91.57,
+      "lines": 90.81
+    },
+    "lint": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "storybook_build": "passed"
+  },
+  "browser": {
+    "mock_and_accessibility_tests_passed": 2,
+    "live_uat_tests_passed": 1,
+    "live_uat_database": "unique temporary PostgreSQL database; removed after tests",
+    "copilot": "explicit existing echo test gateway"
+  },
+  "api": {
+    "paths_before": 125,
+    "paths_after": 125,
+    "changed_wire_contracts": 0
+  },
+  "runtime": {
+    "native_start": "passed; empty database visually verified",
+    "devcontainer": "installed, type/lint checks, frontend build and Chromium tests passed",
+    "containers": "passed",
+    "observability": "Grafana, Prometheus scrape, traces and correlated logs passed",
+    "native_python_reported": "3.13.1",
+    "template_python_pin": "3.13.15",
+    "node": "24.20.0"
+  },
+  "full_acceptance": [
+    {
+      "check": "prerequisites",
+      "passed": true
+    },
+    {
+      "check": "configuration",
+      "passed": true
+    },
+    {
+      "check": "quality and coverage",
+      "passed": true
+    },
+    {
+      "check": "PostgreSQL",
+      "passed": true
+    },
+    {
+      "check": "persistence initialization",
+      "passed": true
+    },
+    {
+      "check": "persistence schema check",
+      "passed": true
+    },
+    {
+      "check": "browser flow and accessibility",
+      "passed": true
+    },
+    {
+      "check": "live finance workflows",
+      "passed": true
+    },
+    {
+      "check": "Docker builds and all services",
+      "passed": true
+    },
+    {
+      "check": "container API/database",
+      "passed": true
+    },
+    {
+      "check": "container frontend proxy",
+      "passed": true
+    },
+    {
+      "check": "Grafana",
+      "passed": true
+    },
+    {
+      "check": "metrics scrape",
+      "passed": true
+    },
+    {
+      "check": "traces",
+      "passed": true
+    },
+    {
+      "check": "correlated logs",
+      "passed": true
+    }
+  ],
+  "not_executed": [
+    "external MCP authentication",
+    "GitHub-hosted CI",
+    "Windows/WSL",
+    "cloud deployment"
+  ],
+  "evidence_directory": ".local/migration-evidence",
+  "source_and_test_inventory": "all original source and test filenames have migrated destinations",
+  "git": "working tree only; no branch, commit, push or remote change",
+  "development_database_rows_at_handover": 0,
+  "task_services": "Stopped; persistent volumes retained",
+  "project_agent_skills": "Copied and database guidance adapted to retained adapters"
+}

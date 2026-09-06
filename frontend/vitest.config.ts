@@ -1,21 +1,34 @@
-import { mergeConfig } from "vite";
-import { defineConfig } from "vitest/config";
+import { mergeConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
-import viteConfig from "./vite.config";
+import { createViteConfig } from './vite.config';
 
 export default mergeConfig(
-  viteConfig,
+  createViteConfig('test'),
   defineConfig({
     test: {
-      environment: "jsdom",
+      environment: 'jsdom',
       environmentOptions: {
         jsdom: {
-          url: "http://localhost/",
+          url: 'http://localhost/',
         },
       },
-      setupFiles: ["./src/test/setup.ts"],
-      include: ["src/**/*.test.{ts,tsx}"],
+      setupFiles: ['./src/shared/test/setup.ts'],
+      include: ['src/**/*.test.{ts,tsx}'],
       css: true,
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'json', 'cobertura'],
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: [
+          'src/generated/**',
+          'src/**/*.stories.tsx',
+          'src/shared/test/**',
+          'src/shared/mocks/**',
+          'src/main.tsx',
+        ],
+        thresholds: { lines: 80, statements: 80, functions: 80, branches: 80 },
+      },
     },
   }),
 );

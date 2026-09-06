@@ -20,18 +20,18 @@ export type ProfitabilitySegment = {
   ebitda: string;
   allocatedCost: string;
   marginAtRisk: string;
-  status: "STRONG" | "WATCH" | "CRITICAL";
+  status: 'STRONG' | 'WATCH' | 'CRITICAL';
 };
 
 export type ProfitabilitySnapshot = {
-  contractStatus: "MOCK_CONNECTED";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
   context: WorkspaceContextSnapshot;
   metrics: Array<{
     id: string;
     label: string;
     value: string;
     delta: string;
-    deltaTone: "positive" | "negative" | "neutral";
+    deltaTone: 'positive' | 'negative' | 'neutral';
     meta: string;
   }>;
   segments: ProfitabilitySegment[];
@@ -40,7 +40,7 @@ export type ProfitabilitySnapshot = {
     label: string;
     amount: number;
     display: string;
-    type: "start" | "positive" | "negative" | "end";
+    type: 'start' | 'positive' | 'negative' | 'end';
   }>;
   matrix: Array<{
     id: string;
@@ -50,14 +50,14 @@ export type ProfitabilitySnapshot = {
     revenue: string;
     marginPct: string;
     marginAtRisk: string;
-    status: "STRONG" | "WATCH" | "CRITICAL";
+    status: 'STRONG' | 'WATCH' | 'CRITICAL';
   }>;
   sensitivities: Array<{
     lever: string;
     movement: string;
     ebitdaImpact: string;
     marginImpact: string;
-    tone: "positive" | "negative";
+    tone: 'positive' | 'negative';
   }>;
   allocation: {
     versionId: string;
@@ -80,18 +80,18 @@ export type CashPoint = {
 };
 
 export type LiquiditySnapshot = {
-  contractStatus: "MOCK_CONNECTED";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
   context: WorkspaceContextSnapshot;
   metrics: Array<{
     id: string;
     label: string;
     value: string;
     delta: string;
-    deltaTone: "positive" | "negative" | "neutral";
+    deltaTone: 'positive' | 'negative' | 'neutral';
     meta: string;
   }>;
   cashForecast: {
-    horizon: "13_WEEK";
+    horizon: '13_WEEK';
     points: CashPoint[];
     minimumLiquidity: string;
     minimumHeadroom: string;
@@ -103,7 +103,7 @@ export type LiquiditySnapshot = {
     current: string;
     target: string;
     cashImpact: string;
-    status: "ON_TARGET" | "WATCH" | "BREACH";
+    status: 'ON_TARGET' | 'WATCH' | 'BREACH';
   }>;
   debt: Array<{
     id: string;
@@ -113,7 +113,7 @@ export type LiquiditySnapshot = {
     maturity: string;
     committedLimit: string;
     headroom: string;
-    status: "NORMAL" | "WATCH";
+    status: 'NORMAL' | 'WATCH';
   }>;
   covenants: Array<{
     id: string;
@@ -122,7 +122,7 @@ export type LiquiditySnapshot = {
     threshold: string;
     headroom: string;
     projectedMinimum: string;
-    status: "PASS" | "WATCH" | "BREACH";
+    status: 'PASS' | 'WATCH' | 'BREACH';
   }>;
   stresses: Array<{
     id: string;

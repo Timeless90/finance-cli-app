@@ -1,6 +1,1 @@
-export default {
-  printWidth: 100,
-  semi: true,
-  singleQuote: false,
-  trailingComma: "all",
-};
+export default { printWidth: 88, semi: true, singleQuote: true, trailingComma: 'all' };

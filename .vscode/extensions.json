@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "github.copilot-chat",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    "ms-python.vscode-python-envs",
+    "charliermarsh.ruff",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "vitest.explorer",
+    "ms-playwright.playwright",
+    "editorconfig.editorconfig",
+    "ms-azuretools.vscode-containers",
+    "ms-vscode-remote.remote-containers"
+  ]
+}

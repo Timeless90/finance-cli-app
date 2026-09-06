@@ -1,5 +1,7 @@
 # CFO Product Implementation Roadmap
 
+> Aufgaben, Prioritäten und Lieferstatus werden im [GitHub Project](https://github.com/users/Timeless90/projects/2) geführt. Dieses Dokument bleibt fachliche Planungsreferenz; historische Reihenfolgen und Statusangaben können vom lokalen Lieferstand abweichen. Siehe [Arbeitsablauf und Übernahmeabgleich](development/github-project-workflow.md).
+
 ## 1. Zielbild
 
 Die bestehende `finance-cli-app` wird schrittweise von einer quantitativen Portfolio- und Simulationsanwendung zu einer modularen CFO-Steuerungsplattform weiterentwickelt.

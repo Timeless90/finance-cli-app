@@ -4,18 +4,18 @@ export type WorkspaceSelection = {
   scenarioId: string;
 };
 
-export type ReportStatus = "DRAFT" | "REVIEW" | "APPROVED" | "PUBLISHED";
-export type CopilotLifecycle = "COPILOT_CONTRACT_PENDING";
+export type ReportStatus = 'DRAFT' | 'REVIEW' | 'APPROVED' | 'PUBLISHED';
+export type CopilotLifecycle = 'COPILOT_CONTRACT_PENDING';
 
 export type ReportSection = {
   id: string;
   title: string;
   purpose: string;
   owner: string;
-  status: "EMPTY" | "GENERATED" | "REVIEWED" | "APPROVED";
+  status: 'EMPTY' | 'GENERATED' | 'REVIEWED' | 'APPROVED';
   sourceCount: number;
   wordCount: number;
-  materiality: "HIGH" | "MEDIUM" | "LOW";
+  materiality: 'HIGH' | 'MEDIUM' | 'LOW';
 };
 
 export type ReportVersion = {
@@ -32,7 +32,7 @@ export type ReportVersion = {
 export type GroundedCitation = {
   id: string;
   label: string;
-  sourceType: "SNAPSHOT" | "MODEL_RUN" | "RISK" | "ACTION" | "REPORT";
+  sourceType: 'SNAPSHOT' | 'MODEL_RUN' | 'RISK' | 'ACTION' | 'REPORT';
   sourceId: string;
   excerpt: string;
   verified: boolean;
@@ -40,7 +40,7 @@ export type GroundedCitation = {
 
 export type CopilotMessage = {
   id: string;
-  role: "USER" | "ASSISTANT";
+  role: 'USER' | 'ASSISTANT';
   content: string;
   createdAt: string;
   citations: GroundedCitation[];
@@ -51,7 +51,7 @@ export type CopilotMessage = {
 };
 
 export type ReportingCopilotSnapshot = {
-  contractStatus: "MOCK_CONNECTED";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
   copilotLifecycle: CopilotLifecycle;
   context: WorkspaceSelection & {
     companyLabel: string;
@@ -79,15 +79,15 @@ export type ReportingCopilotSnapshot = {
       id: string;
       type: string;
       label: string;
-      status: "VALIDATED" | "STALE" | "MISSING";
+      status: 'VALIDATED' | 'STALE' | 'MISSING';
       asOf: string;
       owner: string;
     }>;
     exportTargets: Array<{
       id: string;
       label: string;
-      format: "PDF" | "PPTX" | "DOCX" | "XLSX";
-      status: "READY" | "BLOCKED";
+      format: 'PDF' | 'PPTX' | 'DOCX' | 'XLSX';
+      status: 'READY' | 'BLOCKED';
       note: string;
     }>;
     narrativePreview: Array<{
@@ -95,26 +95,26 @@ export type ReportingCopilotSnapshot = {
       heading: string;
       content: string;
       citations: string[];
-      status: "GENERATED" | "REVIEWED";
+      status: 'GENERATED' | 'REVIEWED';
     }>;
     findings: Array<{
       id: string;
-      severity: "HIGH" | "MEDIUM" | "LOW";
+      severity: 'HIGH' | 'MEDIUM' | 'LOW';
       section: string;
       finding: string;
       owner: string;
-      status: "OPEN" | "RESOLVED";
+      status: 'OPEN' | 'RESOLVED';
     }>;
   };
   copilot: {
     sessionId: string;
-    groundingMode: "VALIDATED_SOURCES_ONLY";
+    groundingMode: 'VALIDATED_SOURCES_ONLY';
     contextSources: Array<{
       id: string;
       label: string;
       type: string;
       enabled: boolean;
-      status: "VALIDATED" | "STALE";
+      status: 'VALIDATED' | 'STALE';
     }>;
     routes: Array<{
       id: string;
@@ -123,7 +123,7 @@ export type ReportingCopilotSnapshot = {
       deployment: string;
       reasoning: string;
       groundingRequired: boolean;
-      status: "ACTIVE" | "FALLBACK";
+      status: 'ACTIVE' | 'FALLBACK';
     }>;
     messages: CopilotMessage[];
     suggestedPrompts: string[];
@@ -133,12 +133,12 @@ export type ReportingCopilotSnapshot = {
       sourceInsight: string;
       estimatedImpact: string;
       confidence: string;
-      status: "PROPOSED" | "APPROVAL_REQUIRED";
+      status: 'PROPOSED' | 'APPROVAL_REQUIRED';
     }>;
     guardrails: Array<{
       id: string;
       label: string;
-      status: "ENFORCED" | "PENDING";
+      status: 'ENFORCED' | 'PENDING';
       detail: string;
     }>;
   };

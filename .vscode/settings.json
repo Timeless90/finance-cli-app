@@ -1,0 +1,159 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/playwright-report": true,
+    "**/test-results": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/playwright-report": true,
+    "**/test-results": true,
+    "**/src/generated/**": true,
+    "**/.env*": true,
+    "**/.env.example": false,
+    "**/playwright/.auth/**": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/coverage/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/playwright-report/**": true,
+    "**/test-results/**": true
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "pnpm-lock.yaml, tsconfig*.json, vite.config.*, vitest.config.*, eslint.config.*, prettier.config.*, .prettierrc*",
+    "pyproject.toml": "uv.lock, .python-version",
+    "*.tsx": "${capture}.test.tsx, ${capture}.stories.tsx",
+    "*.ts": "${capture}.test.ts",
+    "compose.yml": "compose.*.yml",
+    "Dockerfile": ".dockerignore"
+  },
+  "python-envs.workspaceSearchPaths": ["./backend/.venv"],
+  "python.terminal.useEnvFile": false,
+  "python.analysis.typeCheckingMode": "standard",
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.extraPaths": ["./backend"],
+  "python.analysis.exclude": [
+    "**/node_modules",
+    "**/.venv",
+    "frontend",
+    "**/src/generated"
+  ],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}/backend",
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.autoTestDiscoverOnSaveEnabled": false,
+  "eslint.workingDirectories": ["./frontend"],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.run": "onType",
+  "typescript.tsdk": "frontend/node_modules/typescript/lib",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.inlayHints.parameterNames.enabled": "literals",
+  "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
+  "typescript.inlayHints.variableTypes.enabled": false,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": false,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": false,
+  "typescript.inlayHints.parameterTypes.enabled": false,
+  "typescript.referencesCodeLens.enabled": true,
+  "typescript.implementationsCodeLens.enabled": true,
+  "vitest.configSearchPatternInclude": "frontend/**/{vite,vitest}.config.{ts,mts,js,mjs,cts,cjs}",
+  "vitest.applyDiagnostic": true,
+  "vitest.logLevel": "info",
+  "playwright.reuseBrowser": false,
+  "playwright.showTrace": false,
+  "playwright.updateSnapshots": "none",
+  "playwright.updateSourceMethod": "patch",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "files.trimTrailingWhitespace": false
+  },
+  "[makefile]": {
+    "editor.insertSpaces": false,
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false
+  },
+  "ruff.configurationPreference": "filesystemFirst",
+  "files.autoSave": "off",
+  "task.allowAutomaticTasks": "off",
+  "makefile.configureOnOpen": false
+}

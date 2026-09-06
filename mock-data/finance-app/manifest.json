@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "currency": "EUR",
+  "datasets": [
+    {"file": "aurelia-2026-09-base-balanced.csv", "company": "AURELIA", "period": "2026-09", "scenario": "base", "expected_total": "0"},
+    {"file": "aurelia-2026-09-downside-balanced.csv", "company": "AURELIA", "period": "2026-09", "scenario": "downside", "expected_total": "0"},
+    {"file": "europe-2026-09-base-balanced.csv", "company": "EUROPE", "period": "2026-09", "scenario": "base", "expected_total": "0"},
+    {"file": "erp-source-columns.csv", "company": "AURELIA", "period": "2026-10", "scenario": "base", "expected_total": "0", "mapping": "erp-column-mapping.json"},
+    {"file": "invalid-missing-currency.csv", "expected_result": "validation_error"}
+  ]
+}

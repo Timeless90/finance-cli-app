@@ -1,0 +1,18 @@
+Run ID: uat-local-r0-r2-2026-08-09
+Cases: FE-UAT-021, FE-UAT-022, FE-UAT-023, FE-UAT-024, FE-UAT-025
+Environment: local-uat
+Build: working tree based on f28d3ec
+Executed: 2026-08-09T07:43:00Z
+Tester: automated local UAT gate
+
+Evidence
+- CFO_ENVIRONMENT=uat uv run --no-sync cfo-api seeded the deterministic non-personal UAT projections.
+- CFO_UAT_GATEWAY=true npm run dev:uat replaced trust headers at the local gateway.
+- CFO_LIVE_E2E=true npx playwright test tests/e2e/live-uat.spec.ts passed in Chromium.
+- The same live flow includes the published Enterprise Risk and Market Risk workspaces; `tests/test_uat_seed.py` verifies deterministic BE-03 Risk and Market Risk runs with seed and source-snapshot lineage.
+- Backend UAT seed tests, frontend lint/typecheck/unit tests, and frontend build passed in the same working tree.
+
+Scope note
+This evidence establishes local automated UAT integration only. It does not constitute a manual business
+approval, accessibility review, production deployment, OIDC verification, persistence/restart validation,
+or production release approval.

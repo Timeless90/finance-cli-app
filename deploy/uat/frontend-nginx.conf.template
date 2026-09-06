@@ -1,0 +1,22 @@
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    location /api/ {
+        proxy_pass http://cfo-api:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-User ${UAT_X_USER};
+        proxy_set_header X-Roles ${UAT_X_ROLES};
+        proxy_set_header X-Companies ${UAT_X_COMPANIES};
+    }
+
+    location /health/ {
+        proxy_pass http://cfo-api:8000;
+        proxy_set_header Host $host;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

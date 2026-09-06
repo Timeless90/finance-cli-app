@@ -1,64 +1,18 @@
-# CFO Command Center Frontend
+# CFO Command Center frontend
 
-Dedicated web client for the CFO Platform. The frontend is intentionally isolated from backend implementation code and consumes the FastAPI OpenAPI contract.
+Node 24 and pnpm 10, React/Vite/TypeScript, TanStack Router/Query and Orval.
+Use `mise exec -- make install` and `mise exec -- make dev` at the repository root.
+The frontend runs on port 5173; the local gateway forwards `/api` and `/health`.
 
-## Requirements
+From this directory: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`,
+`pnpm build:storybook`, `pnpm api:sync`. Use root `make e2e` / `make e2e-live`
+for browser tests with the correct mock/live environment.
 
-- Node.js 22+
-- npm 10+
-- uv with the repository synchronized (`uv sync --locked`) when synchronizing API contracts
+API source: `../backend/openapi.json`. Generated Orval output: `src/generated/`.
+The shared API adapter preserves scoped feature query keys, errors, abort signals
+and idempotency headers while dispatching through generated operations.
+The browser never supplies trusted identity claims: the explicitly enabled local
+gateway attaches development identities. MSW mock mode remains clearly labelled.
 
-## Local development
-
-```bash
-uv sync --locked
-cd frontend
-npm install
-npm run api:sync
-npm run dev
-```
-
-The Vite development server runs on `http://localhost:3000` and proxies `/api` and `/health` to the local FastAPI service on `http://127.0.0.1:8000`.
-
-## API contract workflow
-
-`npm run api:sync` exports the authoritative schema from `cfo_platform.api.main:app` and generates TypeScript types from it. Generated files are build artifacts and must never be edited by hand.
-
-```text
-FastAPI / Pydantic
-      -> /openapi.json
-      -> exported OpenAPI schema
-      -> generated TypeScript paths/components
-      -> openapi-fetch adapter
-      -> TanStack Query
-      -> React UI
-```
-
-Run `npm run api:sync` whenever backend routes or Pydantic request/response models change.
-
-## Mock mode
-
-For frontend-only work, initialize the MSW browser worker once and opt into mock mode:
-
-```bash
-npm run mock:init
-VITE_API_MODE=mock npm run dev
-```
-
-MSW fixtures must conform to the generated backend contract. Unhandled requests bypass the browser worker so missing fixtures remain visible during integration.
-
-## Quality gates
-
-```bash
-npm run api:sync
-npm run lint
-npm run typecheck
-npm run test
-npm run build
-npm run build:storybook
-npm run test:e2e
-```
-
-## Architecture rule
-
-Finance calculations remain server-side. The web client renders and orchestrates backend results; it must not duplicate authoritative finance, risk or simulation logic in the browser.
+Unit tests live with features and shared code; browser tests live in `e2e/`.
+Global coverage requires 80% statements, branches, functions and lines.

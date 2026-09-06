@@ -1,0 +1,15 @@
+Run ID: uat-local-r4-complete-2026-08-09
+Cases: FE-UAT-041, FE-UAT-042
+Environment: local-uat
+Build: working tree based on f28d3ec
+Executed: 2026-08-09T08:48:00Z
+Tester: automated local UAT gate
+
+Evidence
+- `tests/test_be04_decision_runs.py` verifies Action Simulation, Prioritization and Benefit Tracking plus Capital Valuation, Monte-Carlo-NPV, Allocation and Funding Scenario runs. It also verifies idempotency, company scope, validation, segregated approval, rejection and audit events.
+- The UAT browser flow starts each Action and Capital run type from published IDs/snapshots, renders its backend result/lineage and refreshes the context-scoped review queue.
+- `CFO_LIVE_E2E=true npx playwright test tests/e2e/live-uat.spec.ts` passed in Chromium. Backend Ruff and 127 pytest tests, plus frontend lint, typecheck, 21 Vitest tests and production build, passed in the same working tree.
+
+Scope note
+This closes Release 4 for local UAT. Its in-memory run store, UAT gateway identity and synthetic
+catalogs are explicitly not production persistence, OIDC, worker, or multi-user operational evidence.

@@ -7,8 +7,8 @@ export type WorkspaceSelection = {
 export type PlanningScenarioSummary = {
   id: string;
   label: string;
-  type: "BASE" | "UPSIDE" | "DOWNSIDE";
-  status: "ACTIVE" | "APPROVED" | "DRAFT";
+  type: 'BASE' | 'UPSIDE' | 'DOWNSIDE';
+  status: 'ACTIVE' | 'APPROVED' | 'DRAFT';
   revenue: string;
   ebitda: string;
   freeCashFlow: string;
@@ -32,7 +32,7 @@ export type StatementRow = {
   plan: string;
   forecast: string;
   variance: string;
-  varianceTone: "positive" | "negative" | "neutral";
+  varianceTone: 'positive' | 'negative' | 'neutral';
 };
 
 export type PlanningDriver = {
@@ -42,11 +42,11 @@ export type PlanningDriver = {
   unit: string;
   delta: string;
   owner: string;
-  status: "LOCKED" | "REVIEW" | "OPEN";
+  status: 'LOCKED' | 'REVIEW' | 'OPEN';
 };
 
 export type PlanningSnapshot = {
-  contractStatus: "MOCK_CONNECTED";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
   context: WorkspaceSelection & {
     companyLabel: string;
     periodLabel: string;
@@ -61,11 +61,11 @@ export type PlanningSnapshot = {
     snapshotId: string;
     assumptionSetId: string;
     modelVersion: string;
-    status: "APPROVED" | "DRAFT";
+    status: 'APPROVED' | 'DRAFT';
   };
   forecast: {
-    kpi: "EBITDA";
-    unit: "EUR_M";
+    kpi: 'EBITDA';
+    unit: 'EUR_M';
     horizon: string;
     points: ForecastSeriesPoint[];
     confidence: string;
@@ -79,7 +79,7 @@ export type PlanningSnapshot = {
     target: string;
     warning: string;
     current: string;
-    status: "ON_TARGET" | "WARNING" | "BREACH";
+    status: 'ON_TARGET' | 'WARNING' | 'BREACH';
   }>;
 };
 
@@ -88,7 +88,7 @@ export type KpiNode = {
   label: string;
   value: string;
   variance: string;
-  tone: "positive" | "negative" | "neutral";
+  tone: 'positive' | 'negative' | 'neutral';
   parentId?: string;
 };
 
@@ -97,7 +97,7 @@ export type VarianceStep = {
   label: string;
   amount: number;
   display: string;
-  type: "start" | "positive" | "negative" | "end";
+  type: 'start' | 'positive' | 'negative' | 'end';
 };
 
 export type PerformanceTrendPoint = {
@@ -108,20 +108,20 @@ export type PerformanceTrendPoint = {
 };
 
 export type PerformanceSnapshot = {
-  contractStatus: "MOCK_CONNECTED";
-  context: PlanningSnapshot["context"];
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
+  context: PlanningSnapshot['context'];
   metrics: Array<{
     id: string;
     label: string;
     value: string;
     delta: string;
-    deltaTone: "positive" | "negative" | "neutral";
+    deltaTone: 'positive' | 'negative' | 'neutral';
     meta: string;
   }>;
   kpiTree: KpiNode[];
   varianceBridge: {
-    kpi: "EBITDA";
-    comparison: "ACTUAL_VS_PLAN";
+    kpi: 'EBITDA';
+    comparison: 'ACTUAL_VS_PLAN';
     baseline: string;
     actual: string;
     explained: string;
@@ -130,8 +130,8 @@ export type PerformanceSnapshot = {
     steps: VarianceStep[];
   };
   trend: {
-    kpi: "EBITDA_MARGIN";
-    unit: "PERCENT";
+    kpi: 'EBITDA_MARGIN';
+    unit: 'PERCENT';
     points: PerformanceTrendPoint[];
   };
   anomalies: Array<{
@@ -139,15 +139,15 @@ export type PerformanceSnapshot = {
     period: string;
     kpi: string;
     observation: string;
-    severity: "HIGH" | "MEDIUM" | "LOW";
-    status: "OPEN" | "REVIEWED";
+    severity: 'HIGH' | 'MEDIUM' | 'LOW';
+    status: 'OPEN' | 'REVIEWED';
   }>;
   commentary: Array<{
     id: string;
     kpi: string;
     variance: string;
     threshold: string;
-    status: "REQUIRED" | "COMPLETE" | "NOT_REQUIRED";
+    status: 'REQUIRED' | 'COMPLETE' | 'NOT_REQUIRED';
     owner: string;
   }>;
 };

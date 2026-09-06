@@ -1,43 +1,108 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
-
-import { App } from "@/app/App";
-import { AppShell } from "@/components/layout";
-import { CommandCenterPage } from "@/pages/CommandCenterPage";
-import { LiquidityPage } from "@/pages/LiquidityPage";
-import { MarketRiskPage } from "@/pages/MarketRiskPage";
-import { PerformancePage } from "@/pages/PerformancePage";
-import { PlanningPage } from "@/pages/PlanningPage";
-import { ProfitabilityPage } from "@/pages/ProfitabilityPage";
-import { RiskPage } from "@/pages/RiskPage";
-import { WorkspacePlaceholder } from "@/pages/WorkspacePlaceholder";
-
-const workspaceRoutes = [
-  "actions",
-  "capital",
-  "reports",
-  "copilot",
-  "data",
-  "governance",
-].map((path) => ({ path, element: <WorkspacePlaceholder /> }));
-
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+  redirect,
+} from '@tanstack/react-router';
+import { App } from '@/app/App';
+import { AppShell } from '@/app/layout';
+import { ActionsPage } from '@/features/action-capital/ActionsPage';
+import { CapitalPage } from '@/features/action-capital/CapitalPage';
+import { CommandCenterPage } from '@/features/command-center/CommandCenterPage';
+import { CopilotPage } from '@/features/reporting-copilot/CopilotPage';
+import { DataGovernancePage } from '@/features/data-governance/DataGovernancePage';
+import { LiquidityPage } from '@/features/profitability-liquidity/LiquidityPage';
+import { MarketRiskPage } from '@/features/market-risk/MarketRiskPage';
+import { PerformancePage } from '@/features/planning-performance/PerformancePage';
+import { PlanningPage } from '@/features/planning-performance/PlanningPage';
+import { ProfitabilityPage } from '@/features/profitability-liquidity/ProfitabilityPage';
+import { RiskPage } from '@/features/risk-command/RiskPage';
+import { ReportsPage } from '@/features/reporting-copilot/ReportsPage';
+const rootRoute = createRootRoute({ component: Outlet });
+const landingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: App,
+});
+const appRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/app',
+  component: AppShell,
+});
+const indexRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/',
+  beforeLoad: () => {
+    throw redirect({ to: '/app/command-center' });
   },
-  {
-    path: "/app",
-    element: <AppShell />,
-    children: [
-      { index: true, element: <Navigate replace to="command-center" /> },
-      { path: "command-center", element: <CommandCenterPage /> },
-      { path: "planning", element: <PlanningPage /> },
-      { path: "performance", element: <PerformancePage /> },
-      { path: "profitability", element: <ProfitabilityPage /> },
-      { path: "liquidity", element: <LiquidityPage /> },
-      { path: "risk", element: <RiskPage /> },
-      { path: "market-risk", element: <MarketRiskPage /> },
-      ...workspaceRoutes,
-    ],
-  },
-]);
+});
+const children = [
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'command-center',
+    component: CommandCenterPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'planning',
+    component: PlanningPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'performance',
+    component: PerformancePage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'profitability',
+    component: ProfitabilityPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'liquidity',
+    component: LiquidityPage,
+  }),
+  createRoute({ getParentRoute: () => appRoute, path: 'risk', component: RiskPage }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'market-risk',
+    component: MarketRiskPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'actions',
+    component: ActionsPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'capital',
+    component: CapitalPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'reports',
+    component: ReportsPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'copilot',
+    component: CopilotPage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'data',
+    component: DataGovernancePage,
+  }),
+  createRoute({
+    getParentRoute: () => appRoute,
+    path: 'governance',
+    component: DataGovernancePage,
+  }),
+];
+export const router = createRouter({
+  routeTree: rootRoute.addChildren([
+    landingRoute,
+    appRoute.addChildren([indexRoute, ...children]),
+  ]),
+});

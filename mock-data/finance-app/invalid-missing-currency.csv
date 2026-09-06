@@ -1,0 +1,2 @@
+company,account,period,scenario,value,dim_cost_center
+AURELIA,4000,2026-09,base,100000.00,CC-SALES

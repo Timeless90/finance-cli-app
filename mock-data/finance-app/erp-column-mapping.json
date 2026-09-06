@@ -1,0 +1,8 @@
+{
+  "company": "LegalEntity",
+  "account": "GLAccount",
+  "period": "FiscalMonth",
+  "scenario": "Version",
+  "value": "Amount",
+  "currency": "LocalCurrency"
+}

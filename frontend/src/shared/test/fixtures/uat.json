@@ -1,0 +1,1309 @@
+{
+  "/api/v1/planning/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "scenarios": [
+      {
+        "scenario_id": "base",
+        "label": "Base",
+        "type": "BASE",
+        "status": "APPROVED",
+        "revenue": "\u20ac486.3M",
+        "ebitda": "\u20ac82.4M",
+        "free_cash_flow": "\u20ac41.7M",
+        "owner": "Group FP&A"
+      },
+      {
+        "scenario_id": "downside",
+        "label": "Downside",
+        "type": "DOWNSIDE",
+        "status": "APPROVED",
+        "revenue": "\u20ac451.7M",
+        "ebitda": "\u20ac68.9M",
+        "free_cash_flow": "\u20ac24.6M",
+        "owner": "Group FP&A"
+      }
+    ],
+    "active_forecast": {
+      "version_id": "uat-downside-v1",
+      "snapshot_id": "uat-snapshot-v1",
+      "assumption_set_id": "uat-downside-assumptions",
+      "model_version": "uat-planning-v1",
+      "status": "approved",
+      "label": "Downside"
+    },
+    "forecast_series": [
+      {
+        "period": "P08",
+        "actual": 68.9,
+        "plan": 78.5,
+        "forecast": 68.9,
+        "lower": 64.9,
+        "upper": 72.9
+      }
+    ],
+    "financial_statement": [
+      {
+        "line_item": "EBITDA",
+        "label": "EBITDA",
+        "actual": "\u20ac68.9M",
+        "plan": "\u20ac78.5M",
+        "forecast": "\u20ac68.9M",
+        "variance": "-\u20ac9.6M vs plan",
+        "variance_tone": "negative",
+        "level": 0
+      }
+    ],
+    "drivers": [
+      {
+        "driver_id": "volume",
+        "label": "Volume growth",
+        "value": "-2.6",
+        "unit": "%",
+        "delta": "-1.0pp",
+        "owner": "Commercial Finance",
+        "status": "REVIEW"
+      }
+    ],
+    "thresholds": [
+      {
+        "metric_id": "EBITDA margin",
+        "target": ">= 16.5%",
+        "warning": "< 15.5%",
+        "current": "14.9%",
+        "status": "WARNING"
+      }
+    ],
+    "forecast_assurance": {
+      "confidence": "71%",
+      "mape": "5.8%",
+      "bias": "-1.9%"
+    }
+  },
+  "/api/v1/performance/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "metrics": [
+      {
+        "metric_id": "ebitda",
+        "label": "EBITDA",
+        "value": "\u20ac68.9M",
+        "delta": "-\u20ac9.6M vs plan",
+        "delta_tone": "negative",
+        "meta": "validated projection"
+      }
+    ],
+    "kpi_tree": [
+      {
+        "node_id": "ebitda",
+        "label": "EBITDA",
+        "value": "\u20ac68.9M",
+        "variance": "-\u20ac9.6M vs plan",
+        "tone": "negative"
+      }
+    ],
+    "variance_bridge": {
+      "kpi": "EBITDA",
+      "comparison": "ACTUAL_VS_PLAN",
+      "baseline": "\u20ac78.5M",
+      "actual": "\u20ac68.9M",
+      "explained": "\u20ac9.6M",
+      "unexplained": "\u20ac0.0M",
+      "fully_explained": true,
+      "steps": [
+        {
+          "id": "baseline",
+          "label": "Plan",
+          "amount": 78.5,
+          "display": "\u20ac78.5M",
+          "type": "start"
+        },
+        {
+          "id": "actual",
+          "label": "Actual",
+          "amount": 68.9,
+          "display": "\u20ac68.9M",
+          "type": "end"
+        }
+      ]
+    },
+    "trend": [
+      {
+        "period": "P08",
+        "actual": 68.9,
+        "plan": 78.5,
+        "forecast": 68.9
+      }
+    ],
+    "anomalies": [
+      {
+        "anomaly_id": "AN-031",
+        "period": "P08",
+        "kpi": "EBITDA",
+        "observation": "Downside pressure",
+        "severity": "HIGH",
+        "status": "OPEN"
+      }
+    ],
+    "commentary_requirements": [
+      {
+        "commentary_id": "COM-01",
+        "kpi": "EBITDA",
+        "variance": "-\u20ac9.6M vs plan",
+        "threshold": "\u20ac2.0M",
+        "status": "REQUIRED",
+        "owner": "Group FP&A"
+      }
+    ]
+  },
+  "/api/v1/profitability/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "metrics": [
+      {
+        "metric_id": "ebitda",
+        "label": "EBITDA",
+        "value": "\u20ac68.9M",
+        "delta": "-\u20ac9.6M vs plan",
+        "delta_tone": "negative",
+        "meta": "validated projection"
+      }
+    ],
+    "segments": [
+      {
+        "segment_id": "core",
+        "label": "Core Products",
+        "revenue": "\u20ac198.4M",
+        "contribution_margin": "\u20ac48.7M",
+        "contribution_margin_pct": "24.5%",
+        "ebitda": "\u20ac24.8M",
+        "allocated_cost": "\u20ac18.8M",
+        "margin_at_risk": "\u20ac8.9M",
+        "status": "WATCH"
+      }
+    ],
+    "margin_waterfall": [
+      {
+        "id": "revenue",
+        "label": "REVENUE",
+        "amount": 451.7,
+        "display": "\u20ac451.7M",
+        "type": "start"
+      },
+      {
+        "id": "ebitda",
+        "label": "EBITDA",
+        "amount": 68.9,
+        "display": "\u20ac68.9M",
+        "type": "end"
+      }
+    ],
+    "profitability_matrix": [
+      {
+        "id": "core-strategic",
+        "product": "CX-400",
+        "customer": "Key Accounts",
+        "channel": "Partner",
+        "revenue": "\u20ac56.1M",
+        "margin_pct": "21.4%",
+        "margin_at_risk": "\u20ac4.2M",
+        "status": "WATCH"
+      }
+    ],
+    "sensitivity_summary": [
+      {
+        "lever": "Price recovery",
+        "movement": "+1.5%",
+        "ebitda_impact": "+\u20ac6.8M",
+        "margin_impact": "+1.5pp",
+        "tone": "positive"
+      }
+    ],
+    "allocation_assurance": {
+      "version_id": "uat-allocation-v1",
+      "snapshot_id": "uat-snapshot-v1",
+      "method": "DRIVER + ABC",
+      "source_cost": "\u20ac62.24M",
+      "allocated_cost": "\u20ac62.20M",
+      "reconciliation_difference": "\u20ac0.04M",
+      "reconciled": true
+    }
+  },
+  "/api/v1/liquidity/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "metrics": [
+      {
+        "metric_id": "ebitda",
+        "label": "EBITDA",
+        "value": "\u20ac68.9M",
+        "delta": "-\u20ac9.6M vs plan",
+        "delta_tone": "negative",
+        "meta": "validated projection"
+      }
+    ],
+    "cash_forecast": {
+      "minimum_liquidity": "\u20ac20.0M",
+      "minimum_headroom": "\u20ac5.7M",
+      "forecast_accuracy": "86.1%",
+      "points": [
+        {
+          "period": "W01",
+          "opening": 31.5,
+          "inflow": 13.2,
+          "outflow": 14.4,
+          "closing": 30.3,
+          "minimum": 20
+        }
+      ]
+    },
+    "working_capital": [
+      {
+        "metric_id": "dso",
+        "label": "DSO",
+        "current": "56d",
+        "target": "45d",
+        "cash_impact": "-\u20ac14.2M",
+        "status": "BREACH"
+      }
+    ],
+    "debt": [
+      {
+        "debt_id": "RCF-01",
+        "instrument": "Revolving Credit Facility",
+        "principal": "\u20ac18.0M",
+        "rate": "3.85%",
+        "maturity": "FY29 P06",
+        "committed_limit": "\u20ac50.0M",
+        "headroom": "\u20ac32.0M",
+        "status": "NORMAL"
+      }
+    ],
+    "covenants": [
+      {
+        "covenant_id": "COV-LIQ",
+        "metric": "Minimum liquidity",
+        "actual": "\u20ac24.6M",
+        "threshold": ">= \u20ac20.0M",
+        "headroom": "\u20ac4.6M",
+        "projected_minimum": "\u20ac17.6M",
+        "status": "WATCH"
+      }
+    ],
+    "stresses": [
+      {
+        "stress_id": "S-COMB",
+        "name": "Combined downside",
+        "closing_cash": "\u20ac7.4M",
+        "headroom": "-\u20ac12.6M",
+        "breach": true,
+        "mitigation": "Spend gate + RCF + working-capital actions"
+      }
+    ]
+  },
+  "/api/v1/risk/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "portfolio": {
+      "mean_gross_loss": "\u20ac15.2M",
+      "mean_net_loss": "\u20ac11.7M",
+      "p50_net_loss": "\u20ac8.9M",
+      "p95_net_loss": "\u20ac28.6M",
+      "p99_net_loss": "\u20ac43.9M",
+      "expected_shortfall_95": "\u20ac36.7M",
+      "appetite_usage": "88%",
+      "paths": "10,000",
+      "seed": "20260809"
+    },
+    "percentile_curve": [
+      {
+        "percentile": 50,
+        "loss": 8.9
+      },
+      {
+        "percentile": 95,
+        "loss": 28.6
+      },
+      {
+        "percentile": 99,
+        "loss": 43.9
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "UAT-R-ENERGY",
+        "title": "Energy cost escalation",
+        "category": "Market",
+        "owner": "Treasury",
+        "probability": 0.74,
+        "impact": 0.78,
+        "expected_loss": "\u20ac4.2M",
+        "p95_loss": "\u20ac11.2M",
+        "residual_loss": "\u20ac3.2M",
+        "mitigation_effect": "\u20ac1.0M",
+        "appetite_usage": "112%",
+        "status": "BREACHED",
+        "trend": "UP"
+      },
+      {
+        "risk_id": "UAT-R-VOLUME",
+        "title": "Volume softness",
+        "category": "Strategic",
+        "owner": "Commercial Finance",
+        "probability": 0.66,
+        "impact": 0.72,
+        "expected_loss": "\u20ac3.1M",
+        "p95_loss": "\u20ac8.8M",
+        "residual_loss": "\u20ac2.5M",
+        "mitigation_effect": "\u20ac0.6M",
+        "appetite_usage": "104%",
+        "status": "BREACHED",
+        "trend": "STABLE"
+      }
+    ],
+    "categories": [
+      {
+        "category_id": "market",
+        "label": "Market",
+        "gross_exposure": 84,
+        "residual_exposure": 71,
+        "appetite": 60,
+        "tone": "negative"
+      }
+    ],
+    "appetite_radar": [
+      {
+        "dimension": "Market",
+        "exposure": 71,
+        "appetite": 60
+      }
+    ],
+    "correlation": {
+      "labels": ["Energy", "Volume"],
+      "matrix": [
+        [1, 0.3],
+        [0.3, 1]
+      ]
+    },
+    "scenario": {
+      "name": "Combined downside",
+      "description": "Published deterministic UAT risk scenario.",
+      "earnings_at_risk": "\u20ac24.9M EBITDA",
+      "cash_at_risk": "\u20ac22.1M FCF",
+      "probability": "29%",
+      "top_drivers": ["Energy escalation", "Volume compression"]
+    },
+    "controls": [
+      {
+        "control_id": "CTL-UAT-ENERGY",
+        "risk_id": "UAT-R-ENERGY",
+        "name": "Energy hedge ladder",
+        "owner": "Treasury",
+        "effectiveness": "38%",
+        "annual_cost": "\u20ac0.42M",
+        "avoided_loss": "\u20ac1.0M",
+        "status": "ACTIVE"
+      }
+    ],
+    "regimes": {
+      "lifecycle": "LIVE_RUN_AVAILABLE",
+      "current_state": "PRESSURE",
+      "state_confidence": "68%",
+      "states": [
+        {
+          "id": "S1",
+          "label": "Normal",
+          "probability": 0.32,
+          "expected_loss_multiplier": "1.00x"
+        },
+        {
+          "id": "S2",
+          "label": "Pressure",
+          "probability": 0.68,
+          "expected_loss_multiplier": "1.42x"
+        }
+      ],
+      "transition_matrix": [
+        [0.72, 0.28],
+        [0.22, 0.78]
+      ]
+    },
+    "tail": {
+      "lifecycle": "LIVE_RUN_AVAILABLE",
+      "threshold": "\u20ac11.7M / P90",
+      "shape": "\u03be = 0.21",
+      "scale": "\u03b2 = \u20ac4.8M",
+      "expected_shortfall": "\u20ac36.7M",
+      "qq": [
+        {
+          "theoretical": 1.0,
+          "observed": 1.1
+        },
+        {
+          "theoretical": 5.0,
+          "observed": 5.4
+        },
+        {
+          "theoretical": 10.0,
+          "observed": 11.2
+        }
+      ]
+    }
+  },
+  "/api/v1/market-risk/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "assets": [
+      {
+        "asset_id": "eurusd",
+        "label": "EUR/USD",
+        "asset_class": "FX",
+        "exposure": "\u20ac42.0M",
+        "spot": "1.148",
+        "daily_vol": "0.74%",
+        "annualized_vol": "11.8%",
+        "var95": "\u20ac0.52M",
+        "es95": "\u20ac0.71M",
+        "beta": "0.18",
+        "status": "NORMAL"
+      },
+      {
+        "asset_id": "brent",
+        "label": "Brent",
+        "asset_class": "COMMODITY",
+        "exposure": "\u20ac28.5M",
+        "spot": "$82.4",
+        "daily_vol": "1.92%",
+        "annualized_vol": "42.8%",
+        "var95": "\u20ac1.31M",
+        "es95": "\u20ac1.82M",
+        "beta": "0.41",
+        "status": "STRESS"
+      }
+    ],
+    "selected_runs": {
+      "selected_asset_id": "brent",
+      "model_lifecycle": "LIVE_RUN_AVAILABLE",
+      "garch": {
+        "model": "GARCH(1,1)-t",
+        "run_id": "uat-garch-brent-v1",
+        "convergence": "CONVERGED",
+        "log_likelihood": "-1,842.6",
+        "aic": "3,695.2",
+        "bic": "3,721.8",
+        "persistence": "0.964",
+        "unconditional_vol": "42.8%",
+        "parameters": [
+          {
+            "name": "\u03b1\u2081",
+            "estimate": "0.081",
+            "std_error": "0.018",
+            "t_stat": "4.50",
+            "p_value": "<0.001"
+          }
+        ],
+        "volatility": [
+          {
+            "index": 1,
+            "observed": 1.2,
+            "fitted": 1.1,
+            "lower": 0.9,
+            "upper": 1.4
+          },
+          {
+            "index": 2,
+            "observed": 1.5,
+            "fitted": 1.4,
+            "lower": 1.1,
+            "upper": 1.7
+          }
+        ],
+        "residuals": [
+          {
+            "index": 1,
+            "value": -0.42
+          },
+          {
+            "index": 2,
+            "value": 0.94
+          }
+        ],
+        "qq": [
+          {
+            "theoretical": -1.0,
+            "observed": -1.1
+          },
+          {
+            "theoretical": 1.0,
+            "observed": 1.2
+          }
+        ]
+      },
+      "regimes": {
+        "model": "2-STATE MARKOV SWITCHING",
+        "run_id": "uat-regime-v1",
+        "current_state": "HIGH VOL",
+        "confidence": "82%",
+        "states": [
+          {
+            "id": "S1",
+            "label": "LOW VOL",
+            "probability": 0.18,
+            "mean": "+0.03%",
+            "volatility": "18.2%"
+          },
+          {
+            "id": "S2",
+            "label": "HIGH VOL",
+            "probability": 0.82,
+            "mean": "-0.06%",
+            "volatility": "38.7%"
+          }
+        ],
+        "probabilities": [
+          {
+            "index": 1,
+            "low": 0.41,
+            "high": 0.59
+          },
+          {
+            "index": 2,
+            "low": 0.18,
+            "high": 0.82
+          }
+        ],
+        "transition_matrix": [
+          [0.94, 0.06],
+          [0.11, 0.89]
+        ]
+      },
+      "marginals": [
+        {
+          "asset_id": "brent",
+          "family": "Student-t",
+          "location": "-0.02%",
+          "scale": "1.76%",
+          "dof": "6.4",
+          "aic": "-7,216",
+          "ks_p_value": "0.22"
+        }
+      ],
+      "dependency": {
+        "model": "t-COPULA",
+        "run_id": "uat-copula-v1",
+        "dof": "5.9",
+        "log_likelihood": "2,184.7",
+        "tail_dependence": "0.21",
+        "labels": ["EUR/USD", "Brent"],
+        "matrix": [
+          [1, -0.18],
+          [-0.18, 1]
+        ],
+        "edges": [
+          {
+            "source": "EUR/USD",
+            "target": "Brent",
+            "correlation": -0.18,
+            "tail_dependence": 0.12
+          }
+        ]
+      },
+      "simulation": {
+        "run_id": "uat-market-var-v1",
+        "paths": "50,000",
+        "horizon": "252D",
+        "seed": "20260809",
+        "var95": "\u20ac8.9M",
+        "es95": "\u20ac12.7M",
+        "fan": [
+          {
+            "horizon": 0,
+            "p05": 100,
+            "p25": 100,
+            "p50": 100,
+            "p75": 100,
+            "p95": 100
+          },
+          {
+            "horizon": 252,
+            "p05": 63,
+            "p25": 83,
+            "p50": 105,
+            "p75": 129,
+            "p95": 160
+          }
+        ]
+      },
+      "backtest": {
+        "window": "500D",
+        "observations": 500,
+        "var_exceptions": 31,
+        "expected_exceptions": "25.0",
+        "kupiec_p_value": "0.08",
+        "christoffersen_p_value": "0.28",
+        "traffic_light": "YELLOW",
+        "breaches": [
+          {
+            "date": "2026-07-21",
+            "return": "-5.2%",
+            "var_limit": "-4.0%",
+            "severity": "1.30x",
+            "documented": false,
+            "note": "Documentation required"
+          }
+        ]
+      },
+      "model_comparison": [
+        {
+          "id": "M3",
+          "model": "GARCH(1,1)-t",
+          "aic": "3,695",
+          "bic": "3,722",
+          "out_of_sample_loss": "0.79",
+          "var_coverage": "95.8%",
+          "tail_fit": "GOOD",
+          "status": "CHAMPION"
+        }
+      ]
+    },
+    "threshold_states": [
+      {
+        "threshold_id": "TH-VAR",
+        "metric": "1D VaR 95",
+        "warning": "> \u20ac0.85M",
+        "breach": "> \u20ac1.10M",
+        "current": "\u20ac1.31M",
+        "status": "BREACH",
+        "documentation": "Review hedge ratio in Treasury meeting"
+      }
+    ]
+  },
+  "/api/v1/actions/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "metrics": {
+      "items": [
+        {
+          "metric_id": "impact",
+          "label": "EXPECTED EBITDA IMPACT",
+          "value": "+\u20ac18.9M",
+          "delta": "+\u20ac6.2M protection",
+          "delta_tone": "positive",
+          "meta": "published action projection"
+        }
+      ]
+    },
+    "actions": [
+      {
+        "action_id": "UAT-ACT-AURELIA-DOWNSIDE",
+        "title": "Accelerate price corridor update",
+        "source": "Performance / DACH",
+        "owner": "Commercial Finance",
+        "sponsor": "CCO",
+        "due": "P09 W2",
+        "status": "AT_RISK",
+        "priority": "P0",
+        "confidence": "61%",
+        "expected_ebitda": "+\u20ac2.8M",
+        "expected_cash": "+\u20ac2.2M",
+        "realized_ebitda": "+\u20ac1.7M",
+        "realized_cash": "+\u20ac1.3M",
+        "realization_pct": "61%",
+        "risk_reduction": "\u20ac0.9M",
+        "evidence": "Pricing wave approved",
+        "next_gate": "P09 W1 review"
+      }
+    ],
+    "benefit_series": [
+      {
+        "period": "P08",
+        "expected": 9.4,
+        "realized": 6.8
+      },
+      {
+        "period": "P09",
+        "expected": 14.8,
+        "realized": 10.7
+      }
+    ],
+    "dependencies": [
+      {
+        "action_id": "ACT-042",
+        "depends_on": "ACT-036",
+        "type": "ENABLING"
+      }
+    ]
+  },
+  "/api/v1/capital/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "portfolio": {
+      "budget": "\u20ac96.0M",
+      "committed": "\u20ac58.4M",
+      "approved": "\u20ac18.6M",
+      "unallocated": "\u20ac9.0M",
+      "liquidity_reserve": "\u20ac20.0M",
+      "expected_portfolio_npv": "\u20ac61.7M",
+      "downside_capital_at_risk": "\u20ac27.8M"
+    },
+    "candidates": [
+      {
+        "candidate_id": "INV-104",
+        "name": "Digital pricing platform",
+        "category": "Digital",
+        "sponsor": "CCO",
+        "capital_required": "\u20ac8.4M",
+        "npv": "\u20ac19.6M",
+        "irr": "31%",
+        "payback": "2.1y",
+        "risk_adjusted_score": 86,
+        "strategic_fit": 92,
+        "liquidity_impact": "-\u20ac5.1M Y1",
+        "downside_loss": "\u20ac3.2M",
+        "status": "APPROVED"
+      }
+    ],
+    "constraints": [
+      {
+        "constraint_id": "CAP-LIQ",
+        "label": "Minimum liquidity reserve",
+        "limit": ">= \u20ac20.0M",
+        "used": "\u20ac5.7M",
+        "headroom": "-\u20ac14.3M",
+        "status": "BREACH"
+      }
+    ],
+    "allocation": [
+      {
+        "category": "Digital",
+        "amount": "\u20ac16.8M",
+        "share": 22,
+        "expected_npv": "\u20ac26.3M"
+      }
+    ],
+    "frontier_points": [
+      {
+        "portfolio_id": "P2",
+        "label": "Balanced",
+        "risk": 31,
+        "return": 67,
+        "selected": true
+      }
+    ],
+    "approvals": [
+      {
+        "approval_id": "APR-209",
+        "candidate_id": "INV-104",
+        "gate": "Investment Committee",
+        "owner": "CFO",
+        "status": "APPROVED",
+        "due": "P08 W3"
+      }
+    ],
+    "funding_options": [
+      {
+        "option_id": "RCF-2026",
+        "label": "Revolving credit facility",
+        "status": "AVAILABLE",
+        "source_snapshot_ids": ["uat-snapshot-v1"]
+      }
+    ],
+    "selected_allocation_run_id": null
+  },
+  "/api/v1/reporting/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "active_report": {
+      "report_id": "UAT-RPT-AURELIA-DOWNSIDE",
+      "title": "UAT CFO management pack",
+      "template": "Management Pack v1",
+      "status": "PUBLISHED",
+      "current_version_id": "v1",
+      "reporting_date": "2026-08-09",
+      "completeness": "100%",
+      "source_coverage": "100%"
+    },
+    "sections": [
+      {
+        "id": "kpi",
+        "title": "Executive KPIs",
+        "status": "APPROVED",
+        "source_count": 1
+      },
+      {
+        "id": "performance",
+        "title": "Performance",
+        "status": "APPROVED",
+        "source_count": 1
+      },
+      {
+        "id": "forecast",
+        "title": "Forecast",
+        "status": "APPROVED",
+        "source_count": 1
+      },
+      {
+        "id": "cash",
+        "title": "Liquidity",
+        "status": "APPROVED",
+        "source_count": 1
+      }
+    ],
+    "versions": [
+      {
+        "version_id": "v1",
+        "status": "PUBLISHED",
+        "source_snapshot_ids": ["uat-snapshot-v1"],
+        "content_hash": "uat-report-v1"
+      }
+    ],
+    "source_pack": [
+      {
+        "source_id": "uat-snapshot-v1",
+        "label": "UAT finance snapshot",
+        "status": "APPROVED",
+        "as_of": "2026-08-09T08:00:00Z"
+      }
+    ],
+    "findings": [],
+    "export_targets": [
+      {
+        "format": "PDF",
+        "status": "READY"
+      },
+      {
+        "format": "XLSX",
+        "status": "READY"
+      }
+    ]
+  },
+  "/api/v1/data-governance/workspace": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "lineage": {
+      "seed": "uat-v1",
+      "company": "AURELIA",
+      "scenario": "downside"
+    },
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1,
+    "snapshots": [
+      {
+        "snapshot_id": "uat-snapshot-v1",
+        "row_count": 12,
+        "content_hash": "uat-v1",
+        "status": "APPROVED"
+      }
+    ],
+    "quality_findings": [],
+    "governed_runs": [
+      {
+        "run_id": "uat-projection-v1",
+        "status": "APPROVED",
+        "model_id": "workspace-projection",
+        "snapshot_id": "uat-snapshot-v1"
+      }
+    ],
+    "models": [
+      {
+        "model_id": "workspace-projection",
+        "version": "uat-v1",
+        "status": "VALIDATED"
+      }
+    ],
+    "governance_approvals": [
+      {
+        "approval_id": "uat-projection-approval",
+        "status": "APPROVED",
+        "actor": "uat-publisher"
+      }
+    ],
+    "governance_lineage": {
+      "snapshot_id": "uat-snapshot-v1",
+      "projection_version": 1,
+      "source": "uat-seed"
+    }
+  },
+  "/api/v1/command-center/overview": {
+    "context": {
+      "company_id": "AURELIA",
+      "company_label": "AURELIA",
+      "period_id": "2026-08",
+      "period_label": "2026-08",
+      "scenario_id": "downside",
+      "scenario_label": "downside",
+      "currency": "EUR"
+    },
+    "as_of": "2026-08-09T08:00:00Z",
+    "metrics": [
+      {
+        "metric_id": "revenue",
+        "label": "REVENUE",
+        "value": "\u20ac451.7M",
+        "delta": "-2.6% vs plan",
+        "delta_tone": "negative",
+        "meta": "FY26 UAT outlook"
+      },
+      {
+        "metric_id": "ebitda",
+        "label": "EBITDA",
+        "value": "\u20ac68.9M",
+        "delta": "-\u20ac9.6M vs plan",
+        "delta_tone": "negative",
+        "meta": "validated projection"
+      },
+      {
+        "metric_id": "free_cash_flow",
+        "label": "FREE CASH FLOW",
+        "value": "\u20ac24.6M",
+        "delta": "-\u20ac19.5M vs plan",
+        "delta_tone": "negative",
+        "meta": "working capital outlook"
+      }
+    ],
+    "forecast": {
+      "title": "EBITDA trajectory",
+      "subtitle": "Validated UAT projection // \u20acM",
+      "points": [
+        {
+          "period": "P08",
+          "actual": 68.9,
+          "base": 68.9,
+          "upside": 68.9,
+          "downside": 68.9
+        },
+        {
+          "period": "P09",
+          "base": 70.0,
+          "upside": 71.10000000000001,
+          "downside": 66.5
+        }
+      ]
+    },
+    "liquidity": {
+      "cash": "\u20ac24.6M",
+      "runway": "11.2 months",
+      "minimum_headroom": "\u20ac5.7M",
+      "covenant_headroom": "19%",
+      "tone": "warning"
+    },
+    "risk": {
+      "score": "67 / 100",
+      "expected_loss": "\u20ac11.7M",
+      "tail_loss": "\u20ac31.4M",
+      "appetite_usage": "88%",
+      "signals": [
+        {
+          "risk_id": "R-017",
+          "title": "Energy cost escalation",
+          "owner": "Treasury",
+          "exposure": "\u20ac5.8M",
+          "severity": "HIGH",
+          "trend": "UP"
+        }
+      ]
+    },
+    "variance_drivers": [
+      {
+        "label": "Volume",
+        "amount": "-\u20ac5.6M",
+        "share": "46%",
+        "tone": "negative"
+      },
+      {
+        "label": "Energy",
+        "amount": "-\u20ac2.4M",
+        "share": "20%",
+        "tone": "negative"
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "ACT-042",
+        "title": "Accelerate price corridor update",
+        "owner": "Commercial Finance",
+        "due": "P09 W2",
+        "status": "AT RISK",
+        "impact": "+\u20ac2.8M EBITDA",
+        "confidence": "71%"
+      }
+    ],
+    "briefing": "Aurelia Holding: downside requires immediate margin and cash protection.",
+    "assurance": {
+      "data_freshness": "UAT deterministic dataset",
+      "coverage": "complete",
+      "model_status": "validated",
+      "lineage_status": "complete"
+    },
+    "source_snapshot_ids": ["uat-snapshot-v1"],
+    "projection_version": 1
+  },
+  "/api/v1/context/principal": {
+    "user_id": "uat-cfo",
+    "roles": ["cfo"],
+    "company_scopes": ["AURELIA", "EUROPE"],
+    "permissions": ["approve_run", "create_run", "read_audit", "read_data"]
+  },
+  "/api/v1/context/companies": [
+    {
+      "company_id": "AURELIA",
+      "label": "AURELIA",
+      "currency": "EUR",
+      "data_available": true
+    },
+    {
+      "company_id": "EUROPE",
+      "label": "EUROPE",
+      "currency": "EUR",
+      "data_available": true
+    }
+  ],
+  "/api/v1/context/periods": [
+    {
+      "period_id": "2026-08",
+      "label": "2026-08"
+    }
+  ],
+  "/api/v1/context/scenarios": [
+    {
+      "scenario_id": "base",
+      "label": "base",
+      "kind": null,
+      "status": "available",
+      "version": null,
+      "source": "finance_data"
+    },
+    {
+      "scenario_id": "downside",
+      "label": "downside",
+      "kind": null,
+      "status": "available",
+      "version": null,
+      "source": "finance_data"
+    }
+  ],
+  "/api/v1/data/imports": [],
+  "/api/v1/data/planning-mappings": [],
+  "/api/v1/data/planning-baselines": [],
+  "/api/v1/decision-runs": [],
+  "/health/ready": {
+    "status": "ready",
+    "service": "finance-cli-app-backend",
+    "environment": "uat",
+    "version": "0.3.0"
+  },
+  "/api/v1/platform": {
+    "name": "CFO Command Center",
+    "api_version": "v1",
+    "capabilities": [
+      "enterprise-domain",
+      "model-execution-ports",
+      "planning-foundation",
+      "risk-foundation",
+      "background-jobs"
+    ]
+  }
+}

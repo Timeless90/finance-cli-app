@@ -1,0 +1,19 @@
+# Supplied by a protected Copilot input or a Codex environment variable.
+[[sources]]
+id = "development"
+dsn = "${MCP_POSTGRES_DSN}"
+connection_timeout = 10
+
+[[tools]]
+name = "search_objects"
+source = "development"
+
+[[tools]]
+name = "execute_sql"
+source = "development"
+readonly = true
+max_rows = 100
+
+[[tools]]
+name = "explain_sql"
+source = "development"

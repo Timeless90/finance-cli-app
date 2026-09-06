@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { App } from "@/app/App";
+import { App } from '@/app/App';
 
 const meta = {
-  title: "Foundation/App",
+  title: 'Foundation/App',
   component: App,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 } satisfies Meta<typeof App>;
 

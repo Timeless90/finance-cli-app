@@ -4,7 +4,7 @@ export type WorkspaceSelection = {
   scenarioId: string;
 };
 
-export type SteeringTone = "positive" | "warning" | "negative" | "neutral";
+export type SteeringTone = 'positive' | 'warning' | 'negative' | 'neutral';
 
 export type ManagementAction = {
   id: string;
@@ -13,8 +13,8 @@ export type ManagementAction = {
   owner: string;
   sponsor: string;
   due: string;
-  status: "PROPOSED" | "APPROVED" | "IN_EXECUTION" | "AT_RISK" | "COMPLETED";
-  priority: "P0" | "P1" | "P2";
+  status: 'PROPOSED' | 'APPROVED' | 'IN_EXECUTION' | 'AT_RISK' | 'COMPLETED';
+  priority: 'P0' | 'P1' | 'P2';
   confidence: string;
   expectedEbitda: string;
   expectedCash: string;
@@ -39,11 +39,13 @@ export type CapitalCandidate = {
   strategicFit: number;
   liquidityImpact: string;
   downsideLoss: string;
-  status: "PROPOSED" | "SCREENED" | "APPROVED" | "DEFERRED" | "REJECTED";
+  status: 'PROPOSED' | 'SCREENED' | 'APPROVED' | 'DEFERRED' | 'REJECTED';
 };
 
 export type ActionCapitalSnapshot = {
-  contractStatus: "MOCK_CONNECTED";
+  contractStatus: 'MOCK_CONNECTED' | 'LIVE_API_CONNECTED';
+  sourceSnapshotIds: string[];
+  projectionVersion: number;
   context: WorkspaceSelection & {
     companyLabel: string;
     periodLabel: string;
@@ -66,13 +68,13 @@ export type ActionCapitalSnapshot = {
       realized: number;
     }>;
     statusMix: Array<{
-      status: ManagementAction["status"];
+      status: ManagementAction['status'];
       count: number;
     }>;
     dependencies: Array<{
       actionId: string;
       dependsOn: string;
-      type: "BLOCKING" | "ENABLING";
+      type: 'BLOCKING' | 'ENABLING';
     }>;
   };
   capital: {
@@ -97,7 +99,7 @@ export type ActionCapitalSnapshot = {
       limit: string;
       used: string;
       headroom: string;
-      status: "PASS" | "WATCH" | "BREACH";
+      status: 'PASS' | 'WATCH' | 'BREACH';
     }>;
     allocation: Array<{
       category: string;
@@ -110,8 +112,13 @@ export type ActionCapitalSnapshot = {
       candidateId: string;
       gate: string;
       owner: string;
-      status: "PENDING" | "APPROVED" | "REJECTED";
+      status: 'PENDING' | 'APPROVED' | 'REJECTED';
       due: string;
+    }>;
+    fundingOptions: Array<{
+      id: string;
+      label: string;
+      status: string;
     }>;
   };
 };
