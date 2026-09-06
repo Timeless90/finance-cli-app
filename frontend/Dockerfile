@@ -1,4 +1,4 @@
-FROM node:24.20.0-bookworm-slim AS build
+FROM node:26.8.1-bookworm-slim AS build
 RUN npm install --global pnpm@10.15.1
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
